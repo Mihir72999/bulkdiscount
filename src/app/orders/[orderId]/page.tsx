@@ -4,6 +4,22 @@ import Loading from '../../../../components/loading';
 import { useShippingAndProductsInfo } from '../../../../lib/hooks';
 import { BillingAddress, OrderProduct, ShippingAndProductsInfo } from '../../../../types';
 import { notFound , useParams } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const InternalOrderPage = (order: ShippingAndProductsInfo) => {
     const { shipping_addresses = [], products = [] } = order
@@ -42,64 +58,55 @@ const InternalOrderPage = (order: ShippingAndProductsInfo) => {
     );
 
     return (
-        <>
-<div>
-  {/* Header */}
-  <div className="flex justify-between items-center mb-6">
-    <h1 className="text-3xl font-bold">
-      Order details
-    </h1>
+  <div className="space-y-6">
+    {/* Header */}
+    <div className="flex items-center justify-between">
+      <h1 className="text-3xl font-bold">
+        Order Details
+      </h1>
 
-    <button
-      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-    >
-      Create shipment
-    </button>
-  </div>
-
-  {/* Table */}
-  <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Ship to
-            </th>
-
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Products
-            </th>
-
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Quantity
-            </th>
-          </tr>
-        </thead>
-
-        <tbody className="bg-white divide-y divide-gray-200">
-          {items.map(({ address, addressProducts },index) => (
-            <tr key={index}>
-              <td className="px-6 py-4 align-top">
-                <Address {...address} />
-              </td>
-
-              <td className="px-6 py-4 align-top">
-                {renderOrderProducts(addressProducts)}
-              </td>
-
-              <td className="px-6 py-4 align-top">
-                {renderOrderProductsQuantities(addressProducts)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Button>
+        Create Shipment
+      </Button>
     </div>
+
+    <Card>
+      <CardHeader>
+        <CardTitle>Order Details</CardTitle>
+      </CardHeader>
+
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Ship To</TableHead>
+              <TableHead>Products</TableHead>
+              <TableHead>Quantity</TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {items.map(({ address, addressProducts },index) => (
+              <TableRow key={index}>
+                <TableCell className="align-top">
+                  <Address {...address} />
+                </TableCell>
+
+                <TableCell className="align-top">
+                  {renderOrderProducts(addressProducts)}
+                </TableCell>
+
+                <TableCell className="align-top">
+                  {renderOrderProductsQuantities(addressProducts)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   </div>
-</div>
-        </>
-    );
+);
 };
 
 const OrderPage = () => {

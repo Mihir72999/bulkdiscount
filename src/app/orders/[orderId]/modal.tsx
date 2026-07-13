@@ -3,7 +3,15 @@ import {  useParams } from 'next/navigation';
 import ErrorMessage from '../../../../components/error';
 import { useOrder } from '../../../../lib/hooks';
 import { Order } from '../../../../types';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 
 const InternalOrderModalPage = (order: Order) => {
@@ -11,99 +19,121 @@ const InternalOrderModalPage = (order: Order) => {
 
     const formatCurrency = (amount: string) =>
         new Intl.NumberFormat(order.customer_locale, { style: 'currency', currency: order.currency_code }).format(parseFloat(amount));
+return (
+  <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
 
-    return (
-       <div className="grid gap-12 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+    {/* Billing Information */}
+    <Card>
+      <CardHeader>
+        <CardTitle>Billing Information</CardTitle>
+      </CardHeader>
 
-  {/* Billing Information */}
-  <div>
-    <h3 className="text-lg font-semibold mb-4">
-      Billing information
-    </h3>
+      <CardContent>
+        <address className="not-italic space-y-1 text-sm text-muted-foreground">
+          <p>
+            {billing_address.first_name} {billing_address.last_name}
+          </p>
 
-    <address className="not-italic text-gray-600 space-y-1">
-      <div>
-        {billing_address.first_name} {billing_address.last_name}
-      </div>
+          <p>{billing_address.street_1}</p>
 
-      <div>{billing_address.street_1}</div>
+          {billing_address.street_2 && (
+            <p>{billing_address.street_2}</p>
+          )}
 
-      {billing_address.street_2 && (
-        <div>{billing_address.street_2}</div>
-      )}
+          <p>
+            {billing_address.city}, {billing_address.state}{" "}
+            {billing_address.zip}
+          </p>
 
-      <div>
-        {billing_address.city}, {billing_address.state}, {billing_address.zip}
-      </div>
+          <p>{billing_address.country}</p>
+        </address>
+      </CardContent>
+    </Card>
 
-      <div>{billing_address.country}</div>
-    </address>
+    {/* Payment Details */}
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle>Payment Details</CardTitle>
+
+        <Badge variant="secondary">
+          {order.payment_status}
+        </Badge>
+      </CardHeader>
+
+      <CardContent className="space-y-3">
+        <div className="flex justify-between">
+          <span>Subtotal</span>
+          <span>{formatCurrency(order.subtotal_ex_tax)}</span>
+        </div>
+
+        <div className="flex justify-between">
+          <span>Discount</span>
+          <span>
+            -{formatCurrency(order.discount_amount)}
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span>Shipping</span>
+          <span>
+            {formatCurrency(order.shipping_cost_ex_tax)}
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span>Tax</span>
+          <span>{formatCurrency(order.total_tax)}</span>
+        </div>
+
+        <Separator />
+
+        <div className="flex justify-between font-bold text-lg">
+          <span>Grand Total</span>
+          <span>
+            {formatCurrency(order.total_inc_tax)}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+
+    {/* Order Information */}
+    <Card>
+      <CardHeader>
+        <CardTitle>Order Information</CardTitle>
+      </CardHeader>
+
+      <CardContent className="space-y-3">
+        <div className="flex justify-between">
+          <span>ID</span>
+          <span>{order.id}</span>
+        </div>
+
+        <div className="flex justify-between">
+          <span>Type</span>
+          <span className="capitalize">
+            {order.order_source}
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span>Status</span>
+          <Badge variant="outline">
+            {order.status}
+          </Badge>
+        </div>
+
+        <div className="flex justify-between">
+          <span>Total Items</span>
+          <span>
+            {order.items_total}{" "}
+            {order.items_total === 1 ? "item" : "items"}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+
   </div>
-
-  {/* Payment Details */}
-  <div>
-    <div className="flex items-center justify-between mb-4">
-      <h3 className="text-lg font-semibold">
-        Payment details
-      </h3>
-
-      <span className="px-3 py-1 text-sm font-medium text-green-700 bg-green-100 rounded-full">
-        {order.payment_status}
-      </span>
-    </div>
-
-    <dl className="grid grid-cols-[1fr_auto] gap-y-2 text-gray-600">
-      <dt>Subtotal</dt>
-      <dd>{formatCurrency(order.subtotal_ex_tax)}</dd>
-
-      <dt>Discount</dt>
-      <dd>-{formatCurrency(order.discount_amount)}</dd>
-
-      <dt>Shipping</dt>
-      <dd>{formatCurrency(order.shipping_cost_ex_tax)}</dd>
-
-      <dt>Tax</dt>
-      <dd>{formatCurrency(order.total_tax)}</dd>
-
-      <dt className="font-bold text-black">
-        Grand total
-      </dt>
-
-      <dd className="font-bold text-black">
-        {formatCurrency(order.total_inc_tax)}
-      </dd>
-    </dl>
-  </div>
-
-  {/* Order Information */}
-  <div>
-    <h3 className="text-lg font-semibold mb-4">
-      Order information
-    </h3>
-
-    <dl className="grid grid-cols-[1fr_auto] gap-y-2 text-gray-600">
-      <dt>ID</dt>
-      <dd>{order.id}</dd>
-
-      <dt>Type</dt>
-      <dd className="capitalize">
-        {order.order_source}
-      </dd>
-
-      <dt>Status</dt>
-      <dd>{order.status}</dd>
-
-      <dt>Total items</dt>
-      <dd>
-        {order.items_total > 1
-          ? `${order.items_total} items`
-          : `${order.items_total} item`}
-      </dd>
-    </dl>
-  </div>
-
-</div>
-    );
+);
 };
 
 const OrderModalPage = () => {

@@ -1,9 +1,11 @@
 'use client';
 
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from 'next/navigation';
 import { useProductList } from '../lib/hooks';
 import { TabIds, TabRoutes } from './header';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 
 const InnerHeader = () => {
     const router = useRouter();
@@ -22,7 +24,8 @@ const InnerHeader = () => {
 
     return (
         <div className="mb-10">
-            <button
+            <Button
+                variant="ghost"
                 onClick={handleBackClick}
                 className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-4"
             >
@@ -30,14 +33,14 @@ const InnerHeader = () => {
                 <span className="font-semibold">
                     Products
                 </span>
-            </button>
+            </Button>
 
             {name && (
                 <h1 className="text-3xl font-bold mb-6">
                     {name}
                 </h1>
             )}
-
+             <Separator />
             <hr className="border-gray-300" />
         </div>
     );

@@ -1,7 +1,30 @@
 'use client'
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { FormData, StringKeyValue } from '../types';
+import { Button } from "@/components/ui/button";
 
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import { Input } from "@/components/ui/input";
+
+import { Label } from "@/components/ui/label";
+
+import { Textarea } from "@/components/ui/textarea";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { Switch } from "@/components/ui/switch";
 interface FormProps {
     formData: FormData;
     onCancel(): void;
@@ -55,154 +78,168 @@ const Form = ({ formData, onCancel, onSubmit }: FormProps) => {
     };
 
     return (
-<form onSubmit={handleSubmit} className="space-y-6">
+  <form onSubmit={handleSubmit} className="space-y-6">
 
-  {/* Basic Information */}
-  <div className="bg-white border border-gray-200 rounded-lg p-6">
-    <h2 className="text-lg font-semibold mb-6">
-      Basic Information
-    </h2>
+    {/* Basic Information */}
+    <Card>
+      <CardHeader>
+        <CardTitle>Basic Information</CardTitle>
+      </CardHeader>
 
-    {/* Product Name */}
-    <div className="mb-4">
-      <label className="block text-sm font-medium mb-2">
-        Product name *
-      </label>
+      <CardContent className="space-y-6">
 
-      <input
-        type="text"
-        name="name"
-        value={form.name}
-        onChange={handleChange}
-        className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+        {/* Product Name */}
+        <div className="space-y-2">
+          <Label htmlFor="name">
+            Product Name *
+          </Label>
 
-      {errors?.name && (
-        <p className="text-red-500 text-sm mt-1">
-          {errors.name}
-        </p>
-      )}
-    </div>
+          <Input
+            id="name"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+          />
 
-    {/* Product Type */}
-    <div className="mb-4">
-      <label className="block text-sm font-medium mb-2">
-        Product type *
-      </label>
+          {errors.name && (
+            <p className="text-sm text-destructive">
+              {errors.name}
+            </p>
+          )}
+        </div>
 
-      <select
-        name="type"
-        value={form.type}
-        onChange={(e) => handleSelectChange(e.target.value)}
-        className="w-full rounded-md border border-gray-300 px-3 py-2"
-      >
-        <option value="physical">Physical</option>
-        <option value="digital">Digital</option>
-      </select>
-    </div>
+        {/* Product Type */}
+        <div className="space-y-2">
+          <Label>
+            Product Type
+          </Label>
 
-    {/* Price */}
-    <div className="mb-4">
-      <label className="block text-sm font-medium mb-2">
-        Default price (excluding tax) *
-      </label>
+          <Select
+            value={form.type}
+            onValueChange={handleSelectChange}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select product type" />
+            </SelectTrigger>
 
-      <div className="relative">
-        <span className="absolute left-3 top-2.5 text-gray-500">$</span>
+            <SelectContent>
+              <SelectItem value="physical">
+                Physical
+              </SelectItem>
 
-        <input
-          type="number"
-          step="0.01"
-          name="price"
-          placeholder="10.00"
-          value={form.price}
+              <SelectItem value="digital">
+                Digital
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Price */}
+        <div className="space-y-2">
+          <Label htmlFor="price">
+            Default Price (excluding tax) *
+          </Label>
+
+          <Input
+            id="price"
+            type="number"
+            step="0.01"
+            name="price"
+            value={form.price}
+            placeholder="10.00"
+            onChange={handleChange}
+          />
+
+          {errors.price && (
+            <p className="text-sm text-destructive">
+              {errors.price}
+            </p>
+          )}
+        </div>
+
+        {/* Inventory */}
+        <div className="space-y-2">
+          <Label htmlFor="inventory_level">
+            Quantity in Inventory *
+          </Label>
+
+          <Input
+            id="inventory_level"
+            type="number"
+            step="1"
+            name="inventory_level"
+            value={form.inventory_level}
+            placeholder="0"
+            onChange={handleChangeinventory_level}
+          />
+
+          {errors.inventory_level && (
+            <p className="text-sm text-destructive">
+              {errors.inventory_level}
+            </p>
+          )}
+        </div>
+
+        {/* Visible */}
+        <div className="flex items-center justify-between rounded-lg border p-4">
+          <div className="space-y-1">
+            <Label>
+              Visible on Storefront
+            </Label>
+
+            <p className="text-sm text-muted-foreground">
+              Show this product on your storefront.
+            </p>
+          </div>
+
+          <Switch
+            checked={form.is_visible}
+            onCheckedChange={(checked:boolean) =>
+              setForm(prev => ({
+                ...prev,
+                is_visible: checked,
+              }))
+            }
+          />
+        </div>
+
+      </CardContent>
+    </Card>
+
+    {/* Description */}
+    <Card>
+      <CardHeader>
+        <CardTitle>Description</CardTitle>
+      </CardHeader>
+
+      <CardContent>
+        <Textarea
+          name="description"
+          value={form.description}
+          placeholder="Product information"
+          rows={6}
           onChange={handleChange}
-          className="w-full rounded-md border border-gray-300 pl-8 pr-3 py-2"
         />
-      </div>
+      </CardContent>
+    </Card>
 
-      {errors?.price && (
-        <p className="text-red-500 text-sm mt-1">
-          {errors.price}
-        </p>
-      )}
+    {/* Actions */}
+    <div className="flex justify-end gap-4">
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onCancel}
+      >
+        Cancel
+      </Button>
+
+      <Button type="submit">
+        Save Changes
+      </Button>
     </div>
 
-    {/* Inventory */}
-    <div className="mb-4">
-      <label className="block text-sm font-medium mb-2">
-        Quantity in inventory *
-      </label>
-
-      <input
-        type="number"
-        step="1"
-        name="inventory_level"
-        placeholder="0"
-        value={form.inventory_level}
-        onChange={handleChangeinventory_level}
-        className="w-full rounded-md border border-gray-300 px-3 py-2"
-      />
-
-      {errors?.inventory_level && (
-        <p className="text-red-500 text-sm mt-1">
-          {errors.inventory_level}
-        </p>
-      )}
-    </div>
-
-    {/* Visible */}
-    <div className="flex items-center gap-2">
-      <input
-        type="checkbox"
-        name="is_visible"
-        checked={form.is_visible}
-        onChange={handleCheckboxChange}
-        className="h-4 w-4"
-      />
-
-      <label>
-        Visible on storefront
-      </label>
-    </div>
-  </div>
-
-  {/* Description */}
-  <div className="bg-white border border-gray-200 rounded-lg p-6">
-    <h2 className="text-lg font-semibold mb-6">
-      Description
-    </h2>
-
-    <textarea
-      name="description"
-      placeholder="Product info"
-      value={form.description}
-      onChange={handleChange}
-      rows={6}
-      className="w-full rounded-md border border-gray-300 px-3 py-2"
-    />
-  </div>
-
-  {/* Actions */}
-  <div className="flex justify-end gap-4">
-    <button
-      type="button"
-      onClick={onCancel}
-      className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
-    >
-      Cancel
-    </button>
-
-    <button
-      type="submit"
-      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-    >
-      Save
-    </button>
-  </div>
-
-</form>
-    );
+  </form>
+);
 };
 
 export default Form;

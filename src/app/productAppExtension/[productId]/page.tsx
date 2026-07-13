@@ -4,6 +4,14 @@ import ErrorMessage from "../../../../components/error";
 import Loading from "../../../../components/loading";
 import { useProductInfo } from "../../../../lib/hooks";
 import { notFound } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import { Badge } from "@/components/ui/badge";
 
 const ProductAppExtension = () => {
     const params = useParams()
@@ -16,67 +24,73 @@ const ProductAppExtension = () => {
     if (isLoading) return <Loading />;
     if (error) return <ErrorMessage error={error} />;
   
-    return (
-        <>
-<div className="space-y-4">
+   return (
+  <div className="space-y-6">
+    {/* Basic Information */}
+    <Card>
+      <CardHeader>
+        <CardTitle>Basic Information</CardTitle>
+      </CardHeader>
 
-  {/* Basic Information */}
-  <div className="bg-white border border-gray-200 rounded-lg p-6">
-    <h2 className="text-xl font-semibold mb-6">
-      Basic Information
-    </h2>
+      <CardContent className="space-y-6">
+        <div>
+          <p className="text-sm text-muted-foreground">
+            Product Name
+          </p>
 
-    <div className="space-y-4">
-      <div>
-        <h4 className="text-sm font-semibold text-gray-600 mb-1">
-          Product name
-        </h4>
-        <p className="text-gray-900">{name}</p>
-      </div>
+          <p className="font-medium">
+            {name}
+          </p>
+        </div>
 
-      <div>
-        <h4 className="text-sm font-semibold text-gray-600 mb-1">
-          Product type
-        </h4>
-        <p className="text-gray-900">{typeCapitalized}</p>
-      </div>
+        <div>
+          <p className="text-sm text-muted-foreground">
+            Product Type
+          </p>
 
-      <div>
-        <h4 className="text-sm font-semibold text-gray-600 mb-1">
-          Default price (excluding tax)
-        </h4>
-        <p className="text-gray-900">${price}</p>
-      </div>
+          <Badge variant="outline">
+            {typeCapitalized}
+          </Badge>
+        </div>
 
-      <div>
-        <h4 className="text-sm font-semibold text-gray-600 mb-1">
-          Visible on storefront
-        </h4>
-        <p className="text-gray-900">{isVisibleString}</p>
-      </div>
-    </div>
+        <div>
+          <p className="text-sm text-muted-foreground">
+            Default Price (excluding tax)
+          </p>
+
+          <p className="font-medium">
+            ${price}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-sm text-muted-foreground">
+            Visible on Storefront
+          </p>
+
+          <Badge
+            variant={isVisible ? "default" : "secondary"}
+          >
+            {isVisible ? "Visible" : "Hidden"}
+          </Badge>
+        </div>
+      </CardContent>
+    </Card>
+
+    {/* Description */}
+    <Card>
+      <CardHeader>
+        <CardTitle>Description</CardTitle>
+      </CardHeader>
+
+      <CardContent>
+        <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+          {description || "No description available"}
+        </p>
+      </CardContent>
+    </Card>
   </div>
-
-  {/* Description */}
-  <div className="bg-white border border-gray-200 rounded-lg p-6">
-    <h2 className="text-xl font-semibold mb-6">
-      Description
-    </h2>
-
-    <div>
-      <h4 className="text-sm font-semibold text-gray-600 mb-1">
-        Description
-      </h4>
-
-      <p className="text-gray-900 whitespace-pre-wrap">
-        {description || 'No description available'}
-      </p>
-    </div>
-  </div>
-
-</div>
-        </>
-    );
+);
 };
 
 export default ProductAppExtension;

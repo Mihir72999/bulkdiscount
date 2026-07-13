@@ -1,25 +1,59 @@
 'use client'
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ReactElement } from 'react';
+import { ReactElement , useState } from 'react';
 import ErrorMessage from '../../../components/error';
 import Loading from '../../../components/loading';
 import { useProductList } from '../../../lib/hooks';
 import { TableItem } from '../../../types';
+import { MoreHorizontal } from "lucide-react";
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
 
+import { Button } from "@/components/ui/button";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 const Products = () => {
-    // const [itemsPerPage, setItemsPerPage] = useState(10);
-    // const [currentPage, setCurrentPage] = useState(1);
-    // const [columnHash, setColumnHash] = useState('');
-    // const [direction, setDirection] = useState('ASC');
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
     const router = useRouter();
-    const { error, isLoading, list = []} = useProductList(
-    //   {
-    //   page: String(currentPage),
-    //   limit: String(itemsPerPage),
-    //   ...(columnHash && { sort: columnHash }),
-    //   ...(columnHash && { direction: direction.toLowerCase() }),
-    // }
+    const { error, isLoading, list = [] , meta={}} = useProductList(
+      {
+      page: String(currentPage),
+      limit: String(itemsPerPage),
+    }
   );
     // const itemsPerPageOptions = [10, 20, 50, 100];
     const tableItems: TableItem[] = list.map(({ id, inventory_level: stock, name, price }:{id:any,inventory_level:any,name:any,price:any}) => ({
@@ -28,11 +62,12 @@ const Products = () => {
         price,
         inventory_level: stock,
     }));
-
-    // const onItemsPerPageChange = (newRange:any) => {
-    //     setCurrentPage(1);
-    //     setItemsPerPage(newRange);
-    // };
+    const totalItems =  meta?.pagination?.total ?? 0;
+const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const onItemsPerPageChange = (newRange:any) => {
+        setCurrentPage(1);
+        setItemsPerPage(newRange);
+    };
 
     // const onSort = (newColumnHash: string, newDirection: TableSortDirection) => {
     //     setColumnHash(newColumnHash === 'stock' ? 'inventory_level' : newColumnHash);
@@ -40,8 +75,10 @@ const Products = () => {
     // };
 
     const renderName = (id: number, name: string): ReactElement => (
-        <Link href={`/products/${id}`}>
-            <p>{name}</p>
+        <Link href={`/products/${id}`}
+           className="font-medium text-primary hover:underline"
+        >
+            {name}
         </Link>
     );
 
@@ -49,84 +86,143 @@ const Products = () => {
         new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price)
     );
 
-    const renderInventoryLevel = (inventory_level: number): ReactElement => (
-        inventory_level > 0
-        ? <small>{inventory_level}</small>
-        : <small className="font-bold text-red-600">0</small>
-    );
+    const renderInventoryLevel = (inventory_level: number) =>
+  inventory_level > 0 ? (
+    <Badge variant="secondary">
+      {inventory_level}
+    </Badge>
+  ) : (
+    <Badge variant="destructive">
+      Out of stock
+    </Badge>
+  );
 
-    const renderAction = (id: number): ReactElement => (
-        // <Dropdown
-        //     items={[ { content: 'Edit product', onItemClick: () => router.push(`/products/${id}`), hash: 'edit' } ]}
-        //     toggle={<Button iconOnly={<MoreHorizIcon color="secondary60" />} variant="subtle" />}
-        // />
-          <select
-      defaultValue=""
-      onChange={() => router.push(`/products/${id}`)}
-      className="border rounded px-2 py-1"
-    >
-      <option value="" disabled>
-        Actions
-      </option>
+    const renderAction = (id: number) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button variant="ghost" size="icon">
+        <MoreHorizontal className="h-4 w-4" />
+      </Button>
+    </DropdownMenuTrigger>
 
-      <option value="edit">
-        Edit product
-      </option>
-    </select>
-    );
+    <DropdownMenuContent align="end">
+      <DropdownMenuItem
+        onClick={() => router.push(`/products/${id}`)}
+      >
+        Edit Product
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
 
     if (isLoading) return <Loading />;
     if (error) return <ErrorMessage error={error} />;
 
-    return (
-<div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-  <div className="overflow-x-auto">
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-50">
-        <tr>
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Product name
-          </th>
+return (
+  <Card>
+    <CardContent className="p-0">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Product Name</TableHead>
+            <TableHead>Stock</TableHead>
+            <TableHead>Price</TableHead>
+            <TableHead className="w-[60px]" />
+          </TableRow>
+        </TableHeader>
 
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Stock
-          </th>
+        <TableBody>
+          {tableItems.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell>
+                {renderName(item.id, item.name)}
+              </TableCell>
 
-          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Price
-          </th>
+              <TableCell>
+                {renderInventoryLevel(
+                  item.inventory_level
+                )}
+              </TableCell>
 
-          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Action
-          </th>
-        </tr>
-      </thead>
+              <TableCell>
+                {renderPrice(item.price)}
+              </TableCell>
 
-      <tbody className="bg-white divide-y divide-gray-200">
-        {tableItems.map((item) => (
-          <tr key={item.id} className="hover:bg-gray-50">
-            <td className="px-6 py-4 whitespace-nowrap">
-              {renderName(item.id, item.name)}
-            </td>
+              <TableCell>
+                {renderAction(item.id)}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>    
+      <div className="flex items-center justify-between px-4 py-4">
+  <div className="flex items-center gap-2">
+    <span className="text-sm text-muted-foreground">
+      Rows per page
+    </span>
 
-            <td className="px-6 py-4 whitespace-nowrap">
-              {renderInventoryLevel(item.inventory_level)}
-            </td>
+    <Select
+      value={String(itemsPerPage)}
+      onValueChange={(value:any) => onItemsPerPageChange(value)}
+    >
+      <SelectTrigger className="w-[90px]">
+        <SelectValue />
+      </SelectTrigger>
 
-            <td className="px-6 py-4 whitespace-nowrap">
-              {renderPrice(item.price)}
-            </td>
-
-            <td className="px-6 py-4 whitespace-nowrap text-right">
-              {renderAction(item.id)}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+      <SelectContent>
+        <SelectItem value="10">10</SelectItem>
+        <SelectItem value="20">20</SelectItem>
+        <SelectItem value="50">50</SelectItem>
+        <SelectItem value="100">100</SelectItem>
+      </SelectContent>
+    </Select>
   </div>
-</div>
-    );
+
+  <div className="flex items-center gap-4">
+    <span className="text-sm text-muted-foreground">
+      Page {currentPage} of {totalPages}
+    </span>
+
+    <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious
+          size={'default'}
+            onClick={() => {
+              if (currentPage > 1) {
+                setCurrentPage(currentPage - 1);
+              }
+            }}
+            className={
+              currentPage === 1
+                ? "pointer-events-none opacity-50"
+                : "cursor-pointer"
+            }
+          />
+        </PaginationItem>
+
+        <PaginationItem>
+          <PaginationNext
+          size={'default'}
+            onClick={() => {
+              if (currentPage < totalPages) {
+                setCurrentPage(currentPage + 1);
+              }
+            }}
+            className={
+              currentPage === totalPages
+                ? "pointer-events-none opacity-50"
+                : "cursor-pointer"
+            }
+          />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  </div>
+</div>  
+    </CardContent>
+  </Card>
+);
 };
 
 export default Products;
