@@ -99,7 +99,7 @@ const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const renderAction = (id: number) => (
   <DropdownMenu>
-    <DropdownMenuTrigger asChild>
+    <DropdownMenuTrigger>
       <Button variant="ghost" size="icon">
         <MoreHorizontal className="h-4 w-4" />
       </Button>

@@ -58,7 +58,8 @@ const Form = ({ formData, onCancel, onSubmit }: FormProps) => {
         setForm(prevForm => ({ ...prevForm, [formName]: numericValue }));
     };
 
-    const handleSelectChange = (value: string) => {
+    const handleSelectChange = (value: string | null) => {
+       if (!value) return
         setForm(prevForm => ({ ...prevForm, type: value }));
     };
 
