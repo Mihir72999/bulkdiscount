@@ -22,16 +22,13 @@ export async function getDiscountRules(productId:number){
 
 async function fetcher<T>(url: string, query: string):Promise<T> {
     const res = await fetch(`${url}?${query}`);
-
+    const text = await res.text() as string;
     // If the status code is not in the range 200-299, throw an error
     if (!res.ok) {
-        const { message } = await res.json() as {message:string};
-        const error: ErrorProps = new Error(message || 'An error occurred while fetching the data.');
-        error.status = res.status; // e.g. 500
-        throw error;
+     throw new Error(`HTTP ${res.status}: ${text}`);
     }
 
-    return await res.json();
+    return JSON.parse(text)
 }
 
 // Reusable SWR hooks
@@ -41,7 +38,7 @@ export function useProducts() {
     const params = new URLSearchParams({ context }).toString();
     // Request is deduped and cached; Can be shared across components
     const { data, error } = useSWR(context ? ['/api/products', params] : null, fetcher);
-
+    
     return {
         summary: data,
         isLoading: !data && !error,
