@@ -13,7 +13,7 @@ export async function setUser({ user }: SessionProps) {
     const { email, id, username } = user;
     const userData = { email, userId: id, username };
 
- await db.prepare('INSERT INTO users (email,userId,username) values( ?,?,? )')
+ await db.prepare('INSERT OR IGNORE INTO users (email,userId,username) values( ?,?,? )')
   .bind(userData.email,userData.userId,userData.username)
   .run();
 }
