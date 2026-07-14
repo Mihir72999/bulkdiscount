@@ -16,7 +16,7 @@ export async function setUser({ user }: SessionProps) {
     const userData = { email, userId: id, username };
 
  await db.prepare('INSERT INTO users (email,userId,username) values( ?,?,? )')
-  .bind(userData)
+  .bind(userData.email,userData.userId,userData.username)
   .run();
 }
 
