@@ -105,8 +105,9 @@ const totalPages = Math.ceil(totalItems / itemsPerPage);
       </Button>
     </DropdownMenuTrigger>
 
-    <DropdownMenuContent className={'bg-white text-gray-700'} align="end">
+    <DropdownMenuContent className={'dark:bg-white dark:text-gray-700'} align="end">
       <DropdownMenuItem
+       className={'cursor-pointer'}
         onClick={() => router.push(`/products/${id}`)}
       >
         Edit Product
@@ -170,10 +171,10 @@ return (
       </SelectTrigger>
 
       <SelectContent className={'dark:bg-white dark:text-gray-700'}>
-        <SelectItem value="10">10</SelectItem>
-        <SelectItem value="20">20</SelectItem>
-        <SelectItem value="50">50</SelectItem>
-        <SelectItem value="100">100</SelectItem>
+        <SelectItem className={'cursor-pointer'} value="10">10</SelectItem>
+        <SelectItem className={'cursor-pointer'} value="20">20</SelectItem>
+        <SelectItem className={'cursor-pointer'} value="50">50</SelectItem>
+        <SelectItem className={'cursor-pointer'} value="100">100</SelectItem>
       </SelectContent>
     </Select>
   </div>
