@@ -61,10 +61,10 @@ export function getBCVerify({ signed_payload_jwt }: QueryParams) {
     return bigcommerceSigned.verifyJWT(token);
 }
 
-export function setSession(session: SessionProps) {
-    setUser(session);
-    setStore(session);
-    setStoreUser(session);
+export async function setSession(session: SessionProps) {
+   await setUser(session);
+    await setStore(session);
+    await setStoreUser(session);
 }
 
 export async function getSession(req: NextRequest) {

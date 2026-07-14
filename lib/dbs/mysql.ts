@@ -1,8 +1,6 @@
 import { SessionProps, StoreData } from '../../types';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getDB } from '../db';
 
-const {env} = await getCloudflareContext({async:true})
 const db = await getDB()
 
 // For use with DB URLs
@@ -68,8 +66,11 @@ export async function setStoreUser(session: SessionProps) {
     const { access_token: accessToken, context, owner, sub, user: { id: userId } } = session;
     if (!userId) return null;
 
-    const contextString = context ?? sub;
-    const storeHash = contextString?.split('/')[1] || '';
+    const contextString = context ?? sub ?? "";
+    const storeHash = contextString.startsWith('stores/') ?
+    contextString?.split('/')[1] || ''
+    : contextString
+    ;
  const storeUser = await db.prepare(`
   SELECT *
   FROM storeUsers
