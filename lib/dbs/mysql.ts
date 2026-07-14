@@ -15,7 +15,7 @@ export async function setUser({ user }: SessionProps) {
     const { email, id, username } = user;
     const userData = { email, userId: id, username };
 
- await db.prepare('REPLACE INTO users SET ?')
+ await db.prepare('INSERT OR REPLACE INTO users (email,userId,username) values( ? ? ?'))
   .bind(userData)
   .run();
 }
