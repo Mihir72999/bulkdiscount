@@ -44,10 +44,11 @@ export async function GET(req: NextRequest) {
         );
 
         return NextResponse.redirect(
+            new URL(
             buildRedirectUrl(
                 session.url,
                 encodedContext
-            ),
+            ) , env.APP_URL),
             { status: 302 }
         );
     } catch (error) {

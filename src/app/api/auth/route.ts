@@ -4,8 +4,10 @@ import {
   getBCAuth,
   setSession,
 } from "../../../../lib/auth";
+import { getEnv } from "../../../../lib/env";
 
 export async function GET(req: NextRequest) {
+  const env = await getEnv()
   try {
     // Convert query params to object (replacement for req.query)
     const query = Object.fromEntries(
@@ -23,7 +25,7 @@ export async function GET(req: NextRequest) {
 
     // Redirect to app homepage
     return NextResponse.redirect(
-      `/?context=${encodedContext}`,
+      `${env.APP_URL}/?context=${encodedContext}`,
       { status: 302 }
     );
   } catch (error) {
