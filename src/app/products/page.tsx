@@ -100,12 +100,12 @@ const totalPages = Math.ceil(totalItems / itemsPerPage);
     const renderAction = (id: number) => (
   <DropdownMenu>
     <DropdownMenuTrigger>
-      <Button variant="ghost" size="icon">
+      <Button className={'cursor-pointer'} variant="ghost" size="icon">
         <MoreHorizontal className="h-4 w-4" />
       </Button>
     </DropdownMenuTrigger>
 
-    <DropdownMenuContent align="end">
+    <DropdownMenuContent className={'bg-white text-gray-700'} align="end">
       <DropdownMenuItem
         onClick={() => router.push(`/products/${id}`)}
       >
@@ -148,7 +148,7 @@ return (
                 {renderPrice(item.price)}
               </TableCell>
 
-              <TableCell>
+              <TableCell className='cursor-pointer'>
                 {renderAction(item.id)}
               </TableCell>
             </TableRow>
@@ -165,11 +165,11 @@ return (
       value={String(itemsPerPage)}
       onValueChange={(value:any) => onItemsPerPageChange(value)}
     >
-      <SelectTrigger className="w-[90px]">
+      <SelectTrigger className="w-[90px] cursor-pointer">
         <SelectValue />
       </SelectTrigger>
 
-      <SelectContent>
+      <SelectContent className={'dark:bg-white dark:text-gray-700'}>
         <SelectItem value="10">10</SelectItem>
         <SelectItem value="20">20</SelectItem>
         <SelectItem value="50">50</SelectItem>
