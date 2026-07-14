@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import InnerHeader from './innerHeader';
-
+import {Tabs, TabsList,TabsContent,TabsTrigger} from '@/components/ui/tabs'
 export const TabIds = {
     HOME: 'home',
     PRODUCTS: 'products',
@@ -48,32 +48,25 @@ export default function Header() {
         return <InnerHeader />;
     }
 
-    const items = [
-        { id: TabIds.HOME, title: 'Home', href: '/' },
-        { id: TabIds.PRODUCTS, title: 'Products', href: '/products' },
-    ];
+  const currentTab =
+    pathname.startsWith('/products')
+      ? 'Products'
+      : 'Home';
+
 
     return (
-        <div className="mb-10 border-b border-gray-200">
-            <nav className="flex gap-8">
-                {items.map((item) => {
-                    const active = pathname === item.href;
+            <div className="mb-8 border-b pb-2">
+      <Tabs value={currentTab}>
+        <TabsList>
+          <TabsTrigger value="Home" >
+            <Link href="/">Home</Link>
+          </TabsTrigger>
 
-                    return (
-                        <Link
-                            key={item.id}
-                            href={item.href}
-                            className={`pb-4 border-b-2 transition-colors ${
-                                active
-                                    ? 'border-blue-600 text-blue-600 font-medium'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                            }`}
-                        >
-                            {item.title}
-                        </Link>
-                    );
-                })}
-            </nav>
-        </div>
+          <TabsTrigger value="Products" >
+            <Link href="/products">Products</Link>
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+    </div>
     );
 }
