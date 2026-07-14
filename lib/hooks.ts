@@ -22,8 +22,7 @@ export async function getDiscountRules(productId:number){
 
 async function fetcher<T>([url , query]: [string, string]):Promise<T> {
 const env = await getEnv()
-const {APP_URL} = env
-const origin = new URL(request.url).origin;
+const {APP_URL} = env;
     const res = await fetch(`${APP_URL}/${url}?${query}`);
     const text = await res.text() as string;
     // If the status code is not in the range 200-299, throw an error
