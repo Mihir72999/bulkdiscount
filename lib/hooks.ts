@@ -25,7 +25,7 @@ async function fetcher<T>([url , query]: [string, string]):Promise<T> {
     const text = await res.text() as string;
     // If the status code is not in the range 200-299, throw an error
     if (!res.ok) {
-     throw new Error(`HTTP ${res.status}: ${text}`);
+     throw new Error(`HTTP ${res?.status}: ${text}`);
     }
 
     return JSON.parse(text)
