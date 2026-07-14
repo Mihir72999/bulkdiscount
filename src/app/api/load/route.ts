@@ -4,7 +4,7 @@ import {
     getBCVerify,
     setSession
 } from '../../../../lib/auth';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { getEnv } from '../../../../lib/env';
 
 const buildRedirectUrl = (
     url: string,
@@ -20,9 +20,7 @@ const buildRedirectUrl = (
 };
 
 export async function GET(req: NextRequest) {
-    const { env } = await getCloudflareContext({
-        async: true,
-    });
+    const env  = await getEnv()
 
     const APP_URL = env.APP_URL;
 

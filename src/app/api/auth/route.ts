@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
     // Redirect to app homepage
     return NextResponse.redirect(
-      new URL(`/?context=${encodedContext}`, req.url),
+      `/?context=${encodedContext}`,
       { status: 302 }
     );
   } catch (error) {
