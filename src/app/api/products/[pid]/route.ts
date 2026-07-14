@@ -14,8 +14,15 @@ export async function GET(req:NextRequest, { params }: { params: Promise<{ pid: 
                   
                   return NextResponse.json(data,{status:200})
               } catch (error) {
-                  const { message, response } = error as {message:string , response:any};
-                  return NextResponse.json({message},{status:response.status || 500})
+ const { message, response } = error as {
+      message: string;
+      response?: { status?: number };
+    };
+
+    return NextResponse.json(
+      { message },
+      { status: response?.status ?? 500 }
+    );
               }
 }
 

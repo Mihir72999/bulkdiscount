@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse  } from "next/server";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { bigcommerceClient } from "../../../../../lib/auth";
 import { getDB } from "../../../../../lib/db";
 export const dynamic = 'force-dynamic';
@@ -13,9 +12,10 @@ export async function GET(
     request:NextRequest ,
     { params }: { params: Promise<{ productId: string }> }
 ){
+  try {
+    
   const {productId} = await params  
   const db = await getDB()
-  const {env} = await getCloudflareContext({async:true})
    const domain = request.nextUrl.searchParams.get('domain')
 
 const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE domain = ?").bind(domain).first()  as {
@@ -82,7 +82,18 @@ const match:boolean =
    return NextResponse.json({
     succes:true,
     rules
-   }) 
+   })
+     } catch (error) {
+    const { message, response } = error as {
+      message: string;
+      response?: { status?: number };
+    };
+
+    return NextResponse.json(
+      { message },
+      { status: response?.status ?? 500 }
+    ); 
+  } 
 }
 
 

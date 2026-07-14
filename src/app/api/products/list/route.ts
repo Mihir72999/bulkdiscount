@@ -17,7 +17,14 @@ export async function GET(req:NextRequest){
          const response = await bigcommerce.get(`/catalog/products?${params}`);
         return NextResponse.json(response,{status:200})
      } catch (error) {
-         const { message, response } = error as {message:string , response:any};
-         return NextResponse.json({message},{status:response.status || 500})
+  const { message, response } = error as {
+      message: string;
+      response?: { status?: number };
+    };
+
+    return NextResponse.json(
+      { message },
+      { status: response?.status ?? 500 }
+    );
      }   
 }

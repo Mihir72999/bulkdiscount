@@ -18,9 +18,15 @@ export async function GET(req: NextRequest , { params }: { params: Promise<{ ord
 
                
     } catch (error) {
-        const { message, response } = error as {message:string , response:any};
-        return NextResponse.json({ message },{status:response.status || 500});
-    }
+ const { message, response } = error as {
+      message: string;
+      response?: { status?: number };
+    };
+
+    return NextResponse.json(
+      { message },
+      { status: response?.status ?? 500 }
+    );    }
 }
 
 export async function OPTION(req:NextRequest){
