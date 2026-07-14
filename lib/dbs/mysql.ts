@@ -7,15 +7,36 @@ const db = await getDB()
 // Other mysql: https://www.npmjs.com/package/mysql#pooling-connections
 
 // Use setUser for storing global user data (persists between installs)
+// export async function setUser({ user }: SessionProps) {
+//     if (!user) return null;
+
+//     const { email, id, username } = user;
+//     const userData = { email, userId: id, username };
+
+//  await db.prepare('INSERT OR IGNORE INTO users (email,userId,username) values( ?,?,? )')
+//   .bind(userData.email,userData.userId,userData.username)
+//   .run();
+// }
 export async function setUser({ user }: SessionProps) {
-    if (!user) return null;
+    if (!user?.id) return null;
 
-    const { email, id, username } = user;
-    const userData = { email, userId: id, username };
+    const email = user.email ?? "";
+    const username = user.username ?? "";
 
- await db.prepare('INSERT OR IGNORE INTO users (email,userId,username) values( ?,?,? )')
-  .bind(userData.email,userData.userId,userData.username)
-  .run();
+    await db.prepare(`
+        INSERT INTO users (
+            email,
+            userId,
+            username
+        )
+        VALUES (?, ?, ?)
+        ON CONFLICT(userId)
+        DO UPDATE SET
+            email = excluded.email,
+            username = excluded.username
+    `)
+    .bind(email, user.id, username)
+    .run();
 }
 
 export async function setStore(session: SessionProps) {
