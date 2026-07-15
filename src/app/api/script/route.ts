@@ -3,7 +3,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "../../../../lib/auth";
 import { installScript } from "../../../../lib/installScript";
-
+const headers = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    };
 export async function GET(request: NextRequest) {
     const context = request.nextUrl.searchParams.get("context");
 
@@ -15,6 +19,7 @@ export async function GET(request: NextRequest) {
             },
             {
                 status: 400,
+                 headers
             }
         );
     }
@@ -27,7 +32,7 @@ export async function GET(request: NextRequest) {
             storeHash
         );
 
-        return NextResponse.json(result);
+        return NextResponse.json(result,{headers});
     } catch (error) {
         console.error(error);
 
@@ -38,6 +43,7 @@ export async function GET(request: NextRequest) {
             },
             {
                 status: 500,
+                headers
             }
         );
     }
