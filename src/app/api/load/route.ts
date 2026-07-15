@@ -41,7 +41,8 @@ export async function GET(req: NextRequest) {
 
         await fetch(
             `${APP_URL}/api/script?context=${encodedContext}`
-        );
+        ).then(res=>res.json());
+
 
         return NextResponse.redirect(
             new URL(

@@ -1,0 +1,239 @@
+.bc-rule{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    width: 60%;
+    background:#FFF;
+    border:2px solid #778286;
+    border-radius:20px;
+
+    padding: 8px 22px; 
+    margin-bottom:16px;
+
+    cursor:pointer;
+    transition:.25s;
+}
+
+.bc-rule:hover{
+    border-color:#a8e420;
+}
+
+.bc-rule input[type="radio"] {
+  /* 1. Remove standard browser styling */
+  appearance: none;
+  -webkit-appearance: none;
+  
+  /* 2. Create the circle shape and size */
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  
+  /* 3. Apply your custom border color */
+  border: 2px solid #b9ff28; /* Changes default border to Orange */
+  background-color: #b9ff28;
+  outline: none;
+  cursor: pointer;
+  
+  /* 4. Align nicely with text */
+  display: inline-grid;
+  place-content: center;
+  
+}
+.bc-rule input[type="radio"]:active{
+    outline-offset: 8px;
+    outline: 2px solid #b9ff28;
+}
+.bc-rule input[type="radio"]:focus{
+    outline-offset: 8px;
+    outline: 2px solid #b9ff28;
+}
+
+/* Radio */
+
+.bc-radio{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:3px solid #747d81;
+    position:relative;
+    flex-shrink:0;
+
+}
+
+.bc-rule input:checked + .bc-radio{
+    border-color:#b9ff28;
+    background:#b9ff28;
+    outline-offset: 8px;
+    outline: 2px solid #b9ff28;
+}
+
+.bc-rule input:checked + .bc-radio:after{
+    content:"✓";
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#081018;
+    font-size:20px;
+    font-weight:bold;
+     outline-offset: 8px;
+    outline: 2px solid #b9ff28;
+}
+
+
+.bc-qty-box{
+    width:78px;
+    height:78px;
+
+    border-radius:18px;
+    border:1px solid #5a7c17;
+
+    background:linear-gradient(#263818,#1b2815);
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    flex-shrink:0;
+}
+
+.bc-qty-box .qty{
+    color:#c4ff2f;
+    font-size:42px;
+    font-weight:800;
+    line-height:1;
+}
+
+.bc-qty-box .text{
+    color:#d8d8d8;
+    font-size:12px;
+    letter-spacing:2px;
+    font-weight:700;
+}
+
+
+.bc-content{
+    flex:1;
+}
+
+.bc-content h3{
+    margin:0;
+    color:#fff;
+    font-size:34px;
+    font-weight:800;
+    letter-spacing:1px;
+}
+
+.bc-content small{
+    display:block;
+    margin-top:8px;
+    color:#8f98a0;
+    font-size:20px;
+    letter-spacing:2px;
+}
+
+
+.bc-price{
+    text-align:right;
+}
+
+.bc-price .sale{
+    color:#c7ff29;
+    font-size:60px;
+    font-weight:900;
+    line-height:1;
+}
+
+.bc-price .old{
+    margin-top:10px;
+    color:#a3a7af;
+    font-size:24px;
+    text-decoration:line-through;
+    font-weight:700;
+}
+
+
+.bc-rule:has(input:checked){
+    border-color:#b8ff2a;
+    box-shadow:
+        0 0 18px rgba(170,255,40,.25),
+        inset 0 0 18px rgba(170,255,40,.05);
+}
+.bc-rule-middle{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: #5f6368;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Highlight when the card is selected */
+.bc-rule:has(input:checked) .bc-rule-middle{
+    color: #78be20;
+}
+
+/* .bc-rule-left, */
+/* .bc-rule-middle, */
+/* .bc-rule-right {
+    flex: 1;
+} */
+.bc-rule-right{
+    flex: 1;
+    text-align: right;
+    color: #38383a;
+    font-size: 14px;
+    font-weight: 700;  
+}
+.bc-rule-left{
+    display: flex;
+    flex-direction: column;
+    align-items: center;    
+    border: 1px solid #78be20;
+    padding: 6px 20px;
+    border-radius: 25%;
+    box-shadow: inset 0 0 5px #78be20;
+}
+.bc-rule-left-small{
+    display: block;
+    color: #a3a7af;
+    font-size: 10px;
+    font-weight: 700;
+}
+.bc-rule-left-strong{
+    display: block;
+    color: #a3a7af;
+    font-size: 20px;
+    font-weight: 700;
+}
+.bc-rule-middle{
+    display: flex;
+    flex-direction: column;
+}
+.bc-rule-right-small{
+    display: block;
+    margin-top: 5px;
+    color: #a3a7af;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: line-through;
+}
+
+.bc-rule-fixed{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.bc-rule-fixed > h1{
+    color: #38383a;
+    font-weight: 700;
+    font-size: 15px;
+}
