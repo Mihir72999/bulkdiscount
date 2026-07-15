@@ -108,7 +108,7 @@ class BCDiscountWidget {
     async getRules() {
         try {
             const url =
-                `${this.API_BASE}/api/discounts/${this.productId}` +
+                `${this.API_BASE}/api/discount/${this.productId}` +
                 `?domain=${encodeURIComponent(window.location.hostname)}`;
 
             const response = await fetch(url, {
