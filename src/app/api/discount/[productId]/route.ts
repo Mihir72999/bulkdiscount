@@ -67,7 +67,7 @@ const match:boolean =
   DELETE FROM discountedProduct
   WHERE productId = ?
 `;
-  await db.prepare(sql2).bind(sql2).run()
+  await db.prepare(sql2).bind(productId).run()
   const values1 = response.data.map((rule:any) => [
     store.storeHash,
     Number(productId),
@@ -87,13 +87,12 @@ const bindings = values1.flat();
        (?, ?, ?, ?, ?, ?),
        (?, ?, ?, ?, ?, ?)
                         `).bind(...bindings).run()
-
+  }
     const { results: rules } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
    return NextResponse.json({
     succes:true,
     rules
    },{headers})
-}
      } catch (error) {
     const { message, response } = error as {
       message: string;
