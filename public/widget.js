@@ -108,7 +108,7 @@ async function getRules() {
         console.warn("Product ID not found");
         return [];
     }
-    const url = `${API_BASE}/api/discounts/${productId}?domain=${encodeURIComponent(window.location.hostname)}`;
+    const url = `${API_BASE}/api/discount/${productId}?domain=${encodeURIComponent(window.location.hostname)}`;
 
     try {
        const accessToken = "5afj1t9xdu77fwa9r61yari9ltc2nu4"
