@@ -237,3 +237,9 @@
     font-weight: 700;
     font-size: 15px;
 }
+.form-label--alternate{
+    font-size:15px;
+    font-weight: 800;
+    color:#38383a;
+    margin-top: 10px;
+}
