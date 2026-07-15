@@ -91,13 +91,13 @@ const match:boolean =
 
     return NextResponse.json(
       { message },
-      { status: response?.status ?? 500 }
+      { status: response?.status ?? 500 , headers}
     ); 
   } 
 }
 
 
-export async function OPTION(){
+export async function OPTIONS(){
    return NextResponse.json(null,{ status:204,headers})
 }
 
