@@ -121,7 +121,6 @@ async function getRules() {
       },
         });
 
-        console.log("HTTP Status:", response.status);
 
         const text = await response.text();
 
@@ -151,7 +150,6 @@ const priceElement =
       return "";
     }
   
-console.log("Original Price:", originalPrice);
     return `
       <div class="bc-discount-widget">
 
@@ -294,7 +292,7 @@ function bindEvents() {
 function updateDisplayedPrice(discount, qty) {
 
     const newPrice = calculatePrice(originalPrice * qty, discount);
-  console.log('new Price',newPrice , discount)
+ 
     priceElement.textContent = `${newPrice.toFixed(2)}`;
 }
 
@@ -378,7 +376,7 @@ async function init() {
         console.log("Calling getRules...");
 
         rules = await getRules();
-      console.log("Rules fetched:", rules);
+
  
     } catch (err) {
         console.error("getRules Error:", err);
