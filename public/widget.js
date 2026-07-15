@@ -293,7 +293,7 @@ function updateDisplayedPrice(discount, qty) {
 
     const newPrice = calculatePrice(originalPrice * qty, discount);
  
-    priceElement?.textContent = `${newPrice.toFixed(2)}`;
+    priceElement.textContent = `${newPrice.toFixed(2)}`;
 }
 
 async function quantityChanged(qty) {
