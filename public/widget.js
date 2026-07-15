@@ -1,156 +1,328 @@
-class BCDiscountWidget {
-    constructor() {
-        this.API_BASE = "https://bgcom.mihir72999.workers.dev";
+(() => {
+  "use strict";
 
-        this.rules = [];
-        this.productId = null;
-        this.originalPrice = 0;
+  // Prevent loading twice
+  if (window.__BC_DISCOUNT_WIDGET__) {
+    return;
+  }
 
-        this.priceElement =
-            document.querySelector("[data-product-price-with-tax]") ||
-            document.querySelector("[data-product-price-without-tax]");
+  window.__BC_DISCOUNT_WIDGET__ = true;
+
+  const API_BASE = "https://glucose-abroad-disengage.ngrok-free.dev";
+
+  // Load CSS
+  function loadCSS() {
+    if (document.getElementById("bc-discount-widget-css")) {
+      return;
     }
 
-    init() {
-        if (window.__BC_DISCOUNT_WIDGET__) return;
-        window.__BC_DISCOUNT_WIDGET__ = true;
+    const link = document.createElement("link");
+    link.id = "bc-discount-widget-css";
+    link.rel = "stylesheet";
+    link.href = `${API_BASE}/widget.css`;
 
-        if (!this.isProductPage()) {
-            console.log("Not product page");
-            return;
-        }
+    document.head.appendChild(link);
+  }
 
-        this.loadCSS();
+  function isProductPage() {
+      return getProductId() !== null;
+  }
 
-        this.productId = this.getProductId();
+  function getProductId() {
+    const selectors = [
+      'input[name="product_id"]',
+      "[data-product-id]",
+      "[data-product-id-value]",
+    ];
+  
+    for (const selector of selectors) {
+      const el = document.querySelector(selector);
 
-        if (!this.productId) {
-            return;
-        }
+      if (!el) continue;
 
-        const target = this.findTarget();
-
-        if (!target) {
-            return;
-        }
-
-        this.originalPrice = parseFloat(
-            this.priceElement?.textContent.replace(/[^0-9.]/g, "") || 0
-        );
-
-        this.getRules()
-            .then((rules) => {
-                this.rules = rules;
-
-                if (!rules.length) {
-                    return;
-                }
-
-                target.insertAdjacentHTML(
-                    "beforebegin",
-                    this.renderRules(rules)
-                );
-
-                this.bindEvents();
-            })
-            .catch(console.error);
+      return (
+        el.value ||
+        el.dataset.productId ||
+        el.dataset.productIdValue
+      );
     }
 
-    loadCSS() {
-        if (document.getElementById("bc-discount-widget-css")) {
-            return;
-        }
+    return null;
+  }
+  function findTarget() {
+    return (
+      document.querySelector("#add-to-cart-wrapper") ||
+      document.querySelector(".add-to-cart-wrapper") ||
+      document.querySelector(".productView-options") ||
+      document.querySelector(".productView")
+    );
+  }
 
-        const link = document.createElement("link");
 
-        link.id = "bc-discount-widget-css";
-        link.rel = "stylesheet";
-        link.href = `${this.API_BASE}/widget.css`;
+function getCurrentPrice() {
 
-        document.head.appendChild(link);
+    const priceElement =
+        document.querySelector(".price--withoutTax") ||
+        document.querySelector(".price");
+
+    if (!priceElement)
+        return 0;
+
+    return Number(
+        priceElement.textContent.replace(/[^0-9.]/g, "")
+    );
+}
+
+function calculateDiscount(price, qty, discount) {
+
+    const discountedPrice =
+        price - (price * discount / 100);
+
+    return {
+        unitPrice: discountedPrice,
+        total: discountedPrice * qty,
+        saving: (price * qty) - (discountedPrice * qty)
+    };
+}
+
+function updatePrice(result) {
+
+    const priceElement =
+        document.querySelector(".price--withoutTax") ||
+        document.querySelector(".price");
+
+    if (!priceElement)
+        return;
+
+    priceElement.innerHTML = `
+        <span>$${result.unitPrice.toFixed(2)}</span>
+    `;
+}
+
+async function getRules() {
+    const productId = getProductId();
+
+
+// ❌ This reads the product page URL, not the script URL
+    if (!productId) {
+        console.warn("Product ID not found");
+        return [];
     }
+    const url = `${API_BASE}/api/discounts/${productId}?domain=${encodeURIComponent(window.location.hostname)}`;
 
-    isProductPage() {
-        return this.getProductId() !== null;
-    }
+    try {
+       const accessToken = "5afj1t9xdu77fwa9r61yari9ltc2nu4"
+       
+        const response = await fetch(url, {
+            method: "GET",
+              headers: {
+             'Content-Type': 'application/json',
+              "ngrok-skip-browser-warning": "1",
+      },
+        });
 
-    getProductId() {
-        const selectors = [
-            'input[name="product_id"]',
-            "[data-product-id]",
-            "[data-product-id-value]",
-        ];
+        console.log("HTTP Status:", response.status);
 
-        for (const selector of selectors) {
-            const el = document.querySelector(selector);
+        const text = await response.text();
 
-            if (!el) continue;
 
-            return (
-                el.value ||
-                el.dataset.productId ||
-                el.dataset.productIdValue
-            );
-        }
-
-        return null;
-    }
-
-    findTarget() {
-        return (
-            document.querySelector("#add-to-cart-wrapper") ||
-            document.querySelector(".add-to-cart-wrapper") ||
-            document.querySelector(".productView-options") ||
-            document.querySelector(".productView")
-        );
-    }
-
-    async getRules() {
-        try {
-            const url =
-                `${this.API_BASE}/api/discount/${this.productId}` +
-                `?domain=${encodeURIComponent(window.location.hostname)}`;
-
-            const response = await fetch(url, {
-                headers: {
-                    "Content-Type": "application/json",
-                    
-                }
-            });
-
-            if (!response.ok) {
-                return [];
-            }
-
-            const data = await response.json();
-
-            return data.rules || [];
-        } catch (error) {
-            console.error(error);
+        if (!response.ok) {
             return [];
         }
+      
+        const r = JSON.parse(text);
+      return r.rules 
+    } catch (error) {
+
+        console.error("Fetch Failed:", error);
+
+        return [];
+    }
+// const rules = [
+//   {
+//     quantity: 1,
+//     discount: 0,
+//     label: "Single"
+//   },
+//   {
+//     quantity: 2,
+//     discount: 10,
+//     label: "Pack of 2"
+//   },
+//   {
+//     quantity: 3,
+//     discount: 15,
+//     label: "Pack of 3"
+//   },
+
+// ];
+// return rules;
+}
+const priceElement =
+    document.querySelector("[data-product-price-with-tax]") ||
+    document.querySelector("[data-product-price-without-tax]");
+
+  const originalPrice = parseFloat(
+    priceElement.textContent.replace(/[^0-9.]/g, "")
+);
+  function renderRules(rules) {
+    if (!rules.length) {
+      return "";
+    }
+  
+console.log("Original Price:", originalPrice);
+    return `
+      <div class="bc-discount-widget">
+
+        ${rules
+          .map((rule , _index,arr) => rule.discountType === 'percent' ? `
+            <label class="bc-rule">
+
+              <input
+                type="radio"
+                name="discountQty"
+                value="${rule.quantity}"
+                data-discount="${rule.discount}"
+                ${rule.quantity === 1 ? "checked" : ""}
+              />
+
+              <div class="bc-rule-left">
+                <strong class="bc-rule-left-strong">${rule.quantity}</strong>
+                <small class="bc-rule-left-small">${Number(rule.discount) === 0 ? "VIAL" : "VIALS"}</small>
+              </div>
+
+              <div class="bc-rule-middle">
+               <span class="bc-rule-middle-span"> ${
+                 rule.label
+                }</span>
+                <small class="bc-rule-middle-small">
+                ${
+                 "$" + (calculatePrice(originalPrice, rule.discount)).toFixed(2)+" / VIAL"
+                }
+                </small>
+              </div>
+
+             <div class="bc-rule-right">
+             <span class="bc-rule-middle-span">
+                ${
+                 "$" + (calculatePrice(originalPrice, rule.discount) * rule.quantity).toFixed(2)
+                } 
+               </span>
+             <small class="bc-rule-right-small">
+                ${Number(rule.discount) === 0 ? "" :
+                 "$" + (originalPrice * rule.quantity).toFixed(2)}
+               </small>  
+              </div>
+            </label>
+            `
+           :
+           `<div class="bc-rule-fixed">
+            ${_index === arr.length - 1 ? `<h1>will implement soon ${rule.discountType} discount rule</h1>` : ''}
+            
+           </div>`
+        )
+        .join("")}
+`
+  }
+
+ 
+function bindEvents() {
+
+    const qtyInput =
+        document.querySelector('input[name="qty[]"]') ||
+        document.querySelector('input[name="qty"]');
+
+    if (!qtyInput) {
+        return;
     }
 
-    calculatePrice(price, discount) {
-        return price - (price * discount / 100);
-    }
+    // -----------------------------
+    // Radio Button Change
+    // -----------------------------
+    document.addEventListener("change", (event) => {
 
-    updateDisplayedPrice(discount, qty) {
-        const newPrice = this.calculatePrice(
-            this.originalPrice * qty,
-            discount
-        );
+        const input = event.target;
 
-        if (this.priceElement) {
-            this.priceElement.textContent =
-                `$${newPrice.toFixed(2)}`;
+        if (!input || input.name !== "discountQty") {
+            return;
         }
-    }
 
-    async quantityChanged(qty) {
+        // Update quantity
+        qtyInput.value = input.value;
+
+        // Notify BigCommerce
+        qtyInput.dispatchEvent(new Event("input", { bubbles: true }));
+        qtyInput.dispatchEvent(new Event("change", { bubbles: true }));
+
+        // Update price
+        quantityChanged(qtyInput.value);
+
+    });
+
+    // -----------------------------
+    // Manual Quantity Input
+    // -----------------------------
+    qtyInput.addEventListener("input", () => {
+        syncRadioButtons(qtyInput);
+        quantityChanged(qtyInput.value);
+    });
+
+    qtyInput.addEventListener("change", () => {
+        syncRadioButtons(qtyInput);
+        quantityChanged(qtyInput.value);
+    });
+
+    // -----------------------------
+    // Increase Button
+    // -----------------------------
+    const incBtn = document.querySelector('button[data-action="inc"]');
+
+    incBtn?.addEventListener("click", () => {
+
+        setTimeout(() => {
+
+            syncRadioButtons(qtyInput);
+            quantityChanged(qtyInput.value);
+
+        }, 50);
+ 
+         quantityChanged(qtyInput.value);  
+    });
+
+    // -----------------------------
+    // Decrease Button
+    // -----------------------------
+    const decBtn = document.querySelector('button[data-action="dec"]');
+
+    decBtn?.addEventListener("click", () => {
+
+        setTimeout(() => {
+
+            syncRadioButtons(qtyInput);
+            quantityChanged(qtyInput.value);
+
+        }, 50);
+
+    });
+
+}
+
+  function calculatePrice(price, discount) {
+    return Number(price - (price * discount / 100));
+}
+function updateDisplayedPrice(discount, qty) {
+
+    const newPrice = calculatePrice(originalPrice * qty, discount);
+  console.log('new Price',newPrice , discount)
+    priceElement.textContent = `${newPrice.toFixed(2)}`;
+}
+
+async function quantityChanged(qty) {
+
     qty = Number(qty);
-    let rule = this.rules.find(r => r.quantity === qty);
-    const arr = this.rules.map(r =>{
+    const rules = await getRules()
+    let rule = rules.find(r => r.quantity === qty);
+    const arr = rules.map(r =>{
       return r.quantity 
     } )
 
@@ -162,105 +334,101 @@ for (let i = arr[0]; i <= arr[arr.length - 1]; i++) {
     }
 }
 if(missing[qty]){
-  const rs = this.rules.findIndex(r=>r.quantity === missing[qty])
-  rule = this.rules[rs]
+  const rs = rules.findIndex(r=>r.quantity === missing[qty])
+  rule = rules[rs]
 }
-    if (!rule && qty > this.rules.length - 1) {
+    if (!rule && qty > rules.length - 1) {
 
-        rule = this.rules[this.rules?.length - 1]
+        rule = rules[rules?.length - 1]
     }
 
-    this.updateDisplayedPrice(rule?.discount, qty);
-    }
+    updateDisplayedPrice(rule?.discount, qty);
 
-    syncRadioButtons(qtyInput) {
-        const qty = Number(qtyInput.value);
-
-        document
-            .querySelectorAll('input[name="discountQty"]')
-            .forEach((radio) => {
-                const checked = Number(radio.value) === qty;
-
-                radio.checked = checked;
-
-                if (checked) {
-                    this.updateDisplayedPrice(
-                        Number(radio.dataset.discount),
-                        qty
-                    );
-                }
-            });
-    }
-
-    bindEvents() {
-        const qtyInput =
-            document.querySelector('input[name="qty[]"]') ||
-            document.querySelector('input[name="qty"]');
-
-        if (!qtyInput) {
-            return;
-        }
-
-        document.addEventListener("change", (event) => {
-            const input = event.target;
-
-            if (
-                input &&
-                input.name === "discountQty"
-            ) {
-                qtyInput.value = input.value;
-
-                qtyInput.dispatchEvent(
-                    new Event("input", {
-                        bubbles: true,
-                    })
-                );
-
-                this.quantityChanged(input.value);
-            }
-        });
-
-        qtyInput.addEventListener("input", () => {
-            this.syncRadioButtons(qtyInput);
-            this.quantityChanged(qtyInput.value);
-        });
-
-        qtyInput.addEventListener("change", () => {
-            this.syncRadioButtons(qtyInput);
-            this.quantityChanged(qtyInput.value);
-        });
-    }
-
-    renderRules(rules) {
-        return `
-            <div class="bc-discount-widget">
-                ${rules.map(rule => `
-                    <label class="bc-rule">
-                        <input
-                            type="radio"
-                            name="discountQty"
-                            value="${rule.quantity}"
-                            data-discount="${rule.discount}"
-                            ${rule.quantity === 1 ? "checked" : ""}
-                        />
-
-                        <div>
-                            ${rule.label}
-                        </div>
-                    </label>
-                `).join("")}
-            </div>
-        `;
-    }
 }
 
-const widget = new BCDiscountWidget();
 
-if (document.readyState === "loading") {
-    document.addEventListener(
-        "DOMContentLoaded",
-        () => widget.init()
+
+  function syncRadioButtons(qtyInput){
+   
+      const qty = Number(qtyInput.value);
+
+    document
+        .querySelectorAll('input[name="discountQty"]')
+        .forEach(radio => {
+           const checked = Number(radio.value) === qty;
+            radio.checked = checked;
+           if(checked){
+           updateDisplayedPrice(Number(radio.dataset.discount), qty);
+           }
+
+        });
+  }
+
+async function init() {
+    console.log("========== Widget Init ==========");
+
+    if (!isProductPage()) {
+        console.log("❌ Not a product page");
+        return;
+    }
+
+    console.log("✅ Product page");
+
+    loadCSS();
+
+    const productId = getProductId();
+
+    if (!productId) {
+    console.log("Not a product page");
+    return;
+}
+
+    const target = findTarget();
+
+ 
+    if (!target) {
+        console.warn("❌ Target element not found");
+        return;
+    }
+
+    let rules = [];
+
+    try {
+        console.log("Calling getRules...");
+
+        rules = await getRules();
+      console.log("Rules fetched:", rules);
+ 
+    } catch (err) {
+        console.error("getRules Error:", err);
+        return;
+    }
+
+    if (!Array.isArray(rules)) {
+        console.warn("API did not return an array");
+
+        return;
+    }
+
+    if (rules.length === 0) {
+        console.warn("No discount rules found");
+
+        return;
+    }
+
+    target.insertAdjacentHTML(
+        "beforebegin",
+        renderRules(rules)
     );
-} else {
-    widget.init();
+
+    bindEvents();
+
+    console.log("✅ Widget Rendered");
 }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
