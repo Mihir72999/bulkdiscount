@@ -8,7 +8,7 @@
 
   window.__BC_DISCOUNT_WIDGET__ = true;
 
-  const API_BASE = "https://glucose-abroad-disengage.ngrok-free.dev";
+  const API_BASE = "https://bgcom.mihir72999.workers.dev";
 
   // Load CSS
   function loadCSS() {
@@ -138,25 +138,6 @@ async function getRules() {
 
         return [];
     }
-// const rules = [
-//   {
-//     quantity: 1,
-//     discount: 0,
-//     label: "Single"
-//   },
-//   {
-//     quantity: 2,
-//     discount: 10,
-//     label: "Pack of 2"
-//   },
-//   {
-//     quantity: 3,
-//     discount: 15,
-//     label: "Pack of 3"
-//   },
-
-// ];
-// return rules;
 }
 const priceElement =
     document.querySelector("[data-product-price-with-tax]") ||
