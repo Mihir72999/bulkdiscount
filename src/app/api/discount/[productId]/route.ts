@@ -79,14 +79,15 @@ const match:boolean =
     if (response.data[0]?.type === "percent") {
   values1.unshift([store.storeHash, Number(productId), 1, 0, "percent", "single"]);
 };
+const placeholders = values1
+  .map(() => "(?, ?, ?, ?, ?, ?)")
+  .join(", ");
 
 const bindings = values1.flat();
+
   await db.prepare(`INSERT INTO discountedProduct
-      (storeHash, productId, quantity, discount, discountType, label) VALUES 
-       (?, ?, ?, ?, ?, ?),
-       (?, ?, ?, ?, ?, ?),
-       (?, ?, ?, ?, ?, ?)
-                        `).bind(...bindings).run()
+      (storeHash, productId, quantity, discount, discountType, label) 
+        VALUES ${placeholders} `).bind(...bindings).run()
   }
     const { results: rules } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
    return NextResponse.json({
