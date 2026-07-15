@@ -170,7 +170,7 @@ if(missing[qty]){
         rule = this.rules[this.rules?.length - 1]
     }
 
-    updateDisplayedPrice(rule?.discount, qty);
+    this.updateDisplayedPrice(rule?.discount, qty);
     }
 
     syncRadioButtons(qtyInput) {
