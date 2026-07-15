@@ -7,6 +7,11 @@ const headers = {
     "Access-Control-Allow-Methods": "*",
     "Access-Control-Allow-Headers": "*"
   }
+
+export async function OPTIONS(){
+   return NextResponse.json(null,{ status:204,headers})
+}
+
 export async function GET(
     request:NextRequest ,
     { params }: { params: Promise<{ productId: string }> }
@@ -96,7 +101,5 @@ const match:boolean =
 }
 
 
-export async function OPTIONS(){
-   return NextResponse.json(null,{ status:204,headers})
-}
+
 
