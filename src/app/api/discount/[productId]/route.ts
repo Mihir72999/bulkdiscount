@@ -9,7 +9,7 @@ const headers = {
   }
 
 export async function OPTIONS(){
-   return NextResponse.json(null,{ status:204,headers})
+   return new NextResponse(null,{ status:204,headers})
 }
 
 export async function GET(
