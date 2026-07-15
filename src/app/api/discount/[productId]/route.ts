@@ -35,9 +35,9 @@ const sql = `
     AND productId = ?
     ORDER BY quantity ASC
 `;
-const values = [store?.storeHash, productId];
+const values = {storeHash:store?.storeHash, productId};
 
-const { results: rows } = await db.prepare(sql).bind(values).run();
+const { results: rows } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash);
 const response = await bigcommerce.get(
   `/catalog/products/${productId}/bulk-pricing-rules`
@@ -82,7 +82,7 @@ const match:boolean =
   await db.prepare(`INSERT INTO discountedProduct
       (storeHash, productId, quantity, discount, discountType, label) VALUES ? ? ? ? ? ?`).bind(values1).run()
 }
-    const { results: rules } = await db.prepare(sql).bind(values).run();
+    const { results: rules } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
    return NextResponse.json({
     succes:true,
     rules
