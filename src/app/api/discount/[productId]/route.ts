@@ -4,9 +4,8 @@ import { getDB } from "../../../../../lib/db";
 export const dynamic = 'force-dynamic';
 const headers = {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, OPTIONS",
-    "Access-Control-Allow-Headers":
-      "Content-Type, Accept, ngrok-skip-browser-warning",
+    "Access-Control-Allow-Methods": "*",
+    "Access-Control-Allow-Headers": "*"
   }
 export async function GET(
     request:NextRequest ,
