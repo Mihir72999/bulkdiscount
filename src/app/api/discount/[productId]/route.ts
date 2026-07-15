@@ -82,7 +82,7 @@ const match:boolean =
    return NextResponse.json({
     succes:true,
     rules
-   })
+   },{headers})
      } catch (error) {
     const { message, response } = error as {
       message: string;
