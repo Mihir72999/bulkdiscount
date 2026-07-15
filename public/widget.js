@@ -1,6 +1,6 @@
 class BCDiscountWidget {
     constructor() {
-        this.API_BASE = "https://glucose-abroad-disengage.ngrok-free.dev";
+        this.API_BASE = "https://bgcom.mihir72999.workers.dev";
 
         this.rules = [];
         this.productId = null;
