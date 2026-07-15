@@ -114,8 +114,8 @@ class BCDiscountWidget {
             const response = await fetch(url, {
                 headers: {
                     "Content-Type": "application/json",
-                    "ngrok-skip-browser-warning": "1",
-                },
+                    
+                }
             });
 
             if (!response.ok) {
