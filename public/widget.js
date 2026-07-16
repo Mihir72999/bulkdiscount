@@ -90,7 +90,7 @@ async function getRules() {
       
         const r = JSON.parse(text);
         if(r?.variants){
-          variant = r?.variants.map(r=>({
+          variant = r?.variants.map(v=>({
            variantId: v.id,
            price: v.price,
            sku: v.sku,
