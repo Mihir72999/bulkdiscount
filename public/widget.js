@@ -121,9 +121,7 @@ async function getRules() {
       },
         });
 
-
         const text = await response.text();
-
 
         if (!response.ok) {
             return [];
@@ -226,9 +224,9 @@ function bindEvents() {
         )
     ) {
         console.log("Variant changed");
-       const currentPrice = getCurrentPrice()
+       const currentRules = getRules()
         // selected option id
-        console.log(currentPrice)
+        console.log(currentRules)
         console.log(target.value);
 
         // recalculate widget
