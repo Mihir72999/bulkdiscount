@@ -195,6 +195,8 @@ function bindEvents() {
         ) {
             console.log("Variant changed");
            console.log(variant)
+           console.log('priceelement', priceElement)
+           console.log('originalprice', originalPrice)
             // Refresh widget or update price
             // await refreshWidget();
             rules = await getRules();
