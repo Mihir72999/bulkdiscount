@@ -190,7 +190,7 @@ function bindEvents() {
 
             // Refresh widget or update price
             // await refreshWidget();
-            await init();
+            rules = await getRules();
         }
 
     });
