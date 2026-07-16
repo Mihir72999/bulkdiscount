@@ -210,18 +210,15 @@ function bindEvents() {
         console.log(selectedVariant , selectedOptionIds)
 
         if (selectedVariant) {
-            console.log("Variant ID:", selectedVariant.id);
-            console.log("SKU:", selectedVariant.sku);
-            console.log("Price:", selectedVariant.price);
             originalPrice = selectedVariant.price;
             priceElement.textContent =
                 selectedVariant.price.toFixed(2);
-             rules = await getRules();
-                 const widget = document.querySelector(".bc-discount-widget");
+          //    rules = await getRules();
+          //        const widget = document.querySelector(".bc-discount-widget");
 
-           if (widget) {
-                widget.outerHTML = renderRules(rules);
-          }
+          //  if (widget) {
+          //       widget.outerHTML = renderRules(rules);
+          // }
         }
     }
 });
