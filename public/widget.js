@@ -174,6 +174,26 @@ function bindEvents() {
         return;
      }
   
+    // -----------------------------
+    // Variant Change
+    // -----------------------------
+    document.addEventListener("change", async (event) => {
+
+        const target = event.target;
+
+        if (
+            target.matches(
+                '[data-product-attribute] input, [data-product-attribute] select'
+            )
+        ) {
+            console.log("Variant changed");
+
+            // Refresh widget or update price
+            // await refreshWidget();
+            await init();
+        }
+
+    });
   
     // -----------------------------
     // Radio Button Change
@@ -185,13 +205,8 @@ function bindEvents() {
         if (!input || input.name !== "discountQty") {
             return;
         }
-        //variant changed
-       if(   input.matches(
-            '[data-product-attribute] input, [data-product-attribute] select'
-        )){
-          console.log("varient change")
-           init()
-        }
+        
+    
         
         // Update quantity
         qtyInput.value = input.value;
