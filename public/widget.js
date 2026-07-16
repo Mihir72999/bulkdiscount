@@ -90,7 +90,8 @@ async function getRules() {
       
         const r = JSON.parse(text);
         if(r?.variants){
-          variant = r?.variants.map(r=>r.price)
+          variant = r?.variants.map(r=>({
+            variantId :r.variantId , price:r.price}))
         }
 
       return r.rules 
@@ -193,13 +194,19 @@ function bindEvents() {
                 '[data-product-attribute] input, [data-product-attribute] select'
             )
         ) {
-            console.log("Variant changed" , target);
-           console.log(variant)
-          // for(const price of variant){
-          //  priceElement.textContent = `${price.toFixed(2)}` 
-          // }
-           console.log('priceelement', priceElement)
-           console.log('originalprice', originalPrice)
+    setTimeout(() => {
+                const variantId = document.querySelector(
+                    'input[name="variation_id"]'
+                )?.value;
+
+                console.log("Selected Variant ID:", variantId);
+            }, 100);
+
+            for(const val of variant){
+              if(val.variantId == variantId){
+                priceElement.textContent = `${val.price.toFixed(2)}`
+              }
+            }
             // Refresh widget or update price
             // await refreshWidget();
             rules = await getRules();
