@@ -58,6 +58,9 @@
     );
   }
 
+////variant Array
+let variant;
+
 async function getRules() {
     const productId = getProductId();
 
@@ -86,7 +89,10 @@ async function getRules() {
         }
       
         const r = JSON.parse(text);
-        console.log(r)
+        if(r?.variants){
+          variant = r?.variants.map(r=>r.price)
+        }
+
       return r.rules 
     } catch (error) {
 
@@ -188,11 +194,7 @@ function bindEvents() {
             )
         ) {
             console.log("Variant changed");
-            const variantId = document.querySelector(
-               'input[name="variation_id"]'
-               )?.value;
-
-        console.log('Selected variant:', variantId);
+           console.log(variant)
             // Refresh widget or update price
             // await refreshWidget();
             rules = await getRules();
