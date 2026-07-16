@@ -91,7 +91,7 @@ async function getRules() {
         const r = JSON.parse(text);
         if(r?.variants){
           variant = r?.variants.map(r=>({
-            variantId :r.variantId , price:r.price}))
+            variantId :r.id , price:r.price}))
         }
 
       return r.rules 
@@ -185,34 +185,65 @@ function bindEvents() {
     // -----------------------------
     // Variant Change
     // -----------------------------
-    document.addEventListener("change", async (event) => {
+    document.addEventListener("change", (event) => {
+    const target = event.target;
 
-        const target = event.target;
-
-        if (
-            target.matches(
-                '[data-product-attribute] input, [data-product-attribute] select'
+    if (
+        target.matches(
+            '[data-product-attribute] input, [data-product-attribute] select'
+        )
+    ) {
+        const selectedOptionIds = [
+            ...document.querySelectorAll(
+                '[data-product-attribute] input:checked'
             )
-        ) {
-    setTimeout(() => {
-                const variantId = document.querySelector(
-                    'input[name="variation_id"]'
-                )?.value;
+        ].map(input => Number(input.value));
 
-                for(const val of variant){
-                  if(val.variantId == variantId){
-                    priceElement.textContent = `${val.price.toFixed(2)}`
-                  }
-                console.log("Selected Variant ID:", variantId);
-              }
-            }, 100);
+        const selectedVariant = variant.find(v =>
+            v.option_values.every(
+                ov => selectedOptionIds.includes(ov.id)
+            )
+        );
 
-            // Refresh widget or update price
-            // await refreshWidget();
-            rules = await getRules();
+        if (selectedVariant) {
+            console.log("Variant ID:", selectedVariant.id);
+            console.log("SKU:", selectedVariant.sku);
+            console.log("Price:", selectedVariant.price);
+
+            priceElement.textContent =
+                selectedVariant.price.toFixed(2);
         }
+        rules = await getRules();
+    }
+});
+    // document.addEventListener("change", async (event) => {
 
-    });
+    //     const target = event.target;
+
+    //     if (
+    //         target.matches(
+    //             '[data-product-attribute] input, [data-product-attribute] select'
+    //         )
+    //     ) {
+    // setTimeout(() => {
+    //             const variantId = document.querySelector(
+    //                 'input[name="variation_id"]'
+    //             )?.value;
+                
+    //             for(const val of variant){
+    //               if(val.variantId == variantId){
+    //                 priceElement.textContent = `${val.price.toFixed(2)}`
+    //               }
+    //             console.log("Selected Variant ID:", variantId);
+    //           }
+    //         }, 100);
+
+    //         // Refresh widget or update price
+    //         // await refreshWidget();
+    //         rules = await getRules();
+    //     }
+
+    // });
   
     // -----------------------------
     // Radio Button Change
