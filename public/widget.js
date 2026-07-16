@@ -213,7 +213,27 @@ function bindEvents() {
 
     if (!qtyInput) {
         return;
+     }
+  
+    // -----------------------------
+    // Product Variant Change
+    // -----------------------------
+    document.addEventListener("change", (event) => {
+    const target = event.target;
+    if (
+        target.matches(
+            '[data-product-attribute] input, [data-product-attribute] select'
+        )
+    ) {
+        console.log("Variant changed");
+
+        // selected option id
+        console.log(target.value);
+
+        // recalculate widget
+        quantityChanged(qtyInput.value);
     }
+});
 
     // -----------------------------
     // Radio Button Change
@@ -295,6 +315,21 @@ function updateDisplayedPrice(discount, qty) {
  
     priceElement.textContent = `${newPrice.toFixed(2)}`;
 }
+
+function getSelectedOptions() {
+  const options = {};
+
+  document
+    .querySelectorAll(
+      '[data-product-attribute] input:checked, [data-product-attribute] select'
+    )
+    .forEach(el => {
+      options[el.name] = el.value;
+    });
+
+  return options;
+}
+
 
 async function quantityChanged(qty) {
 
