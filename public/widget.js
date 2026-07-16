@@ -91,7 +91,11 @@ async function getRules() {
         const r = JSON.parse(text);
         if(r?.variants){
           variant = r?.variants.map(r=>({
-            variantId :r.id , price:r.price}))
+           variantId: v.id,
+           price: v.price,
+           sku: v.sku,
+           option_values: v.option_values  
+          }))
         }
 
       return r.rules 
@@ -198,9 +202,9 @@ function bindEvents() {
                 '[data-product-attribute] input:checked'
             )
         ].map(input => Number(input.value));
-
+         console.log(variant)
         const selectedVariant = variant.find(v =>
-            v.option_values.every(
+            v.option_values?.every(
                 ov => selectedOptionIds.includes(ov.id)
             )
         );
