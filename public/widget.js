@@ -213,13 +213,12 @@ function bindEvents() {
             originalPrice = selectedVariant.price;
             priceElement.textContent =
                 selectedVariant.price.toFixed(2);
-            //  rules = 
-             await getRules();
-          //        const widget = document.querySelector(".bc-discount-widget");
+            
+                 const widget = document.querySelector(".bc-discount-widget");
 
-          //  if (widget) {
-          //       widget.outerHTML = renderRules(rules);
-          // }
+           if (widget) {
+                widget.outerHTML = renderRules(rules);
+          }
         }
     }
 });
