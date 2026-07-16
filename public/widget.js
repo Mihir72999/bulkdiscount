@@ -303,7 +303,7 @@ if(missing[qty]){
 
         rule = rules[rules?.length - 1]
     }
-
+   console.log("rule",rule)
     updateDisplayedPrice(rule?.discount, qty);
 
 }
