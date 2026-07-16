@@ -106,14 +106,14 @@ async function getRules() {
         return [];
     }
     }
-    let rules;
+    let rules = [];
     getRules().then(rule=>rules=rule)
 
 const priceElement =
     document.querySelector("[data-product-price-with-tax]") ||
     document.querySelector("[data-product-price-without-tax]");
 
-  const originalPrice = parseFloat(
+  let originalPrice = parseFloat(
     priceElement.textContent.replace(/[^0-9.]/g, "")
 );
   function renderRules(rules) {
@@ -213,11 +213,15 @@ function bindEvents() {
             console.log("Variant ID:", selectedVariant.id);
             console.log("SKU:", selectedVariant.sku);
             console.log("Price:", selectedVariant.price);
-
+            originalPrice = selectedVariant.price;
             priceElement.textContent =
                 selectedVariant.price.toFixed(2);
              rules = await getRules();
-             renderRules(rules)
+                 const widget = document.querySelector(".bc-discount-widget");
+
+           if (widget) {
+                widget.outerHTML = renderRules(rules);
+          }
         }
     }
 });
