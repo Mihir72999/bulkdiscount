@@ -73,31 +73,31 @@ function getCurrentPrice() {
     );
 }
 
-function calculateDiscount(price, qty, discount) {
+//function calculateDiscount(price, qty, discount) {
 
-    const discountedPrice =
-        price - (price * discount / 100);
+//  const discountedPrice =
+//        price - (price * discount / 100);
 
-    return {
-        unitPrice: discountedPrice,
-        total: discountedPrice * qty,
-        saving: (price * qty) - (discountedPrice * qty)
-    };
-}
+//    return {
+//        unitPrice: discountedPrice,
+//        total: discountedPrice * qty,
+//        saving: (price * qty) - (discountedPrice * qty)
+//    };
+//}
 
-function updatePrice(result) {
+//function updatePrice(result) {
 
-    const priceElement =
-        document.querySelector(".price--withoutTax") ||
-        document.querySelector(".price");
+//    const priceElement =
+//        document.querySelector(".price--withoutTax") ||
+//        document.querySelector(".price");
 
-    if (!priceElement)
-        return;
+//    if (!priceElement)
+//        return;
 
-    priceElement.innerHTML = `
-        <span>$${result.unitPrice.toFixed(2)}</span>
-    `;
-}
+//    priceElement.innerHTML = `
+//       <span>${result.unitPrice.toFixed(2)}</span>
+//    `;
+//}
 
 async function getRules() {
     const productId = getProductId();
@@ -311,19 +311,19 @@ function updateDisplayedPrice(discount, qty) {
     priceElement.textContent = `${newPrice.toFixed(2)}`;
 }
 
-function getSelectedOptions() {
-  const options = {};
+// function getSelectedOptions() {
+// const options = {};
 
-  document
-    .querySelectorAll(
-      '[data-product-attribute] input:checked, [data-product-attribute] select'
-    )
-    .forEach(el => {
-      options[el.name] = el.value;
-    });
+// document
+//    .querySelectorAll(
+//      '[data-product-attribute] input:checked, [data-product-attribute] select'
+//    )
+//    .forEach(el => {
+//      options[el.name] = el.value;
+//   });
 
-  return options;
-}
+//  return options;
+//}
 
 
 async function quantityChanged(qty) {
