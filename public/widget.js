@@ -185,7 +185,7 @@ function bindEvents() {
     // -----------------------------
     // Variant Change
     // -----------------------------
-    document.addEventListener("change", (event) => {
+    document.addEventListener("change", async(event) => {
     const target = event.target;
 
     if (
