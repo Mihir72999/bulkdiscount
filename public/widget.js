@@ -86,7 +86,7 @@ async function getRules() {
         }
       
         const r = JSON.parse(text);
-        console.log(r?.variants)
+        console.log(r)
       return r.rules 
     } catch (error) {
 
@@ -188,7 +188,11 @@ function bindEvents() {
             )
         ) {
             console.log("Variant changed");
+            const variantId = document.querySelector(
+               'input[name="variation_id"]'
+               )?.value;
 
+        console.log('Selected variant:', variantId);
             // Refresh widget or update price
             // await refreshWidget();
             rules = await getRules();

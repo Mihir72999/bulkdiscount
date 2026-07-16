@@ -39,7 +39,7 @@ const values = {storeHash:store?.storeHash, productId};
 
 const { results: rows } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash);
-const variants = await bigcommerce.get(`/catalog/products/${productId}/bulk-pricing-rules`)
+const variants = await bigcommerce.get(`/catalog/products/${productId}/variants`)
 
 const response = await bigcommerce.get(
   `/catalog/products/${productId}/bulk-pricing-rules`
