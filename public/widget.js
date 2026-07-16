@@ -199,14 +199,14 @@ function bindEvents() {
                     'input[name="variation_id"]'
                 )?.value;
 
+                for(const val of variant){
+                  if(val.variantId == variantId){
+                    priceElement.textContent = `${val.price.toFixed(2)}`
+                  }
                 console.log("Selected Variant ID:", variantId);
+              }
             }, 100);
 
-            for(const val of variant){
-              if(val.variantId == variantId){
-                priceElement.textContent = `${val.price.toFixed(2)}`
-              }
-            }
             // Refresh widget or update price
             // await refreshWidget();
             rules = await getRules();
