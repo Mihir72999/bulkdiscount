@@ -164,7 +164,7 @@ const priceElement =
   }
 
  
-async function bindEvents() {
+function bindEvents() {
 
     const qtyInput =
         document.querySelector('input[name="qty[]"]') ||
@@ -190,7 +190,7 @@ async function bindEvents() {
             '[data-product-attribute] input, [data-product-attribute] select'
         )){
           console.log("varient change")
-         await init()
+           init()
         }
         
         // Update quantity
