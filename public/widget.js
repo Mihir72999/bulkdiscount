@@ -58,47 +58,6 @@
     );
   }
 
-
-function getCurrentPrice() {
-
-    const priceElement =
-        document.querySelector(".price--withoutTax") ||
-        document.querySelector(".price");
-
-    if (!priceElement)
-        return 0;
-
-    return Number(
-        priceElement.textContent.replace(/[^0-9.]/g, "")
-    );
-}
-
-//function calculateDiscount(price, qty, discount) {
-
-//  const discountedPrice =
-//        price - (price * discount / 100);
-
-//    return {
-//        unitPrice: discountedPrice,
-//        total: discountedPrice * qty,
-//        saving: (price * qty) - (discountedPrice * qty)
-//    };
-//}
-
-//function updatePrice(result) {
-
-//    const priceElement =
-//        document.querySelector(".price--withoutTax") ||
-//        document.querySelector(".price");
-
-//    if (!priceElement)
-//        return;
-
-//    priceElement.innerHTML = `
-//       <span>${result.unitPrice.toFixed(2)}</span>
-//    `;
-//}
-
 async function getRules() {
     const productId = getProductId();
 
