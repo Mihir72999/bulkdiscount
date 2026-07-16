@@ -226,8 +226,9 @@ function bindEvents() {
         )
     ) {
         console.log("Variant changed");
-       getCurrentPrice()
+       const currentPrice = getCurrentPrice()
         // selected option id
+        console.log(currentPrice)
         console.log(target.value);
 
         // recalculate widget
