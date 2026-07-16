@@ -93,10 +93,10 @@ async function getRules() {
 
         return [];
     }
-    
+    }
     let rules;
     getRules().then(rule=>rules=rule)
-}
+
 const priceElement =
     document.querySelector("[data-product-price-with-tax]") ||
     document.querySelector("[data-product-price-without-tax]");
