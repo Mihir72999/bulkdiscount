@@ -86,6 +86,7 @@ async function getRules() {
         }
       
         const r = JSON.parse(text);
+        console.log(r?.variants)
       return r.rules 
     } catch (error) {
 
