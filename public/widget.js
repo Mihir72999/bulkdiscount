@@ -187,6 +187,8 @@ function bindEvents() {
             '[data-product-attribute] input, [data-product-attribute] select'
         )){
           console.log("varient change")
+         getRules().then(rules=>renderRules(rules))
+         .catch(err=>console.error(err))
         }
         
         // Update quantity
