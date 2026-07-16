@@ -171,23 +171,7 @@ function bindEvents() {
         return;
      }
   
-    // -----------------------------
-    // Product Variant Change
-    // -----------------------------
-    document.addEventListener("change", (event) => {
-    const target = event.target;
-    if (
-        target.matches(
-            '[data-product-attribute] input, [data-product-attribute] select'
-        )
-    ) {
-        console.log("Variant changed");
-
-        // recalculate widget
-        // quantityChanged(qtyInput.value);
-    }
-});
-
+  
     // -----------------------------
     // Radio Button Change
     // -----------------------------
@@ -198,7 +182,13 @@ function bindEvents() {
         if (!input || input.name !== "discountQty") {
             return;
         }
-
+        //variant changed
+       if(   input.matches(
+            '[data-product-attribute] input, [data-product-attribute] select'
+        )){
+          console.log("varient change")
+        }
+        
         // Update quantity
         qtyInput.value = input.value;
 
