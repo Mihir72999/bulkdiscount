@@ -70,7 +70,6 @@ async function getRules() {
     const url = `${API_BASE}/api/discount/${productId}?domain=${encodeURIComponent(window.location.hostname)}`;
 
     try {
-       const accessToken = "5afj1t9xdu77fwa9r61yari9ltc2nu4"
        
         const response = await fetch(url, {
             method: "GET",
