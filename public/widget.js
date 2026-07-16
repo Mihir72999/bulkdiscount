@@ -202,12 +202,12 @@ function bindEvents() {
                 '[data-product-attribute] input:checked'
             )
         ].map(input => Number(input.value));
-         console.log(variant)
         const selectedVariant = variant.find(v =>
-            v.option_values?.every(
-                ov => selectedOptionIds.includes(ov.id)
-            )
+          v.option_values?.every(
+            ov => selectedOptionIds.includes(ov.id)
+          )
         );
+        console.log(selectedVariant , selectedOptionIds)
 
         if (selectedVariant) {
             console.log("Variant ID:", selectedVariant.id);
@@ -216,8 +216,9 @@ function bindEvents() {
 
             priceElement.textContent =
                 selectedVariant.price.toFixed(2);
+             rules = await getRules();
+             renderRules(rules)
         }
-        rules = await getRules();
     }
 });
     // document.addEventListener("change", async (event) => {
