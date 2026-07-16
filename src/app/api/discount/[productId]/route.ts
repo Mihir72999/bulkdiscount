@@ -39,6 +39,8 @@ const values = {storeHash:store?.storeHash, productId};
 
 const { results: rows } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash);
+const variants = await bigcommerce.get(`/catalog/products/${productId}/bulk-pricing-rules`)
+
 const response = await bigcommerce.get(
   `/catalog/products/${productId}/bulk-pricing-rules`
 )
@@ -92,7 +94,8 @@ const bindings = values1.flat();
     const { results: rules } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
    return NextResponse.json({
     succes:true,
-    rules
+    rules,
+    variants : variants?.data
    },{headers})
      } catch (error) {
     const { message, response } = error as {
