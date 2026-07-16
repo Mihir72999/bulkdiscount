@@ -226,7 +226,7 @@ function bindEvents() {
         )
     ) {
         console.log("Variant changed");
-
+       getCurrentPrice()
         // selected option id
         console.log(target.value);
 
