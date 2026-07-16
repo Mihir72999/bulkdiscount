@@ -224,9 +224,7 @@ function bindEvents() {
         )
     ) {
         console.log("Variant changed");
-       const currentRules = getRules()
-        // selected option id
-        currentRules.then(rule=>renderRules(rule)).catch(err=>console.error(err))        
+
         // recalculate widget
         // quantityChanged(qtyInput.value);
     }
