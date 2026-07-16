@@ -93,6 +93,9 @@ async function getRules() {
 
         return [];
     }
+    
+    let rules;
+    getRules().then(rule=>rules=rule)
 }
 const priceElement =
     document.querySelector("[data-product-price-with-tax]") ||
@@ -279,7 +282,7 @@ function updateDisplayedPrice(discount, qty) {
 async function quantityChanged(qty) {
 
     qty = Number(qty);
-    const rules = await getRules()
+    
     let rule = rules.find(r => r.quantity === qty);
     const arr = rules.map(r =>{
       return r.quantity 
