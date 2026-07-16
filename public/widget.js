@@ -193,8 +193,11 @@ function bindEvents() {
                 '[data-product-attribute] input, [data-product-attribute] select'
             )
         ) {
-            console.log("Variant changed");
+            console.log("Variant changed" , target);
            console.log(variant)
+          // for(const price of variant){
+          //  priceElement.textContent = `${price.toFixed(2)}` 
+          // }
            console.log('priceelement', priceElement)
            console.log('originalprice', originalPrice)
             // Refresh widget or update price
