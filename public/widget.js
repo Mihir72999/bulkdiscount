@@ -188,6 +188,13 @@ function bindEvents() {
         return;
      }
     
+
+    // -----------------------------
+    // Variant Change
+    // -----------------------------
+    document.addEventListener("change", async(event) => {
+    const target = event.target;
+ 
     //-----------------------------
     // False Event of Variant Change
     //------------------------------
@@ -197,11 +204,6 @@ function bindEvents() {
         return;
     }
 
-    // -----------------------------
-    // Variant Change
-    // -----------------------------
-    document.addEventListener("change", async(event) => {
-    const target = event.target;
 
     if (
         target.matches(
