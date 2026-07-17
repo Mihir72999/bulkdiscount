@@ -187,7 +187,16 @@ function bindEvents() {
     if (!qtyInput) {
         return;
      }
-  
+    
+    //-----------------------------
+    // False Event of Variant Change
+    //------------------------------
+     if (
+        !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)
+    ) {
+        return;
+    }
+
     // -----------------------------
     // Variant Change
     // -----------------------------
@@ -225,35 +234,7 @@ function bindEvents() {
         }
     }
 });
-    // document.addEventListener("change", async (event) => {
 
-    //     const target = event.target;
-
-    //     if (
-    //         target.matches(
-    //             '[data-product-attribute] input, [data-product-attribute] select'
-    //         )
-    //     ) {
-    // setTimeout(() => {
-    //             const variantId = document.querySelector(
-    //                 'input[name="variation_id"]'
-    //             )?.value;
-                
-    //             for(const val of variant){
-    //               if(val.variantId == variantId){
-    //                 priceElement.textContent = `${val.price.toFixed(2)}`
-    //               }
-    //             console.log("Selected Variant ID:", variantId);
-    //           }
-    //         }, 100);
-
-    //         // Refresh widget or update price
-    //         // await refreshWidget();
-    //         rules = await getRules();
-    //     }
-
-    // });
-  
     // -----------------------------
     // Radio Button Change
     // -----------------------------
@@ -337,19 +318,7 @@ function updateDisplayedPrice(discount, qty) {
     priceElement.textContent = `${newPrice.toFixed(2)}`;
 }
 
-// function getSelectedOptions() {
-// const options = {};
 
-// document
-//    .querySelectorAll(
-//      '[data-product-attribute] input:checked, [data-product-attribute] select'
-//    )
-//    .forEach(el => {
-//      options[el.name] = el.value;
-//   });
-
-//  return options;
-//}
 
 
 async function quantityChanged(qty) {
