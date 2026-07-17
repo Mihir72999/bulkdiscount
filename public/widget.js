@@ -116,7 +116,7 @@ const priceElement =
   let originalPrice = parseFloat(
     priceElement.textContent.replace(/[^0-9.]/g, "")
 );
-  function renderRules(rules) {
+  function renderRules() {
     if (!rules.length) {
       return "";
     }
@@ -207,7 +207,7 @@ function bindEvents() {
             ov => selectedOptionIds.includes(ov.id)
           )
         );
-        console.log(selectedVariant , selectedOptionIds)
+
 
         if (selectedVariant) {
             originalPrice = selectedVariant.price;
@@ -218,7 +218,7 @@ function bindEvents() {
                  const widget = document.querySelector(".bc-discount-widget");
 
            if (widget) {
-                widget.outerHTML = renderRules(rules);
+                widget.outerHTML = renderRules();
           }
         }
     }
@@ -451,7 +451,7 @@ async function init() {
 
     target.insertAdjacentHTML(
         "beforebegin",
-        renderRules(rules)
+        renderRules()
     );
 
     await bindEvents();
