@@ -61,9 +61,11 @@
 ////variant Array
 let variant;
 
+let rules = null;
+
 async function getRules() {
     const productId = getProductId();
-
+  if(rules) return rules
 
 // ❌ This reads the product page URL, not the script URL
     if (!productId) {
@@ -97,8 +99,8 @@ async function getRules() {
            option_values: v.option_values  
           }))
         }
-
-      return r.rules 
+      rules = r.rules
+      return rules 
     } catch (error) {
 
         console.error("Fetch Failed:", error);
@@ -106,8 +108,8 @@ async function getRules() {
         return [];
     }
     }
-    let rules = [];
-    getRules().then(rule=>rules=rule)
+    // let rules = [];
+    // getRules().then(rule=>rules=rule)
 
 const priceElement =
     document.querySelector("[data-product-price-with-tax]") ||
