@@ -39,37 +39,44 @@ const values = {storeHash:store?.storeHash, productId};
 
 const { results: rows } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash);
-const variants = await bigcommerce.get(`/catalog/products/${productId}/variants`)
 
-const response = await bigcommerce.get(
-  `/catalog/products/${productId}/bulk-pricing-rules`
-)
+const [variants, response] = await Promise.all([
+  bigcommerce.get(`/catalog/products/${productId}/variants`),
+  bigcommerce.get(`/catalog/products/${productId}/bulk-pricing-rules`)
+]);
+
 if(!response.data || response.data.length === 0){
+
 await db.prepare(`
   DELETE FROM discountedProduct
   WHERE productId = ?
 `)
 .bind(productId)
 .run();
+
 return NextResponse.json({
       success: false,
       rules: [],
     },{status:200 , headers:headers});
 }
+
 const match:boolean =
-  response.length === rows.length - 1 &&
-  response.every((bc:any) =>
+  response.data.length === rows.length - 1 &&
+  response.data.every((bc:any) =>
     rows.some(db =>
       db.quantity === bc.quantity_min &&
       Number(db.discount) === Number(bc.amount)
     )
   );
+
  if(match === Boolean(0)) {
    const sql2 = `
   DELETE FROM discountedProduct
   WHERE productId = ?
 `;
+
   await db.prepare(sql2).bind(productId).run()
+  
   const values1 = response.data.map((rule:any) => [
     store.storeHash,
     Number(productId),
@@ -78,9 +85,11 @@ const match:boolean =
     rule.type,
     `${rule.amount} % OFF`,
   ])
+
     if (response.data[0]?.type === "percent") {
   values1.unshift([store.storeHash, Number(productId), 1, 0, "percent", "single"]);
 };
+
 const placeholders = values1
   .map(() => "(?, ?, ?, ?, ?, ?)")
   .join(", ");
@@ -91,13 +100,17 @@ const bindings = values1.flat();
       (storeHash, productId, quantity, discount, discountType, label) 
         VALUES ${placeholders} `).bind(...bindings).run()
   }
+
     const { results: rules } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
-   return NextResponse.json({
+   
+    return NextResponse.json({
     succes:true,
     rules,
     variants : variants?.data
    },{headers})
+
      } catch (error) {
+
     const { message, response } = error as {
       message: string;
       response?: { status?: number };
