@@ -177,7 +177,32 @@ const priceElement =
 `
   }
 
- 
+ async function updateVariant(){
+      const selectedOptionIds = [
+            ...document.querySelectorAll(
+                '[data-product-attribute] input:checked'
+            )
+        ].map(input => Number(input.value));
+        const selectedVariant = variant.find(v =>
+          v.option_values?.every(
+            ov => selectedOptionIds.includes(ov.id)
+          )
+        );
+
+
+        if (selectedVariant) {
+            originalPrice = selectedVariant.price;
+            priceElement.textContent =
+                selectedVariant.price.toFixed(2);
+             rules = 
+             await getRules();
+                 const widget = document.querySelector(".bc-discount-widget");
+
+           if (widget) {
+                widget.outerHTML = renderRules();
+          }
+        }
+ }
 function bindEvents() {
 
     const qtyInput =
@@ -210,30 +235,32 @@ function bindEvents() {
             '[data-product-attribute] input, [data-product-attribute] select'
         )
     ) {
-        const selectedOptionIds = [
-            ...document.querySelectorAll(
-                '[data-product-attribute] input:checked'
-            )
-        ].map(input => Number(input.value));
-        const selectedVariant = variant.find(v =>
-          v.option_values?.every(
-            ov => selectedOptionIds.includes(ov.id)
-          )
-        );
+      await updateVariant()
+    }
+});
 
+    //------------------------------
+    // Keyboar Event Change
+    //------------------------------
 
-        if (selectedVariant) {
-            originalPrice = selectedVariant.price;
-            priceElement.textContent =
-                selectedVariant.price.toFixed(2);
-             rules = 
-             await getRules();
-                 const widget = document.querySelector(".bc-discount-widget");
+    document.addEventListener("change", async (event) => {
+    if (
+        event.target.matches(
+            '[data-product-attribute] input, [data-product-attribute] select'
+        )
+    ) {
+        await updateVariant();
+    }
+});
 
-           if (widget) {
-                widget.outerHTML = renderRules();
-          }
-        }
+  document.addEventListener("keyup", async (event) => {
+    if (
+        ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key) &&
+        event.target.matches(
+            '[data-product-attribute] input, [data-product-attribute] select'
+        )
+    ) {
+        await updateVariant();
     }
 });
 
