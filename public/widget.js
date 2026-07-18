@@ -191,7 +191,7 @@ const priceElement =
                 }</span>
                 <small class="bc-rule-middle-small">
                 ${
-                 "$" + originalPrice +" / VIAL"
+                 "$" + originalPrice - (originalPrice - rule.discount).toFixed(2) +" / VIAL"
                 }
                 </small>
               </div>
@@ -199,7 +199,7 @@ const priceElement =
              <div class="bc-rule-right">
              <span class="bc-rule-middle-span">
                 ${
-                 "$" + ((originalPrice - rule.discount) * rule.quantity).toFixed(2)
+                 "$" + ((originalPrice - (originalPrice - rule.discount)) * rule.quantity).toFixed(2)
                 } 
                </span>
              <small class="bc-rule-right-small">
