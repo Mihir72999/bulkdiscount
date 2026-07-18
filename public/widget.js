@@ -187,7 +187,7 @@ const priceElement =
 
               <div class="bc-rule-middle">
                <span class="bc-rule-middle-span"> ${
-               rule.quantity === 1 ? "$0 OFF" : "$"+(originalPrice - rule.discount).toFixed(2) + " OFF" 
+               rule.quantity === 1 ? "SINGLE" : "$"+(originalPrice - rule.discount).toFixed(2) + " OFF" 
                 }</span>
                 <small class="bc-rule-middle-small">
                 ${
@@ -230,7 +230,7 @@ const priceElement =
                 }</span>
                 <small class="bc-rule-middle-small">
                 ${
-                 "$" + (originalPrice - rule.discount) +" / VIAL"
+                 "$" + calculatePrice(originalPrice , rule.discount) +" / VIAL"
                 }
                 </small>
               </div>
@@ -238,7 +238,7 @@ const priceElement =
              <div class="bc-rule-right">
              <span class="bc-rule-middle-span">
                 ${
-                 "$" + ((originalPrice - rule.discount) * rule.quantity).toFixed(2)
+                 "$" + (calculatePrice(originalPrice * rule.quantity , rule.discount * rule.quantity ) ).toFixed(2)
                 } 
                </span>
              <small class="bc-rule-right-small">
@@ -414,14 +414,12 @@ function bindEvents() {
 }
 
   function calculatePrice(price, discount , type=discountType) {
-   return type === 'percent' ? Number(price - (price * discount / 100)) : Number(price - (price - discount))   
+   return type === 'percent' ? Number(price - (price * discount / 100)) : type === 'fixed' ? Number(price - (price - discount)) : Number(price - discount)  
 }
 function updateDisplayedPrice(discount, qty , type=discountType ) {
 
-    const newPrice = type === 'percent' ? calculatePrice(originalPrice * qty, discount) : calculatePrice(originalPrice * qty, discount) * qty ;
-    console.log('qty', qty)
-    console.log('cal',originalPrice * qty)
-    console.log('newPrice',newPrice )      
+    const newPrice = type === 'percent' ? calculatePrice(originalPrice * qty, discount) : type === 'fixed' ? calculatePrice(originalPrice * qty, discount) * qty : calculatePrice(originalPrice * qty,discount * qty ) ;
+    
     priceElement.textContent = `${newPrice.toFixed(2)}`;
 }
 
