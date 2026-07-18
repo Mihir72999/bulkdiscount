@@ -168,15 +168,16 @@ const priceElement =
             </label>
             `
            : 
-           `
-            ${_index > 0 ? `
+
+          rule.discountType === 'fixed' ?            
+           `     
                 <label class="bc-rule">
               <input
                 type="radio"
                 name="discountQty"
                 value="${rule.quantity}"
                 data-discount="${rule.discount}"
-                ${rule.quantity > 1 ? "checked" : ""}
+                ${rule.quantity === 1 ? "checked" : ""}
               />
 
               <div class="bc-rule-left">
@@ -186,11 +187,11 @@ const priceElement =
 
               <div class="bc-rule-middle">
                <span class="bc-rule-middle-span"> ${
-                "$"+rule.discount + "OFF" 
+                "$"+(originalPrice - rule.discount).toFixed(2) + " OFF" 
                 }</span>
                 <small class="bc-rule-middle-small">
                 ${
-                 "$" + (originalPrice - rule.discount).toFixed(2)+" / VIAL"
+                 "$" + originalPrice +" / VIAL"
                 }
                 </small>
               </div>
@@ -198,21 +199,57 @@ const priceElement =
              <div class="bc-rule-right">
              <span class="bc-rule-middle-span">
                 ${
-                 "$" + (originalPrice - rule.discount).toFixed(2)
+                 "$" + ((originalPrice - rule.discount) * rule.quantity).toFixed(2)
                 } 
                </span>
              <small class="bc-rule-right-small">
-                ${Number(rule.discount) === 0 ? "" :
-                 "$" + (originalPrice * rule.quantity).toFixed(2)}
+                ${"$" + (originalPrice * rule.quantity).toFixed(2)}
                </small>  
               </div>
             </label>
-             `  
-               : `` } 
-            
-           </div>`
+                
+           `:
+           `
+               <label class="bc-rule">
+              <input
+                type="radio"
+                name="discountQty"
+                value="${rule.quantity}"
+                data-discount="${rule.discount}"
+                ${rule.quantity === 1 ? "checked" : ""}
+              />
+
+              <div class="bc-rule-left">
+                <strong class="bc-rule-left-strong">${rule.quantity}</strong>
+                <small class="bc-rule-left-small">${Number(rule.discount) === 0 ? "VIAL" : "VIALS"}</small>
+              </div>
+
+              <div class="bc-rule-middle">
+               <span class="bc-rule-middle-span"> ${
+                "$"+(rule.discount).toFixed(2) + " OFF" 
+                }</span>
+                <small class="bc-rule-middle-small">
+                ${
+                 "$" + (originalPrice - rule.discount) +" / VIAL"
+                }
+                </small>
+              </div>
+
+             <div class="bc-rule-right">
+             <span class="bc-rule-middle-span">
+                ${
+                 "$" + ((originalPrice - rule.discount) * rule.quantity).toFixed(2)
+                } 
+               </span>
+             <small class="bc-rule-right-small">
+                ${"$" + (originalPrice * rule.quantity).toFixed(2)}
+               </small>  
+              </div>
+            </label>
+           `
         )
         .join("")}
+        </div>
 `
   }
 
