@@ -418,7 +418,7 @@ function bindEvents() {
 }
 function updateDisplayedPrice(discount, qty , type=discountType ) {
 
-    const newPrice = calculatePrice(originalPrice * qty, discount);
+    const newPrice = type === 'percent' ? calculatePrice(originalPrice * qty, discount) : calculatePrice(originalPrice * qty, discount) * qty ;
     console.log('qty', qty)
     console.log('cal',originalPrice * qty)
     console.log('newPrice',newPrice )      
