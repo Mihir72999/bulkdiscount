@@ -187,7 +187,7 @@ const priceElement =
 
               <div class="bc-rule-middle">
                <span class="bc-rule-middle-span"> ${
-                "$"+(originalPrice - rule.discount).toFixed(2) + " OFF" 
+               rule.quantity === 1 ? "$0 OFF" : "$"+(originalPrice - rule.discount).toFixed(2) + " OFF" 
                 }</span>
                 <small class="bc-rule-middle-small">
                 ${
@@ -199,7 +199,7 @@ const priceElement =
              <div class="bc-rule-right">
              <span class="bc-rule-middle-span">
                 ${
-                 "$" + ((originalPrice - (originalPrice - rule.discount)) * rule.quantity).toFixed(2)
+                rule.quantity === 1 ? originalPrice.toFixed(2) : "$" + ((originalPrice - (originalPrice - rule.discount)) * rule.quantity).toFixed(2)
                 } 
                </span>
              <small class="bc-rule-right-small">
@@ -431,6 +431,7 @@ async function quantityChanged(qty) {
     qty = Number(qty);
     
     let rule = rules.find(r => r.quantity === qty);
+   
     const arr = rules.map(r =>{
       return r.quantity 
     } )
