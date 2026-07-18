@@ -110,7 +110,7 @@ async function getRules() {
     }
     // let rules = [];
     // getRules().then(rule=>rules=rule)
-  discountType = rules[0]?.discountType
+  
 const priceElement =
     document.querySelector("[data-product-price-with-tax]") ||
     document.querySelector("[data-product-price-without-tax]");
@@ -508,7 +508,7 @@ async function init() {
         console.log("Calling getRules...");
 
         rules = await getRules();
-
+        discountType = rules[0]?.discountType  
  
     } catch (err) {
         console.error("getRules Error:", err);
