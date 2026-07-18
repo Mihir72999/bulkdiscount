@@ -60,7 +60,7 @@
 
 ////variant Array
 let variant;
-
+let discountType = 'percent'
 let rules = null;
 
 async function getRules() {
@@ -110,7 +110,7 @@ async function getRules() {
     }
     // let rules = [];
     // getRules().then(rule=>rules=rule)
-
+  discountType = rules[0]?.discountType
 const priceElement =
     document.querySelector("[data-product-price-with-tax]") ||
     document.querySelector("[data-product-price-without-tax]");
@@ -122,7 +122,7 @@ const priceElement =
     if (!rules.length) {
       return "";
     }
-  
+    
     return `
       <div class="bc-discount-widget">
 
@@ -413,10 +413,12 @@ function bindEvents() {
 
 }
 
-  function calculatePrice(price, discount) {
-    return Number(price - (price * discount / 100));
+
+  function calculatePrice(price, discount , type=discountType) {
+    const price = type === 'percent' ? Number(price - (price * discount / 100)) : Number(price - (price - discount))
+    return price;
 }
-function updateDisplayedPrice(discount, qty) {
+function updateDisplayedPrice(discount, qty ) {
 
     const newPrice = calculatePrice(originalPrice * qty, discount);
  
