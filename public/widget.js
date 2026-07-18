@@ -419,7 +419,7 @@ function bindEvents() {
 function updateDisplayedPrice(discount, qty ) {
 
     const newPrice = calculatePrice(originalPrice * qty, discount);
- 
+    console.log('newPrice',newPrice)      
     priceElement.textContent = `${newPrice.toFixed(2)}`;
 }
 
