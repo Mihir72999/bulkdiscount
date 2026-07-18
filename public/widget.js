@@ -414,7 +414,8 @@ function bindEvents() {
 }
 console.log('discounttype',discountType)
   function calculatePrice(price, discount , type=discountType) {
-   return type === 'percent' ? Number(price - (price * discount / 100)) : Number(price - (price - discount))   
+   return Number(price - (price * discount / 100)) 
+  //  : Number(price - (price - discount))   
 }
 function updateDisplayedPrice(discount, qty ) {
 
