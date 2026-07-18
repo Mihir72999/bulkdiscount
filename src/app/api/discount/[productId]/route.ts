@@ -65,7 +65,8 @@ const match:boolean =
   response.data.every((bc:any) =>
     rows.some(db =>
       db.quantity === bc.quantity_min &&
-      Number(db.discount) === Number(bc.amount)
+      Number(db.discount) === Number(bc.amount) &&
+      db.discountType === bc.type
     )
   );
 
