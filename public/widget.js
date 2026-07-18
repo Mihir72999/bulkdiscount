@@ -168,10 +168,9 @@ const priceElement =
             </label>
             `
            : 
-           `<div class="bc-rule-fixed">
+           `
             ${_index > 0 ? `
-                          <label class="bc-rule">
-
+                <label class="bc-rule">
               <input
                 type="radio"
                 name="discountQty"
@@ -208,8 +207,8 @@ const priceElement =
                </small>  
               </div>
             </label>
-  
-              ` : `` } 
+             `  
+               : `` } 
             
            </div>`
         )
