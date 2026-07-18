@@ -208,7 +208,7 @@ const priceElement =
                </small>  
               </div>
             </label>
-            </div>
+  
               ` : `` } 
             
            </div>`
