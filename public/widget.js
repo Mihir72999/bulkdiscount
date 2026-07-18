@@ -169,7 +169,7 @@ const priceElement =
             `
            : 
            `<div class="bc-rule-fixed">
-            ${_index > 1 ? `
+            ${_index > 0 ? `
                           <label class="bc-rule">
 
               <input
