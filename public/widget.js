@@ -412,7 +412,7 @@ function bindEvents() {
     });
 
 }
-console.log('discounttype',discountType)
+
   function calculatePrice(price, discount , type=discountType) {
    return type === 'percent' ? Number(price - (price * discount / 100)) : Number(price - (price - discount))   
 }
@@ -452,6 +452,8 @@ if(missing[qty]){
         rule = rules[rules?.length - 1]
     }
    console.log("rule",rule)
+   console.log('discounttype',discountType)
+    console.log('originalPrice',originalPrice)
     updateDisplayedPrice(rule?.discount, qty);
 
 }
