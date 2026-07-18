@@ -86,9 +86,8 @@ const match:boolean =
     `${rule.amount} % OFF`,
   ])
 
-    if (response.data[0]?.type === "percent") {
-  values1.unshift([store.storeHash, Number(productId), 1, 0, "percent", "single"]);
-};
+  values1.unshift([store.storeHash, Number(productId), 1, 0, response.data[0]?.type, "single"]);
+
 
 const placeholders = values1
   .map(() => "(?, ?, ?, ?, ?, ?)")
