@@ -191,7 +191,7 @@ const priceElement =
                 }</span>
                 <small class="bc-rule-middle-small">
                 ${
-                 "$" + calculatePrice(originalPrice , rule.discount).toFixed(2) +" / VIAL"
+                 "$" + calculatePrice(originalPrice ,Number(rule.discount) === 0 ? originalPrice : rule.discount).toFixed(2) +" / VIAL"
                 }
                 </small>
               </div>
@@ -420,7 +420,7 @@ function updateDisplayedPrice(discount, qty , type=discountType ) {
 
     const newPrice = type === 'percent' ? calculatePrice(originalPrice * qty, discount) : type === 'fixed' ? calculatePrice(originalPrice * qty, Number(discount) === 0 ? originalPrice : discount) * qty : calculatePrice(originalPrice * qty,discount * qty ) ;
     
-    priceElement.textContent = `${newPrice.toFixed(2)}`;
+    priceElement.textContent = `$${newPrice.toFixed(2)}`;
 }
 
 
@@ -451,9 +451,7 @@ if(missing[qty]){
 
         rule = rules[rules?.length - 1]
     }
-   console.log("rule",rule)
-   console.log('discounttype',discountType)
-    console.log('originalPrice',originalPrice)
+ 
     updateDisplayedPrice(rule?.discount, qty);
 
 }
