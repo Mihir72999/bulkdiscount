@@ -226,7 +226,7 @@ const priceElement =
 
               <div class="bc-rule-middle">
                <span class="bc-rule-middle-span"> ${
-                "$"+(rule.discount).toFixed(2) + " OFF" 
+                Number(rule.discount)=== 0 ? "SINGLE" :"$"+(rule.discount).toFixed(2) + " OFF" 
                 }</span>
                 <small class="bc-rule-middle-small">
                 ${
