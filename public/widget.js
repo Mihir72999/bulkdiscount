@@ -187,7 +187,7 @@ const priceElement =
 
               <div class="bc-rule-middle">
                <span class="bc-rule-middle-span"> ${
-               rule.quantity === 1 ? "SINGLE" : "$"+(originalPrice - rule.discount).toFixed(2) + " OFF" 
+               Number(rule.discount) === 0 ? "SINGLE" : "$"+(originalPrice - rule.discount).toFixed(2) + " OFF" 
                 }</span>
                 <small class="bc-rule-middle-small">
                 ${
@@ -418,7 +418,7 @@ function bindEvents() {
 }
 function updateDisplayedPrice(discount, qty , type=discountType ) {
 
-    const newPrice = type === 'percent' ? calculatePrice(originalPrice * qty, discount) : type === 'fixed' ? calculatePrice(originalPrice * qty, qty === 1 ? originalPrice : discount) * qty : calculatePrice(originalPrice * qty,discount * qty ) ;
+    const newPrice = type === 'percent' ? calculatePrice(originalPrice * qty, discount) : type === 'fixed' ? calculatePrice(originalPrice * qty, Number(discount) === 0 ? originalPrice : discount) * qty : calculatePrice(originalPrice * qty,discount * qty ) ;
     
     priceElement.textContent = `${newPrice.toFixed(2)}`;
 }
