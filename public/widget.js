@@ -418,7 +418,7 @@ function bindEvents() {
 }
 function updateDisplayedPrice(discount, qty , type=discountType ) {
 
-    const newPrice = type === 'percent' ? calculatePrice(originalPrice * qty, discount) : type === 'fixed' ? calculatePrice(originalPrice * qty, Number(discount) === 0 ? originalPrice : discount) * qty : calculatePrice((originalPrice-discount)*qty,discount ) ;
+    const newPrice = type === 'percent' ? calculatePrice(originalPrice * qty, discount) : type === 'fixed' ? calculatePrice(originalPrice * qty, Number(discount) === 0 ? originalPrice : discount) * qty : calculatePrice(originalPrice*qty,discount*qty ) ;
     
     priceElement.textContent = `$${newPrice.toFixed(2)}`;
 }
