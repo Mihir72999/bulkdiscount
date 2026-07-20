@@ -34,12 +34,12 @@
   
 }
 .bc-rule input[type="radio"]:active{
-    outline-offset: 4px;
-    outline: 2px solid #c364f4;
+    outline-offset: 4px !important;
+    outline: 2px solid #c364f4 !important;
 }
 .bc-rule input[type="radio"]:focus{
-    outline-offset: 8px;
-    outline: 2px solid #c364f4;
+    outline-offset: 4px !important;
+    outline: 2px solid #c364f4 !important;
 }
 
 /* Radio */
@@ -150,10 +150,7 @@
 
 
 .bc-rule:has(input:checked){
-    border-color:#b8ff2a;
-    box-shadow:
-        0 0 18px rgba(170,255,40,.25),
-        inset 0 0 18px rgba(170,255,40,.05);
+    border-color:#c364f4;
 }
 .bc-rule-middle{
     display: flex;
@@ -208,10 +205,10 @@
 }
 .bc-rule-right-small{
     display: block;
-    margin-top: 5px;
     color: #a3a7af;
     font-weight: 700;
     text-decoration: line-through;
+    font-size: 16px;
 }
 .bc-rule-fixed{
     display: flex;
