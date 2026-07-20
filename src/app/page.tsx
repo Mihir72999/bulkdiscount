@@ -126,6 +126,8 @@ export default function Home() {
                 <Input
                   type="number"
                   placeholder="10"
+                  min={0}
+                  max={15}
                 />
               </div>
             </div>
