@@ -1,73 +1,181 @@
-'use client'
-import ErrorMessage from '../../components/error';
-import Loading from '../../components/loading';
-import { useProducts } from '../../lib/hooks';
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-interface ProductSummary {
-inventory_count: number;
-variant_count: number;
-primary_category_name: string;
-}
-export default function Home(){
-    const { error, isLoading, summary } = useProducts();
+  RadioGroup,
+  RadioGroupItem,
+} from "@/components/ui/radio-group";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
-    if (isLoading) return <Loading />;
-	if(!summary) return <ErrorMessage error={error} />; 
-    if (error) return <ErrorMessage error={error} />;
-   const typeSummary = summary as ProductSummary
-   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-semibold">Homepage</h2>
+export default function Home() {
+  const [enabled, setEnabled] = useState(true);
+  const [discountType, setDiscountType] = useState("percentage");
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Inventory Count
-            </CardTitle>
-          </CardHeader>
+  return (
+    <div className="max-w-5xl mx-auto p-6 space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Create Offer</CardTitle>
+        </CardHeader>
 
-          <CardContent>
-            <p className="text-3xl font-bold">
-              {typeSummary.inventory_count}
-            </p>
-          </CardContent>
-        </Card>
+        <CardContent className="space-y-8">
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Variant Count
-            </CardTitle>
-          </CardHeader>
+          {/* General */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-lg">
+              General
+            </h3>
 
-          <CardContent>
-            <p className="text-3xl font-bold">
-              {typeSummary.variant_count}
-            </p>
-          </CardContent>
-        </Card>
+            <div className="space-y-2">
+              <Label>Offer Name</Label>
+              <Input placeholder="Summer Bundle" />
+            </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Primary Category
-            </CardTitle>
-          </CardHeader>
+            <div className="space-y-2">
+              <Label>Description</Label>
+              <Textarea placeholder="Optional description..." />
+            </div>
 
-          <CardContent>
-            <p className="text-3xl font-bold">
-              {typeSummary.primary_category_name}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+            <div className="flex items-center justify-between border rounded-lg p-4">
+              <div>
+                <Label>Enable Offer</Label>
+                <p className="text-sm text-muted-foreground">
+                  Customers can use this offer immediately.
+                </p>
+              </div>
+
+              <Switch
+                checked={enabled}
+                onCheckedChange={setEnabled}
+              />
+            </div>
+          </div>
+
+          {/* Products */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-lg">
+              Products
+            </h3>
+
+            <Input
+              placeholder="Search products..."
+            />
+
+            <div className="border rounded-lg p-4 text-sm text-muted-foreground">
+              Product selector goes here...
+            </div>
+          </div>
+
+          {/* Discount */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-lg">
+              Discount
+            </h3>
+
+            <RadioGroup
+              value={discountType}
+              onValueChange={setDiscountType}
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  value="percentage"
+                  id="percentage"
+                />
+                <Label htmlFor="percentage">
+                  Percentage
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  value="fixed"
+                  id="fixed"
+                />
+                <Label htmlFor="fixed">
+                  Fixed Amount
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  value="price"
+                  id="price"
+                />
+                <Label htmlFor="price">
+                  Fixed Price
+                </Label>
+              </div>
+            </RadioGroup>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Minimum Quantity</Label>
+                <Input
+                  type="number"
+                  defaultValue={2}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Discount Value</Label>
+                <Input
+                  type="number"
+                  placeholder="10"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Appearance */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-lg">
+              Appearance
+            </h3>
+
+            <div className="grid grid-cols-3 gap-4">
+
+              <div className="space-y-2">
+                <Label>Widget Title</Label>
+                <Input defaultValue="Bundle & Save" />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Primary Color</Label>
+                <Input
+                  type="color"
+                  defaultValue="#2563eb"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Border Radius</Label>
+                <Input
+                  type="number"
+                  defaultValue={12}
+                />
+              </div>
+
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-end gap-3">
+            <Button variant="outline">
+              Cancel
+            </Button>
+
+            <Button>
+              Save Offer
+            </Button>
+          </div>
+
+        </CardContent>
+      </Card>
     </div>
   );
-};
-
+}
