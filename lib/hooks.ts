@@ -129,9 +129,10 @@ interface WidgetSettingsPayload {
 export async function saveWidgetSettings(
     payload: WidgetSettingsPayload
 ) {
+  const APP_URL = "https://bgcom.mihir72999.workers.dev"   
   const { context } = useSession();  
   const res = await fetch(
-    `/api/widget/settings?context=${encodeURIComponent(context)}`,
+    `${APP_URL}/api/widget/settings?context=${encodeURIComponent(context)}`,
     {
       method: "POST",
       headers: {
