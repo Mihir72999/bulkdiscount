@@ -125,9 +125,7 @@ export default function Home() {
                 <Label>Discount Value</Label>
                 <Input
                   type="number"
-                  placeholder="10"
-                  min={0}
-                  max={15}
+                  placeholder="10" 
                 />
               </div>
             </div>
@@ -159,6 +157,8 @@ export default function Home() {
                 <Input
                   type="number"
                   defaultValue={12}
+                  min={0}
+                  max={15}
                 />
               </div>
 
