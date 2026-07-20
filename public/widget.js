@@ -11,6 +11,7 @@
   const API_BASE = "https://bgcom.mihir72999.workers.dev";
 
   // Load CSS
+  let widgetSettings = null;
   function loadCSS() {
     if (document.getElementById("bc-discount-widget-css")) {
       return;
@@ -62,6 +63,40 @@
 let variant;
 let discountType = 'percent'
 let rules = null;
+
+let widgetSettings = null;
+
+async function loadWidgetSettings(storeHash) {
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/widget/settings??domain=${encodeURIComponent(window.location.hostname)}`
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to load widget settings");
+    }
+
+    const data = await res.json();
+
+    widgetSettings = data.data;
+      document.documentElement.style.setProperty(
+    "--border-radius",
+    `${settings.borderRadius}px`
+  );
+
+  document.documentElement.style.setProperty(
+    "--border-color",
+    settings.borderColor
+  );
+
+    console.log(widgetSettings);
+    
+    return widgetSettings;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
 
 async function getRules() {
     const productId = getProductId();
@@ -492,6 +527,7 @@ async function init() {
     console.log("Not a product page");
     return;
 }
+
 
     const target = findTarget();
 

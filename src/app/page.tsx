@@ -12,15 +12,29 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ColorPalette } from "../../components/colorPalette";
+import { saveWidgetSettings } from "../../lib/hooks";
 
 export default function Home() {
   const [enabled, setEnabled] = useState(true);
   const [discountType, setDiscountType] = useState("percentage");
   const [backgroundColor, setBackgroundColor] = useState("#c364f4");
+  const [borderRadius , setBorderRadius] = useState(10)
   const color = [
    "#c364f4",
    "#800000"
   ]
+  const handleSave = async()=>{
+    try {
+    await saveWidgetSettings({
+      borderColor:backgroundColor,
+      borderRadius,
+    });
+
+    console.log("Settings saved");
+  } catch (err) {
+    console.error(err);
+  } 
+  }
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <Card>
@@ -154,9 +168,10 @@ export default function Home() {
                 <Label>Border Radius</Label>
                 <Input
                   type="number"
-                  defaultValue={12}
+                  value={12}
                   min={0}
                   max={15}
+                  onChange={(e)=>setBorderRadius(Number(e.target.value))}
                 />
               </div>
 
@@ -172,7 +187,7 @@ export default function Home() {
               Cancel
             </Button>
 
-            <Button>
+            <Button onClick={handleSave}>
               Save Offer
             </Button>
           </div>

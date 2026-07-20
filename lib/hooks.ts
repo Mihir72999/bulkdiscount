@@ -119,3 +119,31 @@ export const useShippingAndProductsInfo = (orderId: number) => {
     };
 }
 
+// lib/api/widget-settings.ts
+
+interface WidgetSettingsPayload {
+  borderColor: string;
+  borderRadius: number;
+}
+
+export async function saveWidgetSettings(
+  payload: WidgetSettingsPayload
+) {
+  const res = await fetch(
+    `/api/widget/settings}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!res.ok) {
+    const { message } = await res.json() as {message:any};
+    throw new Error(message || "Failed to save widget settings");
+  }
+
+  return res.json();
+}

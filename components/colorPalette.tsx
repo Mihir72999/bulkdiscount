@@ -12,7 +12,7 @@ export function ColorPalette({
   onChange,
 }: ColorPaletteProps) {
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div className="flex gap-2 flex-wrap cursor-pointer">
       {colors.map((color) => (
         <button
           key={color}
