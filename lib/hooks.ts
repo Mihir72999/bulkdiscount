@@ -130,7 +130,7 @@ export async function saveWidgetSettings(
   payload: WidgetSettingsPayload
 ) {
   const res = await fetch(
-    `/api/widget/settings}`,
+    `/api/widget/settings`,
     {
       method: "POST",
       headers: {
