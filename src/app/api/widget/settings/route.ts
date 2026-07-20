@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
           success: false,
           message: "borderColor and borderRadius are required.",
         },
-        { status: 400 , headers }
+        { status: 400 }
       );
     }
    
@@ -73,7 +73,7 @@ if (storeHash && settings) {
         borderColor,
         borderRadius,
       },
-    },{headers});
+    });
   } catch (error) {
     console.error(error);
 
@@ -82,7 +82,7 @@ if (storeHash && settings) {
         success: false,
         message: "Something went wrong.",
       },
-      { status: 500 , headers }
+      { status: 500}
     );
   }
 }
