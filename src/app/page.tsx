@@ -12,7 +12,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ColorPalette } from "../../components/colorPalette";
-import { saveWidgetSettings } from "../../lib/hooks";
+import { useSaveWidgetSettings } from "../../lib/hooks";
 
 export default function Home() {
   const [enabled, setEnabled] = useState(true);
@@ -25,6 +25,7 @@ export default function Home() {
   ]
   const handleSave = async()=>{
     try {
+    const {saveWidgetSettings} = useSaveWidgetSettings()  
     await saveWidgetSettings({
       borderColor:backgroundColor,
       borderRadius,

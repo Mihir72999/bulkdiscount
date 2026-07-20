@@ -120,32 +120,39 @@ export const useShippingAndProductsInfo = (orderId: number) => {
 }
 
 // lib/api/widget-settings.ts
-
 interface WidgetSettingsPayload {
   borderColor: string;
   borderRadius: number;
 }
 
-export async function saveWidgetSettings(
+export function useSaveWidgetSettings() {
+  const { context } = useSession();
+
+  const saveWidgetSettings = async (
     payload: WidgetSettingsPayload
-) {
-  const APP_URL = "https://bgcom.mihir72999.workers.dev"   
-  const { context } = useSession();  
-  const res = await fetch(
-    `${APP_URL}/api/widget/settings?context=${encodeURIComponent(context)}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
+  ) => {
+    const APP_URL = "https://bgcom.mihir72999.workers.dev";
+
+    const res = await fetch(
+      `${APP_URL}/api/widget/settings?context=${encodeURIComponent(context)}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (!res.ok) {
+      const { message } = (await res.json()) as { message: string };
+      throw new Error(message || "Failed to save widget settings");
     }
-  );
 
-  if (!res.ok) {
-    const { message } = await res.json() as {message:any};
-    throw new Error(message || "Failed to save widget settings");
-  }
+    return res.json();
+  };
 
-  return res.json();
+  return {
+    saveWidgetSettings,
+  };
 }
