@@ -2,51 +2,44 @@
     position:relative;
     display:flex;
     align-items:center;
+    justify-content: flex-start;
     gap:20px;
-    width: 60%;
     background:#FFF;
-    border:2px solid #778286;
-    border-radius:20px;
-
-    padding: 8px 22px; 
+    border:1px solid #000;
+    border-radius:10px;
+    padding: 10px 15px 10px 30px; 
     margin-bottom:16px;
-
     cursor:pointer;
     transition:.25s;
 }
 
 .bc-rule:hover{
-    border-color:#a8e420;
+    border-color:#c364f4;
+    -webkit-transform: translateY(-2px);
+    transform: translateY(-2px);
 }
-
 .bc-rule input[type="radio"] {
   /* 1. Remove standard browser styling */
   appearance: none;
   -webkit-appearance: none;
-  
   /* 2. Create the circle shape and size */
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  
-  /* 3. Apply your custom border color */
-  border: 2px solid #b9ff28; /* Changes default border to Orange */
-  background-color: #b9ff28;
+  background-color: #ccc;
   outline: none;
   cursor: pointer;
-  
-  /* 4. Align nicely with text */
   display: inline-grid;
   place-content: center;
   
 }
 .bc-rule input[type="radio"]:active{
-    outline-offset: 8px;
-    outline: 2px solid #b9ff28;
+    outline-offset: 4px;
+    outline: 2px solid #c364f4;
 }
 .bc-rule input[type="radio"]:focus{
     outline-offset: 8px;
-    outline: 2px solid #b9ff28;
+    outline: 2px solid #c364f4;
 }
 
 /* Radio */
@@ -163,22 +156,21 @@
         inset 0 0 18px rgba(170,255,40,.05);
 }
 .bc-rule-middle{
-    flex: 1;
     display: flex;
-    justify-content: center;
-    align-items: center;
-
-    color: #5f6368;
-    font-size: 15px;
+    justify-content: flex-start;
+    color: #111827;
+    font-size: 1rem;
     font-weight: 700;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    flex-direction:column;
+    text-align: left;
 }
-
+.bc-rule-middle .bc-rule-middle-small {
+    font-size: 13px;
+}
 /* Highlight when the card is selected */
-.bc-rule:has(input:checked) .bc-rule-middle{
-    color: #78be20;
-}
+
 
 /* .bc-rule-left, */
 /* .bc-rule-middle, */
@@ -186,46 +178,41 @@
     flex: 1;
 } */
 .bc-rule-right{
-    flex: 1;
+    margin-left: auto;
     text-align: right;
     color: #38383a;
-    font-size: 14px;
+    font-size: 1rem;
     font-weight: 700;  
+}
+.bc-rule-right .bc-rule-middle-span {
+    font-size: 20px;
 }
 .bc-rule-left{
     display: flex;
     flex-direction: column;
     align-items: center;    
-    border: 1px solid #78be20;
     padding: 6px 20px;
     border-radius: 25%;
-    box-shadow: inset 0 0 5px #78be20;
 }
 .bc-rule-left-small{
     display: block;
     color: #a3a7af;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
 }
 .bc-rule-left-strong{
     display: block;
-    color: #a3a7af;
-    font-size: 20px;
+    color: #000;
+    font-size: 30px;
     font-weight: 700;
-}
-.bc-rule-middle{
-    display: flex;
-    flex-direction: column;
 }
 .bc-rule-right-small{
     display: block;
     margin-top: 5px;
     color: #a3a7af;
-    font-size: 14px;
     font-weight: 700;
     text-decoration: line-through;
 }
-
 .bc-rule-fixed{
     display: flex;
     justify-content: center;
