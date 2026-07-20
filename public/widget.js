@@ -69,7 +69,7 @@ let widgetSettings = null;
 async function loadWidgetSettings(storeHash) {
   try {
     const res = await fetch(
-      `${API_BASE}/api/widget/settings??domain=${encodeURIComponent(window.location.hostname)}`
+      `${API_BASE}/api/widgets/settings??domain=${encodeURIComponent(window.location.hostname)}`
     );
 
     if (!res.ok) {

@@ -129,8 +129,11 @@ interface WidgetSettingsPayload {
 export async function saveWidgetSettings(
   payload: WidgetSettingsPayload
 ) {
+      const { context } = useSession();
+    const shouldFetch = context 
+  
   const res = await fetch(
-    `/api/widget/settings`,
+   shouldFetch ? `/api/widget/settings` : '',
     {
       method: "POST",
       headers: {
