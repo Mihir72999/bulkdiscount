@@ -11,11 +11,16 @@ import {
 } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { ColorPalette } from "../../components/colorPalette";
 
 export default function Home() {
   const [enabled, setEnabled] = useState(true);
   const [discountType, setDiscountType] = useState("percentage");
-
+  const [backgroundColor, setBackgroundColor] = useState("#c364f4");
+  const color = [
+   "#c364f4",
+   "#800000"
+  ]
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <Card>
@@ -144,13 +149,6 @@ export default function Home() {
                 <Input defaultValue="Bundle & Save" />
               </div>
 
-              <div className="space-y-2">
-                <Label>Primary Color</Label>
-                <Input
-                  type="color"
-                  defaultValue="#2563eb"
-                />
-              </div>
 
               <div className="space-y-2">
                 <Label>Border Radius</Label>
@@ -164,7 +162,10 @@ export default function Home() {
 
             </div>
           </div>
-
+          <div className="flex gap-3">
+          <Label>Color theme</Label>
+         <ColorPalette colors={color} value={backgroundColor} onChange={setBackgroundColor} />
+          </div>
           {/* Footer */}
           <div className="flex justify-end gap-3">
             <Button variant="outline">
