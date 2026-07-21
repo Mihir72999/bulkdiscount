@@ -179,6 +179,7 @@ export default function Home() {
     min={0}
     max={15}
     step={1}
+    className={'border border-indigo-600'}
     onValueChange={(values) =>{
        const radius = Array.isArray(values) ? values[0] : values;
       setBorderRadius(radius)
