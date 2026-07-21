@@ -218,24 +218,28 @@ export default function Home() {
         </CardContent>
       </Card>
        <div className="py-6 bg-white"> 
-       <div className="bc-discount-widget" onClick={() => setCheckedRadio((prev) => !prev)}>
+       <div className="bc-discount-widget w-2/3" onClick={() => setCheckedRadio((prev) => !prev)}>
   <label
-    className={`relative mb-4 flex cursor-pointer items-center gap-5 rounded-[10px] border bg-white px-4 py-3 pl-8 transition-all hover:-translate-y-0.5 ${
-      checkedRadio ? `border-[${backgroundColor}]` : "border-black"
-    }`}
-  >
+  className={cn(
+    "relative mb-4 flex cursor-pointer items-center gap-5 rounded-[10px] border bg-white px-4 py-3 pl-8 transition-all hover:-translate-y-0.5",
+    checkedRadio ? "border-2" : "border-black"
+  )}
+  style={checkedRadio ? { borderColor: backgroundColor } : undefined}
+>
     <input
       type="radio"
       name="discountQty"
       checked={checkedRadio}
       readOnly
-      className={cn(`
-        grid h-4 w-4 cursor-pointer place-content-center
-        appearance-none rounded-full
-        bg-violet-500
-        focus:outline-2 focus:outline-offset-4 focus:outline-violet-500
-        active:outline-2 active:outline-offset-4 active:outline-violet-500
-      `,backgroundColor && `bg-[${backgroundColor}] active:outline-[${backgroundColor}] focus:outline-[${backgroundColor}]` )}
+      className={cn(
+  "grid h-4 w-4 cursor-pointer place-content-center appearance-none rounded-full",
+  backgroundColor === "#c364f4" && "bg-[#c364f4] focus:outline-[#c364f4] active:outline-[#c364f4]",
+  backgroundColor === "#800000" && "bg-[#800000] focus:outline-[#800000] active:outline-[#800000]",
+  backgroundColor === "#0018F9" && "bg-[#0018F9] focus:outline-[#0018F9] active:outline-[#0018F9]",
+  backgroundColor === "#FF9322" && "bg-[#FF9322] focus:outline-[#FF9322] active:outline-[#FF9322]",
+  backgroundColor === "#917CDB" && "bg-[#917CDB] focus:outline-[#917CDB] active:outline-[#917CDB]",
+  "focus:outline-2 focus:outline-offset-4 active:outline-2 active:outline-offset-4"
+)}
     />
     
     <div className="flex flex-col items-center px-5 max-sm:min-w-[75px]">
