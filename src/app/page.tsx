@@ -14,13 +14,15 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ColorPalette } from "../../components/colorPalette";
 import { useSaveWidgetSettings } from "../../lib/hooks";
+import { cn } from "@/lib/utils";
 
 
 export default function Home() {
   const [enabled, setEnabled] = useState(true);
   const [discountType, setDiscountType] = useState("percentage");
   const [backgroundColor, setBackgroundColor] = useState("#c364f4");
-  const [borderRadius , setBorderRadius] = useState(10)
+  const [borderRadius, setBorderRadius] = useState(10)
+  const [checkedRadio, setCheckedRadio] = useState(false)
   const { saveWidgetSettings } = useSaveWidgetSettings();
   const color = [
    "#c364f4",
@@ -171,7 +173,7 @@ export default function Home() {
                 <Input defaultValue="Bundle & Save" />
               </div>
 
-             <div className="flex items-center">
+             <div className="flex items-center justify-between">
               <div className="space-y-2">
              <div className="flex justify-between">
              <span>Border Radius</span>
@@ -196,7 +198,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-6">
           <Label>Color theme</Label>
          <ColorPalette colors={color} value={backgroundColor} onChange={setBackgroundColor} />
           </div>
@@ -215,6 +217,57 @@ export default function Home() {
 
         </CardContent>
       </Card>
+       <div className="bc-discount-widget" onClick={() => setCheckedRadio((prev) => !prev)}>
+  <label
+    className={`relative mb-4 flex cursor-pointer items-center gap-5 rounded-[10px] border bg-white px-4 py-3 pl-8 transition-all hover:-translate-y-0.5 ${
+      checkedRadio ? "border-violet-500" : "border-black"
+    }`}
+  >
+    <input
+      type="radio"
+      name="discountQty"
+      checked={checkedRadio}
+      readOnly
+      className={cn(`
+        grid h-4 w-4 cursor-pointer place-content-center
+        appearance-none rounded-full
+        bg-violet-500
+        focus:outline-2 focus:outline-offset-4 focus:outline-violet-500
+        active:outline-2 active:outline-offset-4 active:outline-violet-500
+      `,backgroundColor && `bg-[${backgroundColor}] active:outline-[${backgroundColor}] focus:outline-[${backgroundColor}]` )}
+    />
+
+    <div className="flex flex-col items-center px-5 max-sm:min-w-[75px]">
+      <strong className="block text-[30px] font-bold text-black">
+        2
+      </strong>
+
+      <small className="block text-xs font-bold text-gray-400">
+        VIALS
+      </small>
+    </div>
+
+    <div className="flex flex-col text-left font-bold uppercase tracking-[0.5px] text-gray-900">
+      <span className="text-base">
+        10% OFF
+      </span>
+
+      <small className="text-[13px] normal-case">
+        $45.00 / VIAL
+      </small>
+    </div>
+
+    <div className="ml-auto text-right font-bold text-gray-700">
+      <span className="text-xl">
+        $90.00
+      </span>
+
+      <small className="block text-base font-bold text-gray-400 line-through">
+        $100.00
+      </small>
+    </div>
+  </label>
+</div>
     </div>
   );
 }
