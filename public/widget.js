@@ -66,7 +66,7 @@ let rules = null;
 
 let widgetSettings = null;
 
-async function loadWidgetSettings(storeHash) {
+async function loadWidgetSettings() {
   try {
     const res = await fetch(
       `${API_BASE}/api/widgets/settings??domain=${encodeURIComponent(window.location.hostname)}`
@@ -110,7 +110,7 @@ async function getRules() {
     const url = `${API_BASE}/api/discount/${productId}?domain=${encodeURIComponent(window.location.hostname)}`;
 
     try {
-       
+        
         const response = await fetch(url, {
             method: "GET",
               headers: {
@@ -540,6 +540,9 @@ async function init() {
     let rules = [];
 
     try {
+        if(widgetSettings) return widgetSettings
+        widgetSettings = await loadWidgetSettings()
+
         console.log("Calling getRules...");
 
         rules = await getRules();
