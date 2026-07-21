@@ -18,7 +18,7 @@ export default function Home() {
   const [discountType, setDiscountType] = useState("percentage");
   const [backgroundColor, setBackgroundColor] = useState("#c364f4");
   const [borderRadius , setBorderRadius] = useState(10)
-  const { saveWidgetSettings } = useSaveWidgetSettings();
+  const { saveWidgetSettings , isSaving } = useSaveWidgetSettings();
   const color = [
    "#c364f4",
    "#800000"
@@ -187,7 +187,10 @@ export default function Home() {
               Cancel
             </Button>
 
-            <Button className={'cursor-pointer'} onClick={()=>handleSave}>
+            <Button className={'cursor-pointer'} 
+             onClick={handleSave}
+             disabled={isSaving}
+              >
               Save Offer
             </Button>
           </div>
