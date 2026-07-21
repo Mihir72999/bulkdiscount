@@ -185,7 +185,7 @@ export default function Home() {
     min={0}
     max={15}
     step={1}
-    className={'border border-indigo-600'}
+    className={'border border-indigo-600 w-52'}
     onValueChange={(values) =>{
        const radius = Array.isArray(values) ? values[0] : values;
       setBorderRadius(radius)
@@ -217,10 +217,11 @@ export default function Home() {
 
         </CardContent>
       </Card>
+       <div className="py-6 bg-white"> 
        <div className="bc-discount-widget" onClick={() => setCheckedRadio((prev) => !prev)}>
   <label
     className={`relative mb-4 flex cursor-pointer items-center gap-5 rounded-[10px] border bg-white px-4 py-3 pl-8 transition-all hover:-translate-y-0.5 ${
-      checkedRadio ? "border-violet-500" : "border-black"
+      checkedRadio ? `border-[${backgroundColor}]` : "border-black"
     }`}
   >
     <input
@@ -236,7 +237,7 @@ export default function Home() {
         active:outline-2 active:outline-offset-4 active:outline-violet-500
       `,backgroundColor && `bg-[${backgroundColor}] active:outline-[${backgroundColor}] focus:outline-[${backgroundColor}]` )}
     />
-
+    
     <div className="flex flex-col items-center px-5 max-sm:min-w-[75px]">
       <strong className="block text-[30px] font-bold text-black">
         2
@@ -266,7 +267,9 @@ export default function Home() {
         $100.00
       </small>
     </div>
+
   </label>
+</div>
 </div>
     </div>
   );
