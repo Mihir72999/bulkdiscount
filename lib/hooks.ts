@@ -3,6 +3,7 @@ import useSWR from 'swr';
 import { useSession } from '../context/session';
 import { mockDiscounts } from "../lib/dbs/mokeDiscounts";
 import { ErrorProps, ListItem, Order,  QueryParams, ShippingAndProductsInfo } from '../types';
+import useSWRMutation from "swr/mutation";
 
 export async function getDiscountRules(productId:number){
 
@@ -119,40 +120,87 @@ export const useShippingAndProductsInfo = (orderId: number) => {
     };
 }
 
-// lib/api/widget-settings.ts
+
+
 interface WidgetSettingsPayload {
   borderColor: string;
   borderRadius: number;
 }
 
+async function saveSettingsFetcher(
+  url: string,
+  { arg }: { arg: WidgetSettingsPayload }
+) {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(arg),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Failed to save settings");
+  }
+
+  return res.json();
+}
+
 export function useSaveWidgetSettings() {
   const { context } = useSession();
+ const params = new URLSearchParams({ context }).toString();
+  const APP_URL = "https://bgcom.mihir72999.workers.dev";
 
-  const saveWidgetSettings = async (
-    payload: WidgetSettingsPayload
-  ) => {
-    const APP_URL = "https://bgcom.mihir72999.workers.dev";
-
-    const res = await fetch(
-      `${APP_URL}/api/widget/settings?context=${encodeURIComponent(context)}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      }
-    );
-
-    if (!res.ok) {
-      const { message } = (await res.json()) as { message: string };
-      throw new Error(message || "Failed to save widget settings");
-    }
-
-    return res.json();
-  };
+  const { trigger, isMutating, error, data } = useSWRMutation(
+    context
+      ? `${APP_URL}/api/widget/settings?${params}}`
+      : null,
+    saveSettingsFetcher
+  );
 
   return {
-    saveWidgetSettings,
+    saveWidgetSettings: trigger,
+    isSaving: isMutating,
+    error,
+    data,
   };
 }
+
+// lib/api/widget-settings.ts
+//interface WidgetSettingsPayload {
+ // borderColor: string;
+//  borderRadius: number;
+//}
+
+//export function useSaveWidgetSettings() {
+  //const { context } = useSession();
+
+  //const saveWidgetSettings = async (
+    //payload: WidgetSettingsPayload
+ // ) => {
+   // const APP_URL = "https://bgcom.mihir72999.workers.dev";
+
+ //   const res = await fetch(
+ //     `${APP_URL}/api/widget/settings?context=${encodeURIComponent(context)}`,
+ //     {
+ //       method: "POST",
+ //       headers: {
+ //         "Content-Type": "application/json",
+ //       },
+ //       body: JSON.stringify(payload),
+ //     }
+ //   );
+
+ //   if (!res.ok) {
+ //     const { message } = (await res.json()) as { message: string };
+ //     throw new Error(message || "Failed to save widget settings");
+ //   }
+
+ //   return res.json();
+ // };
+
+ // return {
+ //   saveWidgetSettings,
+ // };
+//}
