@@ -3,7 +3,6 @@ import useSWR from 'swr';
 import { useSession } from '../context/session';
 import { mockDiscounts } from "../lib/dbs/mokeDiscounts";
 import { ErrorProps, ListItem, Order,  QueryParams, ShippingAndProductsInfo } from '../types';
-import useSWRMutation from "swr/mutation";
 
 export async function getDiscountRules(productId:number){
 

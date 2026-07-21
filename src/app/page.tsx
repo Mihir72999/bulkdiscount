@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ColorPalette } from "../../components/colorPalette";
 import { useSaveWidgetSettings } from "../../lib/hooks";
 
+
 export default function Home() {
   const [enabled, setEnabled] = useState(true);
   const [discountType, setDiscountType] = useState("percentage");
