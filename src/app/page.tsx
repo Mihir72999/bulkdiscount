@@ -18,12 +18,12 @@ export default function Home() {
   const [discountType, setDiscountType] = useState("percentage");
   const [backgroundColor, setBackgroundColor] = useState("#c364f4");
   const [borderRadius , setBorderRadius] = useState(10)
-  const { saveWidgetSettings , isSaving } = useSaveWidgetSettings();
+  const { saveWidgetSettings } = useSaveWidgetSettings();
   const color = [
    "#c364f4",
    "#800000"
   ]
-  const handleSave = async()=>{
+  async function handleSave(){
     try {
     
     await saveWidgetSettings({
@@ -189,7 +189,6 @@ export default function Home() {
 
             <Button className={'cursor-pointer'} 
              onClick={handleSave}
-             disabled={isSaving}
               >
               Save Offer
             </Button>
