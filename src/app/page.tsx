@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+
 import {
   RadioGroup,
   RadioGroupItem,
@@ -21,7 +23,8 @@ export default function Home() {
   const { saveWidgetSettings } = useSaveWidgetSettings();
   const color = [
    "#c364f4",
-   "#800000"
+   "#800000",
+   "#0018F9"
   ]
   async function handleSave(){
     try {
@@ -165,18 +168,27 @@ export default function Home() {
 
 
               <div className="space-y-2">
-                <Label>Border Radius</Label>
-                <Input
-                  type="number"
-                  value={borderRadius}
-                  min={0}
-                  max={15}
-                  onChange={(e)=>setBorderRadius(Number(e.target.value))}
-                />
-              </div>
+             <div className="flex justify-between">
+             <span>Border Radius</span>
+             <span>{borderRadius}px</span>
+             </div>
 
+  <Slider
+    value={[borderRadius]}
+    min={0}
+    max={15}
+    step={1}
+    onValueChange={(values) =>{
+       const radius = Array.isArray(values) ? values[0] : values;
+      setBorderRadius(radius)
+    }}
+
+      
+   />
+   </div>
             </div>
           </div>
+
           <div className="flex gap-3">
           <Label>Color theme</Label>
          <ColorPalette colors={color} value={backgroundColor} onChange={setBackgroundColor} />
