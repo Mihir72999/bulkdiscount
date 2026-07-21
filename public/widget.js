@@ -81,12 +81,12 @@ async function loadWidgetSettings() {
     widgetSettings = data.data;
       document.documentElement.style.setProperty(
     "--border-radius",
-    `${settings.border_radius}px`
+    `${widgetSettings.border_radius}px`
   );
 
   document.documentElement.style.setProperty(
     "--border-color",
-    settings.border_color
+    widgetSettings.border_color
   );
 
     console.log(widgetSettings);
