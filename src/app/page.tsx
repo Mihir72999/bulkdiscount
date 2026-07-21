@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +29,6 @@ export default function Home() {
       borderColor:backgroundColor,
       borderRadius,
     });
-
     console.log("Settings saved");
   } catch (err) {
     console.error(err);
@@ -188,7 +186,7 @@ export default function Home() {
               Cancel
             </Button>
 
-            <Button onClick={handleSave}>
+            <Button className={'cursor-pointer'} onClick={()=>handleSave}>
               Save Offer
             </Button>
           </div>

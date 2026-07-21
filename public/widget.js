@@ -11,7 +11,7 @@
   const API_BASE = "https://bgcom.mihir72999.workers.dev";
 
   // Load CSS
-  let widgetSettings = null;
+
   function loadCSS() {
     if (document.getElementById("bc-discount-widget-css")) {
       return;
