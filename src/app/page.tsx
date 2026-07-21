@@ -18,13 +18,14 @@ export default function Home() {
   const [discountType, setDiscountType] = useState("percentage");
   const [backgroundColor, setBackgroundColor] = useState("#c364f4");
   const [borderRadius , setBorderRadius] = useState(10)
+  const { saveWidgetSettings } = useSaveWidgetSettings();
   const color = [
    "#c364f4",
    "#800000"
   ]
   const handleSave = async()=>{
     try {
-    const {saveWidgetSettings} = useSaveWidgetSettings()  
+    
     await saveWidgetSettings({
       borderColor:backgroundColor,
       borderRadius,
@@ -167,7 +168,7 @@ export default function Home() {
                 <Label>Border Radius</Label>
                 <Input
                   type="number"
-                  value={12}
+                  value={borderRadius}
                   min={0}
                   max={15}
                   onChange={(e)=>setBorderRadius(Number(e.target.value))}
