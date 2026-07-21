@@ -20,7 +20,7 @@ const result = await db.prepare('SELECT storeHash from stores WHERE domain = ?')
 const storeHash = result?.storeHash
 const settings = await db
   .prepare(
-    "SELECT id FROM widget_settings WHERE store_hash = ?"
+    "SELECT * FROM widget_settings WHERE store_hash = ?"
   )
   .bind(storeHash)
   .first();
