@@ -218,19 +218,24 @@ export default function Home() {
         </CardContent>
       </Card>
        <div className="py-6 bg-white"> 
-       <div className="bc-discount-widget w-2/3" onClick={() => setCheckedRadio((prev) => !prev)}>
-  <label
-  className={cn(
-    "relative mb-4 flex cursor-pointer  items-center gap-5 border bg-white px-4 py-3 pl-8 transition-all hover:-translate-y-0.5",
-       checkedRadio && backgroundColor === "#c364f4" && "border-[#c364f4]",
+       <div className={
+        cn("bc-discount-widget w-2/3 border",
+        checkedRadio && backgroundColor === "#c364f4" && "border-[#c364f4]",
     checkedRadio && backgroundColor === "#800000" && "border-[#800000]",
     checkedRadio && backgroundColor === "#0018F9" && "border-[#0018F9]",
     checkedRadio && backgroundColor === "#FF9322" && "border-[#FF9322]",
     checkedRadio && backgroundColor === "#917CDB" && "border-[#917CDB]",
-    !checkedRadio && "border-black"
+    !checkedRadio && "border-black",
+      
+      )}
+        style={{ 
+    borderRadius: `${borderRadius}px`}} 
+      onClick={() => setCheckedRadio((prev) => !prev)}>
+  <label
+  className={cn(
+    "relative mb-4 flex cursor-pointer  items-center gap-5  bg-white px-4 py-3 pl-8 transition-all hover:-translate-y-0.5",
+      
   )}
-  style={{ 
-    borderRadius: `${borderRadius}px`}}
 >
     <input
       type="radio"
