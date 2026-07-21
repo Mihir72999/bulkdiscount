@@ -127,81 +127,42 @@ interface WidgetSettingsPayload {
   borderRadius: number;
 }
 
-async function saveSettingsFetcher(
-  url: string,
-  { arg }: { arg: WidgetSettingsPayload }
-) {
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(arg),
-  });
 
-     const text = await res.text() as string;
-    // If the status code is not in the range 200-299, throw an error
-    if (!res.ok) {
-     throw new Error(`HTTP ${res?.status}: ${text}`);
-    }
 
-    return JSON.parse(text)
+// lib/api/widget-settings.ts
+interface WidgetSettingsPayload {
+ borderColor: string;
+ borderRadius: number;
 }
 
 export function useSaveWidgetSettings() {
   const { context } = useSession();
- const params = new URLSearchParams({ context }).toString();
-  const APP_URL = "https://bgcom.mihir72999.workers.dev";
 
-  const { trigger, isMutating, error, data } = useSWRMutation(
-    context
-      ? `${APP_URL}/api/widget/settings?${params}}`
-      : null,
-    saveSettingsFetcher
-  );
+  const saveWidgetSettings = async (
+    payload: WidgetSettingsPayload
+ ) => {
+   const APP_URL = "https://bgcom.mihir72999.workers.dev";
 
-  return {
-    saveWidgetSettings: trigger,
-    isSaving: isMutating,
-    error,
-    data,
+       const res = await fetch(
+       `${APP_URL}/api/widget/settings?context=${encodeURIComponent(context)}`,
+        {
+         method: "POST",
+          headers: {
+         "Content-Type": "application/json",
+         },
+         body: JSON.stringify(payload),
+       }
+      );
+
+     if (!res.ok) {
+       const { message } = (await res.json()) as { message: string };
+       throw new Error(message || "Failed to save widget settings");
+    }
+
+    return res.json();
   };
-}
 
-// lib/api/widget-settings.ts
-//interface WidgetSettingsPayload {
- // borderColor: string;
-//  borderRadius: number;
-//}
-
-//export function useSaveWidgetSettings() {
-  //const { context } = useSession();
-
-  //const saveWidgetSettings = async (
-    //payload: WidgetSettingsPayload
- // ) => {
-   // const APP_URL = "https://bgcom.mihir72999.workers.dev";
-
- //   const res = await fetch(
- //     `${APP_URL}/api/widget/settings?context=${encodeURIComponent(context)}`,
- //     {
- //       method: "POST",
- //       headers: {
- //         "Content-Type": "application/json",
- //       },
- //       body: JSON.stringify(payload),
- //     }
- //   );
-
- //   if (!res.ok) {
- //     const { message } = (await res.json()) as { message: string };
- //     throw new Error(message || "Failed to save widget settings");
- //   }
-
- //   return res.json();
- // };
-
- // return {
- //   saveWidgetSettings,
- // };
-//}
+    return {
+      saveWidgetSettings,
+    };
+ }
