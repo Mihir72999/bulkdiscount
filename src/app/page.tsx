@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-
+import { toast } from "sonner";
 import {
   RadioGroup,
   RadioGroupItem,
@@ -25,7 +25,9 @@ export default function Home() {
   const color = [
    "#c364f4",
    "#800000",
-   "#0018F9"
+   "#0018F9",
+   "#FF9322",
+   "#917CDB"
   ]
   async function handleSave(){
     try {
@@ -34,9 +36,11 @@ export default function Home() {
       borderColor:backgroundColor,
       borderRadius,
     });
-    console.log("Settings saved");
+    toast.success('your settings saved successfully')
+    
   } catch (err) {
     console.error(err);
+    toast.error(`your settings saved successfully ${JSON.stringify(err)}`)
   } 
   }
   return (
@@ -167,7 +171,7 @@ export default function Home() {
                 <Input defaultValue="Bundle & Save" />
               </div>
 
-
+             <div className="flex items-center">
               <div className="space-y-2">
              <div className="flex justify-between">
              <span>Border Radius</span>
@@ -188,6 +192,7 @@ export default function Home() {
       
    />
    </div>
+            </div>
             </div>
           </div>
 

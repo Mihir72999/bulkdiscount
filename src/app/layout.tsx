@@ -4,6 +4,7 @@ import "./globals.css";
 import SessionProvider from "../../context/session";
 import Header from "../../components/header";
 import { Suspense } from "react";
+import { Toaster } from "@/components/ui/sonner";
 export const dynamic = "force-dynamic";
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
             <Suspense fallback={null}>
 			<SessionProvider>
 				{children}
+			 <Toaster position="top-right" richColors />
 		    </SessionProvider>
 			 </Suspense>
 				</body>
