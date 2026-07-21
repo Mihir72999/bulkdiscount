@@ -220,13 +220,6 @@ export default function Home() {
        <div className="py-6 bg-white"> 
        <div className={
         cn("bc-discount-widget w-2/3 border mx-auto my-4 z-50",
-    //     checkedRadio && backgroundColor === "#c364f4" && "border-[#c364f4]",
-    // checkedRadio && backgroundColor === "#800000" && "border-[#800000]",
-    // checkedRadio && backgroundColor === "#0018F9" && "border-[#0018F9]",
-    // checkedRadio && backgroundColor === "#FF9322" && "border-[#FF9322]",
-    // checkedRadio && backgroundColor === "#917CDB" && "border-[#917CDB]",
-    // !checkedRadio && "border-black",
-      
       )}
         style={{ 
      borderColor: checkedRadio ? backgroundColor : "#000",      
@@ -234,7 +227,7 @@ export default function Home() {
       onClick={() => setCheckedRadio((prev) => !prev)}>
   <label
   className={cn(
-    "relative mb-4 flex cursor-pointer  items-center gap-5  bg-white px-4 py-3 pl-8",
+    "relative mb-4 flex cursor-pointer  items-center gap-5  bg-white mx-4 my-3 pl-8",
       
   )}
 >
