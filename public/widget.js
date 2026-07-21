@@ -69,7 +69,7 @@ let widgetSettings = null;
 async function loadWidgetSettings() {
   try {
     const res = await fetch(
-      `${API_BASE}/api/widgets/settings??domain=${encodeURIComponent(window.location.hostname)}`
+      `${API_BASE}/api/widgets/settings?domain=${encodeURIComponent(window.location.hostname)}`
     );
 
     if (!res.ok) {
@@ -520,6 +520,7 @@ async function init() {
     console.log("✅ Product page");
 
     loadCSS();
+    await loadWidgetSettings()
 
     const productId = getProductId();
 
@@ -540,8 +541,6 @@ async function init() {
     let rules = [];
 
     try {
-        if(widgetSettings) return widgetSettings
-        widgetSettings = await loadWidgetSettings()
 
         console.log("Calling getRules...");
 
