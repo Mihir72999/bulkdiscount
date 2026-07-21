@@ -140,7 +140,7 @@ async function saveSettingsFetcher(
   });
 
   if (!res.ok) {
-    const error = await res.json();
+    const error = await res.json() as {error:any};
     throw new Error(error.message || "Failed to save settings");
   }
 
