@@ -221,10 +221,17 @@ export default function Home() {
        <div className="bc-discount-widget w-2/3" onClick={() => setCheckedRadio((prev) => !prev)}>
   <label
   className={cn(
-    "relative mb-4 flex cursor-pointer items-center gap-5 rounded-[10px] border bg-white px-4 py-3 pl-8 transition-all hover:-translate-y-0.5",
-    checkedRadio ? "border-2" : "border-black"
+    "relative mb-4 flex cursor-pointer  items-center gap-5 border bg-white px-4 py-3 pl-8 transition-all hover:-translate-y-0.5",
+    checkedRadio ? "border-2" : "border-black",
+  backgroundColor === "#c364f4" && "checked:border-[#c364f4]",
+  backgroundColor === "#800000" && "checked:border-[#800000]",
+  backgroundColor === "#0018F9" && "checked:border-[#0018F9]",
+  backgroundColor === "#FF9322" && "checked:border-[#FF9322]",
+  backgroundColor === "#917CDB" && "checked:border-[#917CDB]",
+  borderRadius > 0 && borderRadius < 15 && borderRadius 
   )}
-  style={checkedRadio ? { borderColor: backgroundColor } : undefined}
+  style={{ 
+    borderRadius}}
 >
     <input
       type="radio"
