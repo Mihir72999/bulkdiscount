@@ -139,12 +139,13 @@ async function saveSettingsFetcher(
     body: JSON.stringify(arg),
   });
 
-  if (!res.ok) {
-    const error = await res.json() as {error:any};
-    throw new Error(error.message || "Failed to save settings");
-  }
+     const text = await res.text() as string;
+    // If the status code is not in the range 200-299, throw an error
+    if (!res.ok) {
+     throw new Error(`HTTP ${res?.status}: ${text}`);
+    }
 
-  return res.json();
+    return JSON.parse(text)
 }
 
 export function useSaveWidgetSettings() {
