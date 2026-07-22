@@ -219,7 +219,7 @@ export default function Home() {
       </Card>
        <div className="py-6 bg-white h-64"> 
        <div className={
-        cn("bc-discount-widget w-2/3 h-1/4 my-auto border mx-auto  z-50",
+        cn("bc-discount-widget w-2/3 my-auto border mx-auto  z-50",
       )}
         style={{ 
      borderColor: checkedRadio ? backgroundColor : "#000",      
