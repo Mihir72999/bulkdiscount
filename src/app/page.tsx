@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ColorPalette } from "../../components/colorPalette";
 import { useSaveWidgetSettings } from "../../lib/hooks";
 import { cn } from "@/lib/utils";
+import DiscountForm from "@/app/section/discountForm";
 
 
 export default function Home() {
@@ -141,8 +142,9 @@ export default function Home() {
                 </Label>
               </div>
             </RadioGroup>
-
-            <div className="grid grid-cols-2 gap-4">
+            
+            <DiscountForm/>
+            {/* <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Minimum Quantity</Label>
                 <Input
@@ -159,6 +161,7 @@ export default function Home() {
                 />
               </div>
             </div>
+            */}
           </div>
 
           {/* Appearance */}
