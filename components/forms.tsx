@@ -63,10 +63,10 @@ const Form = ({ formData, onCancel, onSubmit }: FormProps) => {
         setForm(prevForm => ({ ...prevForm, type: value }));
     };
 
-    const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { checked, name: formName } = event.target || {};
-        setForm(prevForm => ({ ...prevForm, [formName]: checked }));
-    };
+    // const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+    //     const { checked, name: formName } = event.target || {};
+    //     setForm(prevForm => ({ ...prevForm, [formName]: checked }));
+    // };
 
     const handleSubmit = (event: FormEvent<EventTarget>) => {
         event.preventDefault();

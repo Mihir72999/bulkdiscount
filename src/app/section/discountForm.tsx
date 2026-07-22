@@ -1,31 +1,118 @@
 "use client";
 
-import { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+const formSchema = z.object({
+  discounts: z.array(
+    z.object({
+      quantity: z.string().min(1, "Quantity is required"),
+      discount: z.string().min(2, "Discount is required"),
+    })
+  ),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 export default function DiscountForm() {
-  const [inputs, setInputs] = useState([0]);
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      discounts: [
+        {
+          quantity: "",
+          discount: "",
+        },
+      ],
+    },
+  });
 
-  const addInput = () => {
-    setInputs((prev) => [...prev, prev.length]);
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "discounts",
+  });
+
+  const onSubmit = (values: FormValues) => {
+    console.log(values);
   };
 
   return (
-    <div className="space-y-4">
-      {inputs.map((_, index) => (
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {fields.map((item, index) => (
         <div
-          key={index}
-          className="flex items-center gap-4 rounded-lg border p-4"
+          key={item.id}
+          className="rounded-lg border p-4 space-y-4"
         >
-          <Input placeholder="Minimum Quantity" />
-          <Input placeholder="Discount (%)" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Minimum Quantity</Label>
+
+              <Input
+                type="number"
+                placeholder="1"
+                {...register(`discounts.${index}.quantity`)}
+              />
+
+              {errors.discounts?.[index]?.quantity && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.discounts[index]?.quantity?.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <Label>Discount (%)</Label>
+
+              <Input
+                type="number"
+                placeholder="10"
+                {...register(`discounts.${index}.discount`)}
+              />
+
+              {errors.discounts?.[index]?.discount && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.discounts[index]?.discount?.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={() => remove(index)}
+          >
+            Remove
+          </Button>
         </div>
       ))}
 
-      <Button onClick={addInput}>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={() =>
+          append({
+            quantity: "",
+            discount: "",
+          })
+        }
+      >
         + Add Discount
       </Button>
-    </div>
+
+      <Button type="submit">
+        Save Discounts
+      </Button>
+    </form>
   );
 }
