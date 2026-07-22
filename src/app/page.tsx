@@ -29,7 +29,8 @@ export default function Home() {
    "#800000",
    "#0018F9",
    "#FF9322",
-   "#d80beb"
+   "#d80beb",
+   "#55e912"
   ]
   async function handleSave(){
     try {
