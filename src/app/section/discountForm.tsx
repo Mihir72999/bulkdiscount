@@ -60,6 +60,7 @@ export default function DiscountForm() {
               <Input
                 type="number"
                 placeholder="1"
+                className="space-y-2"
                 {...register(`discounts.${index}.quantity`)}
               />
 
@@ -76,6 +77,7 @@ export default function DiscountForm() {
               <Input
                 type="number"
                 placeholder="10"
+                className="space-y-2"
                 {...register(`discounts.${index}.discount`)}
               />
 
@@ -90,6 +92,7 @@ export default function DiscountForm() {
           <Button
             type="button"
             variant="destructive"
+            className={'cursor-pointer'}
             onClick={() => remove(index)}
           >
             Remove
