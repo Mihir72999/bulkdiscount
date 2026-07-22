@@ -29,7 +29,7 @@ export default function Home() {
    "#800000",
    "#0018F9",
    "#FF9322",
-   "#917CDB"
+   "#d80beb"
   ]
   async function handleSave(){
     try {
@@ -203,7 +203,7 @@ export default function Home() {
          <ColorPalette colors={color} value={backgroundColor} onChange={setBackgroundColor} />
           </div>
           {/* Footer */}
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-3 h-100">
             <Button variant="outline">
               Cancel
             </Button>
@@ -227,8 +227,7 @@ export default function Home() {
       onClick={() => setCheckedRadio((prev) => !prev)}>
   <label
   className={cn(
-    "relative mb-4 flex cursor-pointer  items-center gap-5  bg-white mx-4 my-3 pl-8",
-      
+    "relative mb-4 flex cursor-pointer  items-center gap-5  bg-white mx-4 my-3 pl-8",     
   )}
 >
     <input
@@ -242,7 +241,7 @@ export default function Home() {
   backgroundColor === "#800000" && "bg-[#800000] focus:outline-[#800000] active:outline-[#800000]",
   backgroundColor === "#0018F9" && "bg-[#0018F9] focus:outline-[#0018F9] active:outline-[#0018F9]",
   backgroundColor === "#FF9322" && "bg-[#FF9322] focus:outline-[#FF9322] active:outline-[#FF9322]",
-  backgroundColor === "#917CDB" && "bg-[#917CDB] focus:outline-[#917CDB] active:outline-[#917CDB]",
+  backgroundColor === "#d80beb" && "bg-[#d80beb] focus:outline-[#d80beb] active:outline-[#d80beb]",
   "focus:outline-2 focus:outline-offset-4 active:outline-2 active:outline-offset-4"
 )}
     />
