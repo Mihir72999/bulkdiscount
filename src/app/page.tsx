@@ -13,9 +13,11 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ColorPalette } from "../../components/colorPalette";
-import { useSaveWidgetSettings } from "../../lib/hooks";
+import { useSaveWidgetSettings, useProductList } from "../../lib/hooks";
 import { cn } from "@/lib/utils";
 import DiscountForm from "@/app/section/discountForm";
+import ProductSelector from "./section/productSection";
+import { useDebounce } from "@/lib/debounce";
 
 
 export default function Home() {
@@ -24,6 +26,10 @@ export default function Home() {
   const [backgroundColor, setBackgroundColor] = useState("#c364f4");
   const [borderRadius, setBorderRadius] = useState(10)
   const [checkedRadio, setCheckedRadio] = useState(false)
+  const [search, setSearch] = useState("");
+const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
+const debouncedKeyword = useDebounce(search, 300);
+const { list:products, isLoading } = useProductList({keyword:debouncedKeyword});
   const { saveWidgetSettings } = useSaveWidgetSettings();
   const color = [
    "#c364f4",
@@ -88,7 +94,15 @@ export default function Home() {
           </div>
 
           {/* Products */}
-          <div className="space-y-4">
+          <ProductSelector
+              search={search}
+              onSearchChange={setSearch}
+              products={products?.data ?? []}
+              selectedProducts={selectedProducts}
+              onSelectedProductsChange={setSelectedProducts}
+              isLoading={isLoading}
+            />
+          {/* <div className="space-y-4">
             <h3 className="font-semibold text-lg">
               Products
             </h3>
@@ -100,7 +114,7 @@ export default function Home() {
             <div className="border rounded-lg p-4 text-sm text-muted-foreground">
               Product selector goes here...
             </div>
-          </div>
+          </div> */}
 
           {/* Discount */}
           <div className="space-y-4">
@@ -116,6 +130,7 @@ export default function Home() {
                 <RadioGroupItem
                   value="percentage"
                   id="percentage"
+                  className={'cursor-pointer'}
                 />
                 <Label htmlFor="percentage">
                   Percentage
@@ -126,6 +141,7 @@ export default function Home() {
                 <RadioGroupItem
                   value="fixed"
                   id="fixed"
+                  className={'cursor-pointer'}
                 />
                 <Label htmlFor="fixed">
                   Fixed Amount
@@ -136,32 +152,15 @@ export default function Home() {
                 <RadioGroupItem
                   value="price"
                   id="price"
+                  className={'cursor-pointer'}
                 />
                 <Label htmlFor="price">
                   Fixed Price
                 </Label>
               </div>
             </RadioGroup>
-            
-            <DiscountForm/>
-            {/* <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Minimum Quantity</Label>
-                <Input
-                  type="number"
-                  defaultValue={2}
-                />
-              </div>
 
-              <div className="space-y-2">
-                <Label>Discount Value</Label>
-                <Input
-                  type="number"
-                  placeholder="10" 
-                />
-              </div>
-            </div>
-            */}
+            <DiscountForm/>
           </div>
 
           {/* Appearance */}

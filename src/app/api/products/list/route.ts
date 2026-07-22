@@ -12,7 +12,10 @@ export async function GET(req:NextRequest){
        const limit = req.nextUrl.searchParams.get("limit") ?? "20";
        const sort = req.nextUrl.searchParams.get("sort");
        const direction = req.nextUrl.searchParams.get("direction");
-         const params = new URLSearchParams({ page, limit, ...(sort && {sort, direction:direction ?? "asc"}) }).toString();
+         const keyword = req.nextUrl.searchParams.get("keyword");
+         const params = new URLSearchParams({ page, limit,
+           ...(keyword ? { keyword } : {}),
+           ...(sort && {sort, direction:direction ?? "asc"}) }).toString();
  
          const response = await bigcommerce.get(`/catalog/products?${params}`);
         return NextResponse.json(response,{status:200})
