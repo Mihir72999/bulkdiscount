@@ -243,6 +243,7 @@ export default function Home() {
   backgroundColor === "#0018F9" && "bg-[#0018F9] focus:outline-[#0018F9] active:outline-[#0018F9]",
   backgroundColor === "#FF9322" && "bg-[#FF9322] focus:outline-[#FF9322] active:outline-[#FF9322]",
   backgroundColor === "#d80beb" && "bg-[#d80beb] focus:outline-[#d80beb] active:outline-[#d80beb]",
+  backgroundColor === "#55e912" && "bg-[#55e912] focus:outline-[#55e912] active:outline-[#55e912]",
   "focus:outline-2 focus:outline-offset-4 active:outline-2 active:outline-offset-4"
 )}
     />
