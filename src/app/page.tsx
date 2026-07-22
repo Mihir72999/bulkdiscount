@@ -203,7 +203,7 @@ export default function Home() {
          <ColorPalette colors={color} value={backgroundColor} onChange={setBackgroundColor} />
           </div>
           {/* Footer */}
-          <div className="flex justify-end gap-3 h-100">
+          <div className="flex justify-end gap-3 ">
             <Button variant="outline">
               Cancel
             </Button>
@@ -217,7 +217,7 @@ export default function Home() {
 
         </CardContent>
       </Card>
-       <div className="py-6 bg-white"> 
+       <div className="py-6 bg-white h-64"> 
        <div className={
         cn("bc-discount-widget w-2/3 border mx-auto my-4 z-50",
       )}
