@@ -29,7 +29,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
 const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
 const debouncedKeyword = useDebounce(search, 300);
-const { list:products, isLoading } = useProductList({keyword:debouncedKeyword});
+const { list:products = [], isLoading } = useProductList({keyword:debouncedKeyword});
   const { saveWidgetSettings } = useSaveWidgetSettings();
   const color = [
    "#c364f4",
@@ -97,24 +97,12 @@ const { list:products, isLoading } = useProductList({keyword:debouncedKeyword});
           <ProductSelector
               search={search}
               onSearchChange={setSearch}
-              products={products?.data ?? []}
+              products={products ?? []}
               selectedProducts={selectedProducts}
               onSelectedProductsChange={setSelectedProducts}
               isLoading={isLoading}
             />
-          {/* <div className="space-y-4">
-            <h3 className="font-semibold text-lg">
-              Products
-            </h3>
-
-            <Input
-              placeholder="Search products..."
-            />
-
-            <div className="border rounded-lg p-4 text-sm text-muted-foreground">
-              Product selector goes here...
-            </div>
-          </div> */}
+  
 
           {/* Discount */}
           <div className="space-y-4">

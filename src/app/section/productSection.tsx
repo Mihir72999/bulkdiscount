@@ -76,7 +76,7 @@ export default function ProductSelector({
                 </Label>
               </div>
             ))
-          ) : (
+          ) : isLoading ? <Loading /> : (
             <p className="text-sm text-muted-foreground">
               No products found.
             </p>
