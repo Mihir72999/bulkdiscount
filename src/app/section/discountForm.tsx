@@ -55,7 +55,7 @@ export default function DiscountForm() {
           key={item.id}
           className="rounded-lg border p-4 space-y-4"
         >
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-rows-2 gap-4">
             <div>
               <Label>Minimum Quantity</Label>
 
