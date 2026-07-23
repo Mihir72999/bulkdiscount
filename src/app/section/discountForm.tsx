@@ -11,8 +11,8 @@ import { Label } from "@/components/ui/label";
 const formSchema = z.object({
   discounts: z.array(
     z.object({
-      quantity: z.number().min(1, "Quantity is required"),
-      discount: z.number().min(2, "Discount is required"),
+      quantity: z.number().min(2, "Quantity is required"),
+      discount: z.number().min(5, "Discount is required"),
     })
   ),
 });
@@ -61,7 +61,7 @@ export default function DiscountForm() {
                 type="number"
                 placeholder="1"
                 className="my-2"
-                {...register(`discounts.${index}.quantity`)}
+                {...register(`discounts.${index}.quantity`,{valueAsNumber:true})}
               />
 
               {errors.discounts?.[index]?.quantity && (
@@ -78,7 +78,7 @@ export default function DiscountForm() {
                 type="number"
                 placeholder="10"
                 className="my-2"
-                {...register(`discounts.${index}.discount`)}
+                {...register(`discounts.${index}.discount`,{valueAsNumber:true})}
               />
 
               {errors.discounts?.[index]?.discount && (
