@@ -18,10 +18,11 @@ import { cn } from "@/lib/utils";
 import DiscountForm from "@/app/section/discountForm";
 import ProductSelector from "./section/productSection";
 import { useDebounce } from "@/lib/debounce";
+import FixedDiscountForm from "./section/fixedDiscountForm";
+import PriceDiscountForm from "./section/priceDiscountForm";
 
 
 export default function Home() {
-  const [enabled, setEnabled] = useState(true);
   const [discountType, setDiscountType] = useState("percentage");
   const [backgroundColor, setBackgroundColor] = useState("#c364f4");
   const [borderRadius, setBorderRadius] = useState(10)
@@ -53,6 +54,20 @@ const { list:products = [], isLoading } = useProductList({keyword:debouncedKeywo
     toast.error(`your settings saved successfully ${JSON.stringify(err)}`)
   } 
   }
+  
+  const renderForm = () => {
+  switch (discountType) {
+    case "fixed":
+      return <FixedDiscountForm />;
+
+    case "price":
+      return <PriceDiscountForm />;
+
+    default:
+      return <DiscountForm />;
+  }
+};
+
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <Card>
@@ -133,8 +148,8 @@ const { list:products = [], isLoading } = useProductList({keyword:debouncedKeywo
                 </Label>
               </div>
             </RadioGroup>
-
-            <DiscountForm/>
+           
+            {renderForm()}
           </div>
 
           {/* Appearance */}
