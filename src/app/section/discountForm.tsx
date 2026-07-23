@@ -11,7 +11,8 @@ import { Label } from "@/components/ui/label";
 const formSchema = z.object({
   discounts: z.array(
     z.object({
-      quantity: z.number().min(2, "Quantity is required"),
+      quantity_min: z.number().min(2, "Quantity is required"),
+      quantity_max: z.number().min(2, "Quantity is required"),
       discount: z.number().min(5, "Discount is required"),
     })
   ),
@@ -30,7 +31,8 @@ export default function DiscountForm() {
     defaultValues: {
       discounts: [
         {
-          quantity: 2,
+          quantity_min: 2,
+          quantity_max: 2,
           discount: 5,
         },
       ],
@@ -61,16 +63,34 @@ export default function DiscountForm() {
                 type="number"
                 placeholder="1"
                 className="my-2"
-                {...register(`discounts.${index}.quantity`,{valueAsNumber:true})}
+                {...register(`discounts.${index}.quantity_min`,{valueAsNumber:true})}
               />
 
-              {errors.discounts?.[index]?.quantity && (
+              {errors.discounts?.[index]?.quantity_min && (
                 <p className="mt-1 text-sm text-red-500">
-                  {errors.discounts[index]?.quantity?.message}
+                  {errors.discounts[index]?.quantity_min?.message}
                 </p>
               )}
             </div>
+         
+                      <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Maximum Quantity</Label>
 
+              <Input
+                type="number"
+                placeholder="1"
+                className="my-2"
+                {...register(`discounts.${index}.quantity_max`,{valueAsNumber:true})}
+              />
+
+              {errors.discounts?.[index]?.quantity_min && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.discounts[index]?.quantity_max?.message}
+                </p>
+              )}
+            </div>
+           </div>
             <div>
               <Label>Discount (%)</Label>
 
@@ -105,7 +125,8 @@ export default function DiscountForm() {
         variant="outline"
         onClick={() =>
           append({
-            quantity: 2,
+            quantity_min: 2,
+            quantity_max: 2,
             discount: 5,
           })
         }

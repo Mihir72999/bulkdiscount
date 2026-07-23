@@ -77,20 +77,6 @@ const { list:products = [], isLoading } = useProductList({keyword:debouncedKeywo
               <Label>Description</Label>
               <Textarea placeholder="Optional description..." />
             </div>
-
-            <div className="flex items-center justify-between border rounded-lg p-4">
-              <div>
-                <Label>Enable Offer</Label>
-                <p className="text-sm text-muted-foreground">
-                  Customers can use this offer immediately.
-                </p>
-              </div>
-
-              <Switch
-                checked={enabled}
-                onCheckedChange={setEnabled}
-              />
-            </div>
           </div>
 
           {/* Products */}
