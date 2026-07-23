@@ -28,7 +28,7 @@ export default function Home() {
   const [checkedRadio, setCheckedRadio] = useState(false)
   const [search, setSearch] = useState("");
 const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
-const debouncedKeyword = useDebounce(search, 300);
+const debouncedKeyword = useDebounce(search.length >= 3 ? search : "", 300);
 const { list:products = [], isLoading } = useProductList({keyword:debouncedKeyword});
   const { saveWidgetSettings } = useSaveWidgetSettings();
   const color = [
