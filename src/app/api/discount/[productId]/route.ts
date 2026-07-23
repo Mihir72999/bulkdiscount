@@ -102,10 +102,20 @@ return NextResponse.json({
 //   }
 
 //     const { results: rules } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
-   
+   const rules = response.data.map((data:any)=>{
+
+    return{
+      productId,
+      quantity: data.quantity_min,
+      discountType:data.type,
+      discount:data.amount,
+      label:`${data.amount} % OFF`
+    }
+   })
+   rules.unshift({productId,quantity: 1 , discountType:response.data[0].type, discount:0,label:'SINGLE'})
     return NextResponse.json({
     succes:true,
-    rules: response.data,
+    rules,
     variants : variants?.data
    },{headers})
 
