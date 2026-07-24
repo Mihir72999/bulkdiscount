@@ -13,18 +13,25 @@ export async function POST(req:NextRequest , { params }: { params: Promise<{ pro
            quantity_max: number,
            type: string,
            amount: number       
-           };
+           }[];
+
+          const results = []
+
           const bigcommerce = bigcommerceClient(context?.accessToken as string, context?.storeHash as string, 'v3');
-                       const { data } = await bigcommerce.post(
+        for (const rule of body){
+      
+          const { data } = await bigcommerce.post(
       `/catalog/products/${productId}/bulk-pricing-rules`,
       {
-        quantity_min: body.quantity_min,
-        quantity_max: body.quantity_max,
-        type: body.type,      // "percent" | "fixed" | "price"
-        amount: body.amount,
+        quantity_min: rule.quantity_min,
+        quantity_max: rule.quantity_max,
+        type: rule.type,      // "percent" | "fixed" | "price"
+        amount: rule.amount,
       }
     );
-                   return NextResponse.json(data,{status:200})
+      results.push(data)
+    }              
+        return NextResponse.json(results,{status:200})
                } catch (error) {
   const { message, response } = error as {
        message: string;

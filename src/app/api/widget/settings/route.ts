@@ -12,9 +12,24 @@ export async function POST(req: NextRequest) {
                    if(!context?.storeHash){
                  return NextResponse.json({message:'AccessToken Required'})
              }
-    const { borderColor, borderRadius } = body as {borderColor:string , borderRadius:number};
+         
+    const { 
+      borderColor, 
+      borderRadius,
+      product_ids,
+      name,
+      description,
+      widget_title    
+    } = body as {
+      borderColor:string, 
+      borderRadius:number,
+      product_ids:string,
+      name:string,
+      description:string
+      widget_title:string
+    };
 
-    if (!borderColor || borderRadius === undefined) {
+    if (!borderColor || borderRadius || product_ids === undefined) {
       return NextResponse.json(
         {
           success: false,
@@ -27,35 +42,41 @@ export async function POST(req: NextRequest) {
 const db = await getDB()
 
 const storeHash = context?.storeHash
-const settings = await db
+const {results:settings} = await db
   .prepare(
-    "SELECT id FROM widget_settings WHERE store_hash = ?"
+    "SELECT product_ids FROM widget_settings WHERE store_hash = ?"
   )
   .bind(storeHash)
-  .first();
+  .all<{product_ids:string}>();
+const bodyProductIds = JSON.parse(product_ids);
 
-if (storeHash && settings) {
-  await db
-    .prepare(`
-      UPDATE widget_settings
-      SET border_color = ?, border_radius = ?
-      WHERE store_hash = ?
-    `)
-    .bind(borderColor, borderRadius, storeHash)
-    .run();
-} else {
+const bodySet = new Set(bodyProductIds);
+
+const exists = settings.some(row => {
+  const dbProductIds = JSON.parse(row.product_ids) as number[];
+
+  return dbProductIds.some(id => bodySet.has(id));
+});
+
+if (storeHash && exists) {
+ return NextResponse.json({success:false , data:[]}) 
+} 
   await db
     .prepare(`
       INSERT INTO widget_settings (
         store_hash,
         border_color,
-        border_radius
+        border_radius,
+        product_ids,
+        name,
+        description,
+        widget_title
       )
-      VALUES (?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `)
-    .bind(storeHash, borderColor, borderRadius)
+    .bind(storeHash, borderColor, borderRadius , product_ids, name, description, widget_title)
     .run();
-}
+
 
     return NextResponse.json({
       success: true,
@@ -77,3 +98,11 @@ if (storeHash && settings) {
   }
 }
 
+// await db
+//     .prepare(`
+//       UPDATE widget_settings
+//       SET border_color = ?, border_radius = ?, name = ?, description = ?, widget_title = ?
+//       WHERE store_hash = ?
+//     `)
+//     .bind(borderColor, borderRadius, name, description , widget_title, storeHash )
+//     .run();

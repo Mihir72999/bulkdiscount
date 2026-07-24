@@ -106,7 +106,7 @@ export function useGetPricingRules(products: Product[]) {
 type UpdateBulkPricingRule = {
   quantity_min: number;
   quantity_max?: number;
-  type: "percent" | "fixed" | "price";
+  type: string;
   amount: number;
 };
 
@@ -150,7 +150,7 @@ export function useCreateBulkPricingRule() {
 
   const createBulkPricingRule = async (
     productId: number,
-    data:UpdateBulkPricingRule,
+    data:UpdateBulkPricingRule[],
   ) => {
     if (!context) {
       throw new Error("Missing context");
@@ -245,6 +245,10 @@ interface WidgetSettingsPayload {
 interface WidgetSettingsPayload {
  borderColor: string;
  borderRadius: number;
+ product_ids :string,
+ name: string,
+ description: string,
+ widget_title: string
 }
 
 export function useSaveWidgetSettings() {

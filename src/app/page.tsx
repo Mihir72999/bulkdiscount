@@ -13,7 +13,7 @@
   import { Switch } from "@/components/ui/switch";
   import { Textarea } from "@/components/ui/textarea";
   import { ColorPalette } from "../../components/colorPalette";
-  import { useSaveWidgetSettings, useProductList} from "../../lib/hooks";
+  import { useSaveWidgetSettings, useProductList, useCreateBulkPricingRule} from "../../lib/hooks";
   import { cn } from "@/lib/utils";
   import DiscountForm from "@/app/section/discountForm";
   import ProductSelector from "./section/productSection";
@@ -32,12 +32,16 @@ export type DiscountRule = {
     const [backgroundColor, setBackgroundColor] = useState("#c364f4");
     const [borderRadius, setBorderRadius] = useState(10)
     const [checkedRadio, setCheckedRadio] = useState(false)
+    const [widget_title , setWidgetTitle] = useState('')
+    const [name , setName] = useState('')
+    const [description,setDescription] = useState('')
     const [search, setSearch] = useState("");
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
-  const [_discounts, setDiscounts] = useState<DiscountRule[]>([]);
+  const [discounts, setDiscounts] = useState<DiscountRule[]>([]);
   const debouncedKeyword = useDebounce(search.length >= 3 ? search : "", 300);
   const { list:products = [], isLoading } = useProductList({keyword:debouncedKeyword});
     const { saveWidgetSettings } = useSaveWidgetSettings();
+    const {createBulkPricingRule} = useCreateBulkPricingRule()
     const color = [
     "#c364f4",
     "#800000",
@@ -52,7 +56,14 @@ export type DiscountRule = {
       await saveWidgetSettings({
         borderColor:backgroundColor,
         borderRadius,
+        name,
+        widget_title,
+        description,
+        product_ids: JSON.stringify(selectedProducts)
       });
+      for(const productId of selectedProducts){
+        await createBulkPricingRule(productId,discounts)
+      }
       toast.success('your settings saved successfully')
       
     } catch (err) {
@@ -100,12 +111,12 @@ export type DiscountRule = {
 
               <div className="space-y-2">
                 <Label>Offer Name</Label>
-                <Input placeholder="Summer Bundle" />
+                <Input placeholder="Summer Bundle" value={name} onChange={(e)=>setName(e.target.value)} />
               </div>
 
               <div className="space-y-2">
                 <Label>Description</Label>
-                <Textarea placeholder="Optional description..." />
+                <Textarea placeholder="Optional description..." value={description} onChange={(e)=>setDescription(e.target.value)}/>
               </div>
             </div>
 
@@ -177,7 +188,7 @@ export type DiscountRule = {
 
                 <div className="space-y-2">
                   <Label>Widget Title</Label>
-                  <Input defaultValue="Bundle & Save" />
+                  <Input defaultValue="Bundle & Save" value={widget_title} onChange={(e)=>setWidgetTitle(e.target.value)} />
                 </div>
 
               <div className="flex items-center justify-between">

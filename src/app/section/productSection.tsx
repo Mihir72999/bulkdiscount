@@ -35,7 +35,7 @@ export default function ProductSelector({
   );
 
   const toggleProduct = (id: number) => {
-    console.log(selectedProducts)
+    
       if (selectedProducts.includes(id)) {
       onSelectedProductsChange(
         selectedProducts.filter((productId) => productId !== id)
@@ -43,6 +43,7 @@ export default function ProductSelector({
     } else {
       onSelectedProductsChange([...selectedProducts, id]);
     }
+   
   };
   
   return (
