@@ -21,20 +21,21 @@ export async function GET(req:NextRequest) {
  const db = await getDB()
 const result = await db.prepare('SELECT storeHash from stores WHERE domain = ?').bind(domain).first<{storeHash:string | null}>()
 const storeHash = result?.storeHash
-// const settings = await db
-//   .prepare(`
-//     SELECT *
-//     FROM widget_settings
-//     WHERE store_hash = ?
-//       AND EXISTS (
-//         SELECT 1
-//         FROM json_each(product_ids)
-//         WHERE value = ?
-//       )
-//   `)
-//   .bind(storeHash, productId)
-//   .first();
-  const {results:settings} = await db.prepare('SELECT product_ids FROM widget_settings').all()
+const prorduct_id = Number(productId)
+const settings = await db
+  .prepare(`
+    SELECT *
+    FROM widget_settings
+    WHERE store_hash = ?
+      AND EXISTS (
+        SELECT 1
+        FROM json_each(product_ids)
+        WHERE value = ?
+      )
+  `)
+  .bind(storeHash, prorduct_id)
+  .first();
+
     return NextResponse.json({
       success: true,
       data: settings,
