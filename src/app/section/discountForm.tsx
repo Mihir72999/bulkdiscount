@@ -15,7 +15,7 @@ const formSchema = z.object({
       quantity_max: z.number().min(2, "Maximum Quantity is required"),
       discount: z.number().min(5, "Discount is required"),
     }).refine((val)=>val.quantity_min <= val.quantity_max ,{
-      message:'number must be grater than max value',
+      message:'minimum quantity must be less than or equal maximum quantity',
       path:["quantity_min"]
     })
   ),
