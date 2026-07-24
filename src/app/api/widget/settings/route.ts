@@ -92,6 +92,7 @@ if (storeHash && exists) {
       {
         success: false,
         message: "Something went wrong.",
+        error
       },
       { status: 500}
     );
