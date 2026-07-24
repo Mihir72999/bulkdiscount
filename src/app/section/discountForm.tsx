@@ -13,7 +13,7 @@ const formSchema = z.object({
     z.object({
       quantity_min: z.number().min(2, "Minimum Quantity is required"),
       quantity_max: z.number().min(2, "Maximum Quantity is required"),
-      discount: z.number().min(5, "Discount is required"),
+      amount: z.number().min(5, "Discount is required"),
     }).refine((val)=>val.quantity_min <= val.quantity_max ,{
       message:'minimum quantity must be less than or equal maximum quantity',
       path:["quantity_min"]
@@ -36,7 +36,7 @@ export default function DiscountForm() {
         {
           quantity_min: 2,
           quantity_max: 2,
-          discount: 5,
+          amount: 5,
         },
       ],
     },
@@ -99,12 +99,12 @@ export default function DiscountForm() {
                 type="number"
                 placeholder="10"
                 className="my-2"
-                {...register(`discounts.${index}.discount`,{valueAsNumber:true})}
+                {...register(`discounts.${index}.amount`,{valueAsNumber:true})}
               />
 
-              {errors.discounts?.[index]?.discount && (
+              {errors.discounts?.[index]?.amount && (
                 <p className="mt-1 text-sm text-red-500">
-                  {errors.discounts[index]?.discount?.message}
+                  {errors.discounts[index]?.amount?.message}
                 </p>
               )}
             </div>
@@ -128,7 +128,7 @@ export default function DiscountForm() {
           append({
             quantity_min: 2,
             quantity_max: 2,
-            discount: 5,
+            amount: 5,
           })
         }
       >
