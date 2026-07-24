@@ -21,7 +21,12 @@
   import FixedDiscountForm from "./section/fixedDiscountForm";
   import PriceDiscountForm from "./section/priceDiscountForm";
 
-
+export type DiscountRule = {
+  quantity_min: number;
+  quantity_max: number;
+  amount: number;
+  type:string;
+};
   export default function Home() {
     const [discountType, setDiscountType] = useState("percentage");
     const [backgroundColor, setBackgroundColor] = useState("#c364f4");
@@ -29,6 +34,7 @@
     const [checkedRadio, setCheckedRadio] = useState(false)
     const [search, setSearch] = useState("");
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
+  const [discounts, setDiscounts] = useState<DiscountRule[]>([]);
   const debouncedKeyword = useDebounce(search.length >= 3 ? search : "", 300);
   const { list:products = [], isLoading } = useProductList({keyword:debouncedKeyword});
     const { saveWidgetSettings } = useSaveWidgetSettings();
@@ -58,13 +64,22 @@
     const renderForm = () => {
     switch (discountType) {
       case "fixed":
-        return <FixedDiscountForm />;
+        return <FixedDiscountForm 
+                onChange={setDiscounts} 
+                discountType={discountType}        
+                />;
 
       case "price":
-        return <PriceDiscountForm />;
+        return <PriceDiscountForm 
+                onChange={setDiscounts} 
+                discountType={discountType}        
+                />;
 
       default:
-        return <DiscountForm />;
+        return <DiscountForm 
+                onChange={setDiscounts} 
+                discountType={discountType}
+                />;
     }
   };
 

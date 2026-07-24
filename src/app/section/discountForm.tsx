@@ -3,10 +3,11 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DiscountRule } from "../page";
 
 const formSchema = z.object({
   discounts: z.array(
@@ -14,6 +15,7 @@ const formSchema = z.object({
       quantity_min: z.number().min(2, "Minimum Quantity is required"),
       quantity_max: z.number().min(2, "Maximum Quantity is required"),
       amount: z.number().min(5, "Discount is required"),
+      type:z.string({message:'type is required'})
     }).refine((val)=>val.quantity_min <= val.quantity_max ,{
       message:'minimum quantity must be less than or equal maximum quantity',
       path:["quantity_min"]
@@ -23,7 +25,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function DiscountForm() {
+export default function DiscountForm({onChange , discountType}:{onChange:(value:DiscountRule[])=>void,discountType:string}) {
   const {
     register,
     control,
@@ -37,6 +39,7 @@ export default function DiscountForm() {
           quantity_min: 2,
           quantity_max: 2,
           amount: 5,
+          type:discountType
         },
       ],
     },
@@ -48,7 +51,7 @@ export default function DiscountForm() {
   });
 
   const onSubmit = (values: FormValues) => {
-    console.log(values);
+    onChange(values.discounts);
   };
 
   return (
@@ -129,6 +132,7 @@ export default function DiscountForm() {
             quantity_min: 2,
             quantity_max: 2,
             amount: 5,
+            type:discountType
           })
         }
       >
