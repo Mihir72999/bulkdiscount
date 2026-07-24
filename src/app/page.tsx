@@ -34,7 +34,7 @@ export type DiscountRule = {
     const [checkedRadio, setCheckedRadio] = useState(false)
     const [search, setSearch] = useState("");
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
-  const [discounts, setDiscounts] = useState<DiscountRule[]>([]);
+  const [_discounts, setDiscounts] = useState<DiscountRule[]>([]);
   const debouncedKeyword = useDebounce(search.length >= 3 ? search : "", 300);
   const { list:products = [], isLoading } = useProductList({keyword:debouncedKeyword});
     const { saveWidgetSettings } = useSaveWidgetSettings();

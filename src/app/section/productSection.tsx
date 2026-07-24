@@ -35,6 +35,7 @@ export default function ProductSelector({
   );
 
   const toggleProduct = (id: number) => {
+    console.log(selectedProducts)
       if (selectedProducts.includes(id)) {
       onSelectedProductsChange(
         selectedProducts.filter((productId) => productId !== id)
@@ -43,7 +44,7 @@ export default function ProductSelector({
       onSelectedProductsChange([...selectedProducts, id]);
     }
   };
-
+  
   return (
     <div className="space-y-4">
       <h3 className="font-semibold text-lg">Products</h3>
