@@ -11,9 +11,12 @@ import { Label } from "@/components/ui/label";
 const formSchema = z.object({
   discounts: z.array(
     z.object({
-      quantity_min: z.number().min(2, "Quantity is required"),
-      quantity_max: z.number().min(2, "Quantity is required"),
+      quantity_min: z.number().min(2, "Minimum Quantity is required"),
+      quantity_max: z.number().min(2, "Maximum Quantity is required"),
       amount: z.number().min(5, "Discount is required"),
+    }).refine((val)=>val.quantity_min <= val.quantity_max ,{
+      message:'number must be grater than max value',
+      path:["quantity_min"]
     })
   ),
 });
