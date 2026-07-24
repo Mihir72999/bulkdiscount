@@ -61,9 +61,11 @@ export type DiscountRule = {
         description,
         product_ids: JSON.stringify(selectedProducts)
       });
-      for(const productId of selectedProducts){
-        await createBulkPricingRule(productId,discounts)
-      }
+    await Promise.all(
+      selectedProducts.map((productId) =>
+        createBulkPricingRule(productId, discounts)
+      )
+    );
       toast.success('your settings saved successfully')
       
     } catch (err) {
