@@ -3,6 +3,7 @@ import useSWR from 'swr';
 import { useSession } from '../context/session';
 import { mockDiscounts } from "../lib/dbs/mokeDiscounts";
 import { ErrorProps, ListItem, Order,  QueryParams, ShippingAndProductsInfo } from '../types';
+  const APP_URL = "https://bgcom.mihir72999.workers.dev" as const;
 
 export async function getDiscountRules(productId:number){
 
@@ -66,6 +67,117 @@ export function useProductList(query?: QueryParams) {
         error,
         mutateList,
     };
+}
+
+type Product = {
+  id: number;
+  name: string;
+};
+
+export function useGetPricingRules(products: Product[]) {
+  const { context } = useSession();
+
+  const { data, error, isLoading } = useSWR<
+    Record<number, boolean>,
+    ErrorProps
+  >(
+    context && products.length
+      ? ["/api/rules", context, products.map(p => p.id)]
+      : null,
+    async ([url, context, productIds]) => {
+      const res = await fetch(`${APP_URL}${url}?context=${context}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productIds }),
+      });
+
+      return res.json();
+    }
+  );
+
+  return {
+    pricingRules: data,
+    isLoading,
+    error,
+  };
+}
+type UpdateBulkPricingRule = {
+  quantity_min: number;
+  quantity_max?: number;
+  type: "percent" | "fixed" | "price";
+  amount: number;
+};
+
+export function useUpdatePricingRule() {
+  const { context } = useSession();
+
+  const updatePricingRule = async (
+    productId: number,
+    payload: UpdateBulkPricingRule
+  ) => {
+    if (!context) {
+      throw new Error("Missing context");
+    }
+
+    const params = new URLSearchParams({ context }).toString();
+
+    const res = await fetch(
+      `${APP_URL}/api/rules/${productId}?${params}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (!res.ok) {
+      const error = (await res.json()) as ErrorProps;
+      throw new Error(error.message);
+    }
+
+    return res.json();
+  };
+
+  return { updatePricingRule };
+}
+
+export function useCreateBulkPricingRule() {
+  const { context } = useSession();
+
+  const createBulkPricingRule = async (
+    productId: number,
+    data:UpdateBulkPricingRule,
+  ) => {
+    if (!context) {
+      throw new Error("Missing context");
+    }
+
+    const params = new URLSearchParams({ context }).toString();
+
+    const res = await fetch(
+      `${APP_URL}/api/rules/${productId}?${params}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (!res.ok) {
+      const error = (await res.json()) as ErrorProps;
+      throw new Error(error.message);
+    }
+
+    return res.json();
+  };
+
+  return { createBulkPricingRule };
 }
 
 export function useProductInfo(pid: number, list?:ListItem[]) {
@@ -141,8 +253,7 @@ export function useSaveWidgetSettings() {
   const saveWidgetSettings = async (
     payload: WidgetSettingsPayload
  ) => {
-   const APP_URL = "https://bgcom.mihir72999.workers.dev";
-
+ 
        const res = await fetch(
        `${APP_URL}/api/widget/settings?context=${encodeURIComponent(context)}`,
         {

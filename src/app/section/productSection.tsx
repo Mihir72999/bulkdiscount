@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import Loading from "../../../components/loading";
+import { useGetPricingRules } from "../../../lib/hooks";
 
 type Product = {  
   id: number;
@@ -26,8 +27,8 @@ export default function ProductSelector({
   selectedProducts,
   onSelectedProductsChange,
   isLoading,
-}: ProductSelectorProps) {
- 
+}: ProductSelectorProps) { 
+  const {pricingRules} = useGetPricingRules(products)
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -64,6 +65,7 @@ export default function ProductSelector({
                   id={`product-${product.id}`}
                   checked={selectedProducts.includes(product.id)}
                   onCheckedChange={() => toggleProduct(product.id)}
+                  disabled={pricingRules?.[product.id]}
                 />
 
                 <Label
