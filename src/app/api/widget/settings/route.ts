@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       widget_title:string
     };
 
-    if (!borderColor || borderRadius || product_ids === undefined) {
+    if (borderColor === undefined || borderRadius === undefined || product_ids === undefined) {
       return NextResponse.json(
         {
           success: false,
