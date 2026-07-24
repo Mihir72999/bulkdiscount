@@ -13,16 +13,26 @@ export async function OPTIONS(){
 
 export async function GET(req:NextRequest) {
         const domain = req.nextUrl.searchParams.get('domain')
-
+        const productId = req.nextUrl.searchParams.get('product_id')
+        if(!domain || !productId){
+         return NextResponse.json({success:false},{status:404,headers})
+        }
     try {
  const db = await getDB()
 const result = await db.prepare('SELECT storeHash from stores WHERE domain = ?').bind(domain).first<{storeHash:string | null}>()
 const storeHash = result?.storeHash
 const settings = await db
-  .prepare(
-    "SELECT * FROM widget_settings WHERE store_hash = ?"
-  )
-  .bind(storeHash)
+  .prepare(`
+    SELECT *
+    FROM widget_settings
+    WHERE store_hash = ?
+      AND EXISTS (
+        SELECT 1
+        FROM json_each(product_ids)
+        WHERE value = ?
+      )
+  `)
+  .bind(storeHash, productId)
   .first();
     return NextResponse.json({
       success: true,
