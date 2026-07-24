@@ -38,6 +38,7 @@ const settings = await db
       success: true,
       data: settings,
     } ,{headers});
+    
   } catch (error) {
 
     return NextResponse.json(
