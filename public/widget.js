@@ -67,9 +67,10 @@ let rules = null;
 let widgetSettings = null;
 
 async function loadWidgetSettings() {
+  const product_id = getProductId()
   try {
     const res = await fetch(
-      `${API_BASE}/api/widgets/settings?domain=${encodeURIComponent(window.location.hostname)}`
+      `${API_BASE}/api/widgets/settings?domain=${encodeURIComponent(window.location.hostname)}&product_id=${product_id}`
     );
 
     if (!res.ok) {
