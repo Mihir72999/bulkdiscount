@@ -63,7 +63,9 @@ export default function ProductSelector({
               >
                 <Checkbox
                   id={`product-${product.id}`}
-                  checked={selectedProducts.includes(product.id)}
+                  checked={
+                    pricingRules?.[product.id] ||
+                    selectedProducts.includes(product.id)}
                   onCheckedChange={() => toggleProduct(product.id)}
                   disabled={pricingRules?.[product.id]}
                 />
