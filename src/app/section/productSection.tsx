@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import Loading from "../../../components/loading";
 import { useGetPricingRules } from "../../../lib/hooks";
+import { cn } from "@/lib/utils";
 
 type Product = {  
   id: number;
@@ -72,7 +73,9 @@ export default function ProductSelector({
 
                 <Label
                   htmlFor={`product-${product.id}`}
-                  className="cursor-pointer flex-1"
+                  className={cn("cursor-pointer flex-1", 
+                    pricingRules?.[product.id] && 'text-muted-foreground'
+                  )}
                 >
                   {product.name}
                 </Label>
