@@ -65,8 +65,8 @@ if (storeHash && exists) {
     .prepare(`
       INSERT INTO widget_settings (
         store_hash,
-        border_color,
-        border_radius,
+        borderColor,
+        borderRadius,
         product_ids,
         name,
         description,
