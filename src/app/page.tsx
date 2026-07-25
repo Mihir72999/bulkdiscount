@@ -145,11 +145,11 @@ export type DiscountRule = {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem
-                    value="percentage"
-                    id="percentage"
+                    value="percent"
+                    id="percent"
                     className={'cursor-pointer'}
                   />
-                  <Label htmlFor="percentage">
+                  <Label htmlFor="percent">
                     Percentage
                   </Label>
                 </div>
