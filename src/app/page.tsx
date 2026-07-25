@@ -28,7 +28,7 @@ export type DiscountRule = {
   type:string;
 };
   export default function Home() {
-    const [discountType, setDiscountType] = useState("percentage");
+    const [discountType, setDiscountType] = useState("percent");
     const [backgroundColor, setBackgroundColor] = useState("#c364f4");
     const [borderRadius, setBorderRadius] = useState(10)
     const [checkedRadio, setCheckedRadio] = useState(false)
