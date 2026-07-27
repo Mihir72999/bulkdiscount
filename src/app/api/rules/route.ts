@@ -66,11 +66,20 @@ export async function GET(req:NextRequest){
       "v3"
     );     
       const {results} = await db.prepare('select * from widget_settings where store_hash = ?').bind(context?.storeHash).run()
- const productSettings = results.map(async(val)=>{
-  const productIds:number[] = JSON.parse(val.product_ids as string)
-  const product = await productResult(productIds)
-  return {...val , product}
- })
+ const productSettings = await Promise.all(
+  results.map(async (val) => {
+    const productIds: number[] = JSON.parse(val.product_ids as string);
+
+    const product = await productResult(productIds);
+
+    return {
+      ...val,
+      product,
+    };
+  })
+);
+
+
 async function productResult(productIds:number[]){
   const response = await bigcommerce.get("/catalog/products", {
     "id:in": productIds.join(","),
