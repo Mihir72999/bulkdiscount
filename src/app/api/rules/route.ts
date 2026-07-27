@@ -81,10 +81,9 @@ export async function GET(req:NextRequest){
 
 
 async function productResult(productIds:number[]){
-  const response = await bigcommerce.get("/catalog/products", {
-    "id:in": productIds.join(","),
-    include_fields: "id,name",
-  });
+  const response = await bigcommerce.get(
+      `/catalog/products?id:in=${productIds.join(",")}&include_fields=id,name`
+  );
   return response.data
 }
 
