@@ -5,7 +5,7 @@ class BCDiscountWidget {
         this.rules = [];
         this.productId = null;
         this.originalPrice = 0;
-
+        this.init = this.init()
         this.priceElement =
             document.querySelector("[data-product-price-with-tax]") ||
             document.querySelector("[data-product-price-without-tax]");
@@ -259,7 +259,7 @@ const widget = new BCDiscountWidget();
 if (document.readyState === "loading") {
     document.addEventListener(
         "DOMContentLoaded",
-        () => widget.init()
+        widget.init
     );
 } else {
     widget.init();
