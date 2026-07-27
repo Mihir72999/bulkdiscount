@@ -76,7 +76,9 @@ type Product = {
 
 export function useGetProductSettings(){
   const { context } = useSession();
-  const {data, error , isLoading} = useSWR(context ? ['api/rules'] : null , fetcher)
+      const params = new URLSearchParams({ context }).toString();
+
+  const {data, error , isLoading} = useSWR(context ? ['api/rules', params] : null , fetcher)
   return {
     setting:data ,
     error,
