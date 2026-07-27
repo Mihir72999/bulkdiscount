@@ -1,5 +1,6 @@
 import { NextRequest,NextResponse } from "next/server";
 import { getSession , bigcommerceClient } from "../../../../lib/auth";
+import { getDB } from "../../../../lib/db";
 
 
 export async function POST(req: NextRequest) {
@@ -54,12 +55,41 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req:NextRequest){
  try {
+   const db = await getDB()
     const context = await getSession(req);
                    if(!context?.accessToken){
                  return NextResponse.json({message:'AccessToken Required'}, {status:400})
              }
-            return NextResponse.json({message:'ok'})
+   const bigcommerce = bigcommerceClient(
+      context.accessToken,
+      context.storeHash,
+      "v3"
+    );     
+      const {results} = await db.prepare('select * from widget_settings where store_hash = ?').bind(context?.storeHash).run()
+ const productSettings = results.map(async(val)=>{
+  const productIds:number[] = JSON.parse(val.product_ids as string)
+  const product = await productResult(productIds)
+  return {...val , product}
+ })
+async function productResult(productIds:number[]){
+  const response = await bigcommerce.get("/catalog/products", {
+    "id:in": productIds.join(","),
+    include_fields: "id,name",
+  });
+  return response.data
+}
+
+
+  return NextResponse.json(productSettings)
  } catch (error) {
-    
+    const { message, response } = error as {
+      message: string;
+      response?: { status?: number };
+    };
+
+    return NextResponse.json(
+      { message },
+      { status: response?.status ?? 500 }
+    );
  }   
 }

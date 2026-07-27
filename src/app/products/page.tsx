@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { ReactElement , useState } from 'react';
 import ErrorMessage from '../../../components/error';
 import Loading from '../../../components/loading';
-import { useProductList } from '../../../lib/hooks';
+import { useGetProductSettings, useProductList } from '../../../lib/hooks';
 import { TableItem } from '../../../types';
 import { MoreHorizontal } from "lucide-react";
 import {
@@ -52,7 +52,8 @@ import { HugeiconsIcon } from '@hugeicons/react';
 
 
 const Products = () => {
-  
+const {setting} = useGetProductSettings()
+console.log(setting)  
 return (
   <div>
     <Card className="p-6">

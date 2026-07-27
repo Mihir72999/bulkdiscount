@@ -74,6 +74,16 @@ type Product = {
   name: string;
 };
 
+export function useGetProductSettings(){
+  const { context } = useSession();
+  const {data, error , isLoading} = useSWR(context ? ['api/rules'] : null , fetcher)
+  return {
+    setting:data ,
+    error,
+    isLoading
+  }
+}
+
 export function useGetPricingRules(products: Product[]) {
   const { context } = useSession();
 
