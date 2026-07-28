@@ -23,7 +23,8 @@ const formSchema = z.object({
   ).superRefine((discounts, ctx) => {
   for (let i = 1; i < discounts.length; i++) {
     const previousMax = discounts[i - 1].quantity_max;
-
+   const prev = discounts[i - 1]
+    const current = discounts[i];
     if (discounts[i].quantity_min < previousMax + 1) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -31,7 +32,7 @@ const formSchema = z.object({
         message: `Minimum quantity must be at least ${previousMax + 1}.`,
       });
     }
-if (current.amount <= previous.amount) {
+if (current.amount <= prev.amount) {
   ctx.addIssue({
     code: z.ZodIssueCode.custom,
     path: [i, "amount"],
