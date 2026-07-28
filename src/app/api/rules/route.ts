@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
         );
 
         pricingRules[productId] = data.length > 0;
+      
       } catch {
         // If the request fails, treat it as having no rules
         pricingRules[productId] = false;
