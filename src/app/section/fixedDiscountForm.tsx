@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DiscountRule } from "../page";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   discounts: z.array(
@@ -20,7 +21,27 @@ const formSchema = z.object({
       message:'minimum quantity must be less than or equal maximum quantity',
       path:["quantity_min"]
     })
-  ),
+  ).superRefine((discounts, ctx) => {
+  for (let i = 1; i < discounts.length; i++) {
+    const previousMax = discounts[i - 1].quantity_max;
+   const prev = discounts[i - 1]
+    const current = discounts[i];
+    if (discounts[i].quantity_min < previousMax + 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [i, "quantity_min"],
+        message: `Minimum quantity must be at least ${previousMax + 1}.`,
+      });
+    }
+if (current.amount >= prev.amount) {
+  ctx.addIssue({
+    code: z.ZodIssueCode.custom,
+    path: [i, "amount"],
+    message: `Discount must be less than ${prev.amount}.`,
+  });
+}
+  }
+}),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -52,6 +73,7 @@ export default function FixedDiscountForm({onChange , discountType}:{onChange:(v
 
   const onSubmit = (values: FormValues) => {
     onChange(values.discounts);
+    toast.success('your Rules saved successfully')
   };
 
   return (
@@ -127,6 +149,7 @@ export default function FixedDiscountForm({onChange , discountType}:{onChange:(v
       <Button
         type="button"
         variant="outline"
+        className={'cursor-pointer'}
         onClick={() =>
           append({
             quantity_min: 2,
@@ -139,7 +162,7 @@ export default function FixedDiscountForm({onChange , discountType}:{onChange:(v
         + Add Discount
       </Button>
 
-      <Button type="submit">
+      <Button type="submit" className={'cursor-pointer'}>
         Save Discounts
       </Button>
     </form>
