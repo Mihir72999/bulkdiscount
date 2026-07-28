@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     const pricingRules: Record<number, boolean> = {};
 
     await Promise.all(
-     productIds.map((productId)=>{
+     productIds.map(async (productId)=>{
       try {
         const { data } = await bigcommerce.get(
           `/catalog/products/${productId}/bulk-pricing-rules`
