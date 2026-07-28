@@ -36,7 +36,7 @@ if (current.amount <= prev.amount) {
   ctx.addIssue({
     code: z.ZodIssueCode.custom,
     path: [i, "amount"],
-    message: `Discount must be greater than ${previous.amount}.`,
+    message: `Discount must be greater than ${prev.amount}.`,
   });
 }
   }
