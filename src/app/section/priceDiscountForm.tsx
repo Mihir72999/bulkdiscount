@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DiscountRule } from "../page";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const formSchema = z.object({
   discounts: z.array(
@@ -49,6 +50,9 @@ type FormValues = z.infer<typeof formSchema>;
 export default function PriceDiscountForm(
   {onChange , discountType}:{onChange:(value:DiscountRule[])=>void,discountType:string}
 ) {
+ 
+  const [disableRule , setDisableRule] = useState(false) 
+  
   const {
     register,
     control,
@@ -93,6 +97,8 @@ export default function PriceDiscountForm(
                 type="number"
                 placeholder="1"
                 className="my-2"
+                disabled={disableRule}
+                aria-disabled={disableRule}
                 {...register(`discounts.${index}.quantity_min`,{valueAsNumber:true})}
               />
 
@@ -110,6 +116,8 @@ export default function PriceDiscountForm(
                 type="number"
                 placeholder="1"
                 className="my-2"
+                disabled={disableRule}
+                aria-disabled={disableRule}
                 {...register(`discounts.${index}.quantity_max`,{valueAsNumber:true})}
               />
 
@@ -126,6 +134,8 @@ export default function PriceDiscountForm(
                 type="number"
                 placeholder="10"
                 className="my-2"
+                disabled={disableRule}
+                aria-disabled={disableRule}
                 {...register(`discounts.${index}.amount`,{valueAsNumber:true})}
               />
 
@@ -141,6 +151,8 @@ export default function PriceDiscountForm(
             type="button"
             variant="destructive"
             className={'cursor-pointer'}
+            disabled={disableRule}
+            aria-disabled={disableRule}
             onClick={() => remove(index)}
           >
             Remove
@@ -152,6 +164,8 @@ export default function PriceDiscountForm(
         type="button"
         variant="outline"
         className={'cursor-pointer'}
+        disabled={disableRule}
+        aria-disabled={disableRule}
         onClick={() =>
           append({
             quantity_min: 2,
@@ -164,8 +178,11 @@ export default function PriceDiscountForm(
         + Add Discount
       </Button>
 
-      <Button type="submit" className={'cursor-pointer'}>
+      <Button type="submit" disabled={disableRule} className={'cursor-pointer'}>
         Save Discounts
+      </Button>
+      <Button type="submit" disabled={!disableRule} onClick={()=>setDisableRule(!disableRule)} className={'cursor-pointer'}>
+        Edit Discounts
       </Button>
     </form>
   );
