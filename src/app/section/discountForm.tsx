@@ -20,7 +20,17 @@ const formSchema = z.object({
       message:'minimum quantity must be less than or equal maximum quantity',
       path:["quantity_min"]
     })
-  ),
+  ).superRefine((discounts, ctx) => {
+      for (let i = 1; i < discounts.length; i++) {
+        if (discounts[i].quantity_min < discounts[i - 1].quantity_max) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: `Minimum quantity must be at least ${discounts[i - 1].quantity_max}`,
+            path: [i, "quantity_min"],
+          });
+        }
+      }
+    }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
