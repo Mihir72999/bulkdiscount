@@ -21,16 +21,18 @@ const formSchema = z.object({
       path:["quantity_min"]
     })
   ).superRefine((discounts, ctx) => {
-      for (let i = 1; i < discounts.length; i++) {
-        if (discounts[i].quantity_min < discounts[i - 1].quantity_max) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: `Minimum quantity must be at least ${discounts[i - 1].quantity_max}`,
-            path: [i, "quantity_min"],
-          });
-        }
-      }
-    }),
+  for (let i = 1; i < discounts.length; i++) {
+    const previousMax = discounts[i - 1].quantity_max;
+
+    if (discounts[i].quantity_min < previousMax + 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [i, "quantity_min"],
+        message: `Minimum quantity must be at least ${previousMax + 1}.`,
+      });
+    }
+  }
+})
 });
 
 type FormValues = z.infer<typeof formSchema>;
