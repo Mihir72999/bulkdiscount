@@ -69,8 +69,12 @@ export async function GET(req:NextRequest){
  const productSettings = await Promise.all(
   results.map(async (val) => {
     const productIds: number[] = JSON.parse(val.product_ids as string);
-   const ruleDatas = productIds.map(async(productId) => await bigcommerce.get(`/catalog/products/${productId}/bulk-pricing-rules`))
-    
+   const ruleDatas = await Promise.all(
+      productIds.map(async(productId) =>
+        await bigcommerce.get(`/catalog/products/${productId}/bulk-pricing-rules`)
+      )
+    );
+  
     const product = await productResult(productIds);
   
     return {
