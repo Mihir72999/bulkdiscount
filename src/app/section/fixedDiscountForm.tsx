@@ -76,6 +76,7 @@ const [disableRule , setDisableRule] = useState(false)
   const onSubmit = (values: FormValues) => {
     onChange(values.discounts);
     toast.success('your Rules saved successfully')
+    setDisableRule(true)
   };
 
   return (
