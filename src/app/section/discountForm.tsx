@@ -31,6 +31,13 @@ const formSchema = z.object({
         message: `Minimum quantity must be at least ${previousMax + 1}.`,
       });
     }
+if (current.amount <= previous.amount) {
+  ctx.addIssue({
+    code: z.ZodIssueCode.custom,
+    path: [i, "amount"],
+    message: `Discount must be greater than ${previous.amount}.`,
+  });
+}
   }
 })
 });
