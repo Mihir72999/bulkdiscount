@@ -182,7 +182,7 @@ export default function PriceDiscountForm(
       <Button type="submit" disabled={disableRule} className={'cursor-pointer'}>
         Save Discounts
       </Button>
-      <Button type="submit" disabled={!disableRule} onClick={()=>setDisableRule(!disableRule)} className={'cursor-pointer'}>
+      <Button type="button" disabled={!disableRule} onClick={()=>setDisableRule(!disableRule)} className={'cursor-pointer'}>
         Edit Discounts
       </Button>
     </form>
