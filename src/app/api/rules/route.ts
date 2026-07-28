@@ -26,7 +26,8 @@ export async function POST(req: NextRequest) {
 
     const pricingRules: Record<number, boolean> = {};
 
-    for (const productId of productIds) {
+    await Promise.all(
+     productIds.map((productId)=>{
       try {
         const { data } = await bigcommerce.get(
           `/catalog/products/${productId}/bulk-pricing-rules`
@@ -37,7 +38,8 @@ export async function POST(req: NextRequest) {
         // If the request fails, treat it as having no rules
         pricingRules[productId] = false;
       }
-    }
+     })
+    )
 
     return NextResponse.json(pricingRules);
   } catch (error) {
