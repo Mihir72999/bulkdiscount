@@ -55,7 +55,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 
 
 const Products = () => {
-const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | never[]}
+const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | never[] , isLoading:boolean}
   const [data, setData] = useState(setting);
   const [activeBundles, setActiveBundles] = useState<Record<number, boolean>>({});
   const [selectedIds, setSelectedIds] = useState<Record<number, boolean>>({});
