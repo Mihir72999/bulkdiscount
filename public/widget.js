@@ -148,6 +148,7 @@ async function getRules() {
     // getRules().then(rule=>rules=rule)
   
 const priceElement =
+    document.querySelector(".price") ||
     document.querySelector("[data-product-price-with-tax]") ||
     document.querySelector("[data-product-price-without-tax]") ||
     document.querySelector("[data-product-price]") ||
