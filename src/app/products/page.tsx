@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ReactElement , useState } from 'react';
+import { ReactElement , useState , useEffect} from 'react';
 import ErrorMessage from '../../../components/error';
 import Loading from '../../../components/loading';
 import { useGetProductSettings, useProductList } from '../../../lib/hooks';
