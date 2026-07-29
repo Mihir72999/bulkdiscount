@@ -93,9 +93,6 @@ const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | neve
 const selectedCount = Object.values(selectedIds).filter(Boolean).length;
 if(isLoading) return <Loading/>
 
-useEffect(() => {
-  setData(setting);
-}, [setting]);
 return (
   <div className="max-w-5xl mx-auto p-6 space-y-6">
     <Card className="p-3">
