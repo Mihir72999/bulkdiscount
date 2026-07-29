@@ -148,8 +148,8 @@ async function getRules() {
     // getRules().then(rule=>rules=rule)
   
 const priceElement =
-    document.querySelector("[data-product-price-with-tax]") ??
-    document.querySelector("[data-product-price-without-tax]") ;
+    document.querySelector("[data-product-price-without-tax]") ||
+    document.querySelector("[data-product-price-with-tax]") ;
     
 console.log(priceElement.outerHTML , 'outerHtml');
 console.log(priceElement.textContent , 'text content');
