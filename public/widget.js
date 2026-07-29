@@ -153,7 +153,7 @@ const priceElement =
     document.querySelector("[data-product-price]") ||
     document.querySelector('[data-product-price-without-tax], .price--withoutTax, .price--withTax');
     ;
-    console.log(priceElement)
+    console.log(priceElement.textContent)
 
   let originalPrice = parseFloat(
     priceElement.textContent.replace(/[^0-9.]/g, "")
