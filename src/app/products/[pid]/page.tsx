@@ -21,7 +21,7 @@ const ProductInfo = () => {
 
     const handleSubmitData = async (data: FormData) => {
         try {
-            const filteredList = list.filter((item:any) => item.id !== pid);
+            const filteredList = list.filter((item:{id:number}) => item.id !== pid);
             const { description, is_visible, name, price, inventory_level, type } = data;
             const apiFormattedData = { description,is_visible, name, price, inventory_level, type };
 

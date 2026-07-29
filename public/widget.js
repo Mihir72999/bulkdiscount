@@ -149,7 +149,9 @@ async function getRules() {
   
 const priceElement =
     document.querySelector("[data-product-price-with-tax]") ||
-    document.querySelector("[data-product-price-without-tax]");
+    document.querySelector("[data-product-price-without-tax]") ||
+    document.querySelector("[data-product-price]")
+    ;
 
   let originalPrice = parseFloat(
     priceElement.textContent.replace(/[^0-9.]/g, "")
