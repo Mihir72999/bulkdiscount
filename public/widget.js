@@ -148,14 +148,9 @@ async function getRules() {
     // getRules().then(rule=>rules=rule)
   
 const priceElement =
-    document.querySelector("[data-product-price-with-tax]") ||
-    document.querySelector("[data-product-price-without-tax]") ||
-    document.querySelector("[data-product-price]") ||
-    document.querySelector('[data-product-price-without-tax], .price--withoutTax, .price--withTax');
-    ;
-    document.querySelectorAll(".price").forEach((el, i) => {
-  console.log(i, el.outerHTML , 'testing purpose');
-});
+    document.querySelector("[data-product-price-with-tax]") ??
+    document.querySelector("[data-product-price-without-tax]") ;
+    
 console.log(priceElement.outerHTML , 'outerHtml');
 console.log(priceElement.textContent , 'text content');
 console.log(priceElement.innerHTML , 'inner html');
