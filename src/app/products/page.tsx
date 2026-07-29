@@ -55,7 +55,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 
 
 const Products = () => {
-const {setting} = useGetProductSettings() as {setting:[] | never[]}
+const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | never[]}
   const [data, setData] = useState(setting);
   const [activeBundles, setActiveBundles] = useState<Record<number, boolean>>({});
   const [selectedIds, setSelectedIds] = useState<Record<number, boolean>>({});
@@ -91,7 +91,7 @@ const {setting} = useGetProductSettings() as {setting:[] | never[]}
     setSelectedIds({}); // Reset selection state
   }; 
 const selectedCount = Object.values(selectedIds).filter(Boolean).length;
-
+if(isLoading) return <Loading/>
 console.log(setting)  
 return (
   <div className="max-w-5xl mx-auto p-6 space-y-6">
