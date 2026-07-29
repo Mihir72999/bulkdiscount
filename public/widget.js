@@ -147,8 +147,8 @@ async function getRules() {
     // let rules = [];
     // getRules().then(rule=>rules=rule)
   
-const priceElement =
-    document.querySelector( "[data-product-price-with-tax], [data-product-price-without-tax]").find(el => el.textContent.trim() !== "");
+const priceElement =[
+    document.querySelector("[data-product-price-with-tax], [data-product-price-without-tax]")].find(el => el.textContent.trim() !== "");
     
 console.log(priceElement.outerHTML , 'outerHtml');
 console.log(priceElement.textContent , 'text content');
