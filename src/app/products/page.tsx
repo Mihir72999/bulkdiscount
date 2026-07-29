@@ -59,8 +59,8 @@ const {setting} = useGetProductSettings() as {setting:[] | never[]}
   const [data, setData] = useState(setting);
   const [activeBundles, setActiveBundles] = useState<Record<number, boolean>>({});
   const [selectedIds, setSelectedIds] = useState<Record<number, boolean>>({});
+
  // Active status toggle handler
- if(!data) return []
   const handleToggleActive = (id: number) => {
     setActiveBundles((prev) => ({ ...prev, [id]: !prev[id] }));
   };
