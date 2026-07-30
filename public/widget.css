@@ -90,13 +90,13 @@
 
 .bc-color-select{
 display: flex;
-flex-wrap: wrap;
+flex-direction: column;
 gap: 10px;
 }
 
 
 .bc-color{
-   flex: 0 0 calc(50% - 5px);
+   width: 100px; 
    padding: 10px; 
 }
 
