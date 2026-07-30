@@ -169,6 +169,7 @@ function renderColorSelectors(quantity) {
     const colors = getColors();
   return Array.from({ length: quantity }, (_, index) => `
     <div class="bc-color-select"
+     
     >
       <label>#${index + 1}</label>
 
@@ -224,10 +225,7 @@ function renderColorSelectors(quantity) {
                 }
                 </small>
               </div>
-             ${variant.length > 0 && variant[0].option_values ? `<div class="bc-color-options">
-                 ${renderColorSelectors(rule.quantity)}
-                     </div>` : ``}
-
+     
              <div class="bc-rule-right">
              <span class="bc-rule-middle-span">
                 ${
