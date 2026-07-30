@@ -80,15 +80,27 @@
     outline: 2px solid #b9ff28;
 } */
 
+.bc-color-options{
+    display: none;
+}
+
+.bc-rule:has(input[type="radio"]:checked) .bc-color-options{
+    display: flex;
+}
+
 .bc-color-select{
 display: flex;
 flex-wrap: wrap;
 gap: 10px;
 }
 
+
 .bc-color{
-   flex: 0 0 calc(50% - 5px); 
+   flex: 0 0 calc(50% - 5px);
+   padding: 10px; 
 }
+
+
 
 .bc-rule:has(input:checked){
     border-color:var(--border-color);
