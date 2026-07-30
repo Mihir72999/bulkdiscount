@@ -143,8 +143,7 @@ async function getRules() {
         return [];
     }
     }
-    // let rules = [];
-    // getRules().then(rule=>rules=rule)
+  
   
 const priceElement =[
     ...document.querySelectorAll("[data-product-price-with-tax], [data-product-price-without-tax]")].find(el => el.textContent.trim() !== "");
@@ -205,8 +204,7 @@ const priceElement =[
            : 
 
           rule.discountType === 'fixed' ?            
-           `     
-                <label class="bc-rule">
+           ` <label class="bc-rule">
               <input
                 type="radio"
                 name="discountQty"
@@ -238,7 +236,8 @@ const priceElement =[
                 } 
                </span>
              <small class="bc-rule-right-small">
-                ${"$" + (originalPrice * rule.quantity).toFixed(2)}
+                ${Number(rule.discount) === 0 ? "" :
+                "$" + (originalPrice * rule.quantity).toFixed(2)}
                </small>  
               </div>
             </label>
@@ -277,7 +276,8 @@ const priceElement =[
                 } 
                </span>
              <small class="bc-rule-right-small">
-                ${"$" + (originalPrice * rule.quantity).toFixed(2)}
+                ${Number(rule.discount) === 0 ? "" :
+                  "$" + (originalPrice * rule.quantity).toFixed(2)}
                </small>  
               </div>
             </label>
