@@ -58,6 +58,7 @@
 
 }
 
+
 /* .bc-rule input:checked + .bc-radio{
     border-color:#b9ff28;
     background:#b9ff28;
@@ -79,6 +80,15 @@
     outline: 2px solid #b9ff28;
 } */
 
+.bc-color-select{
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+}
+
+.bc-color{
+   flex: 0 0 calc(50% - 5px); 
+}
 
 .bc-rule:has(input:checked){
     border-color:var(--border-color);
