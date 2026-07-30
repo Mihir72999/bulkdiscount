@@ -232,7 +232,7 @@ const priceElement =[
              <div class="bc-rule-right">
              <span class="bc-rule-middle-span">
                 ${
-                rule.quantity === 1 ? originalPrice.toFixed(2) : "$" + (calculatePrice(originalPrice , rule.discount) * rule.quantity).toFixed(2)
+                rule.quantity === 1 ? "$" + originalPrice.toFixed(2) : "$" + (calculatePrice(originalPrice , rule.discount) * rule.quantity).toFixed(2)
                 } 
                </span>
              <small class="bc-rule-right-small">
