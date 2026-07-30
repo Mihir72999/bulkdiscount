@@ -60,7 +60,7 @@
   }
 
 ////variant Array
-let variant = [];
+let variant ;
 let discountType = 'percent'
 let rules = null;
 
@@ -168,22 +168,24 @@ function getColors() {
 function renderColorSelectors(quantity) {
     const colors = getColors();
   return Array.from({ length: quantity }, (_, index) => `
-    <div class="bc-color-select">
-      <label>#${index + 1} Select Color</label>
+    <div class="bc-color-select"
+     style="display:flex; "
+    >
+      <label>#${index + 1}</label>
 
       <select class="bc-color" data-index="${index}">
-        <option value="">Choose Color</option>
-
-        ${colors
-          .map(
-            color => `
+      
+      ${colors
+        .map(
+          color => `
+          <option value="">${color}</option>
               <option value="${color}">
                 ${color}
               </option>
+              </select>
             `
           )
           .join("")}
-      </select>
     </div>
   `).join("");
 }
@@ -223,12 +225,11 @@ function renderColorSelectors(quantity) {
                 }
                 </small>
               </div>
-             
-                ${variant.length > 0 ? `<div class="bc-color-options">
+             ${variant.length > 0 && variant[0].option_values ? `<div class="bc-color-options">
                  ${renderColorSelectors(rule.quantity)}
                      </div>` : ``}
 
-             <div class="bc-rule-right">)
+             <div class="bc-rule-right">
              <span class="bc-rule-middle-span">
                 ${
                  "$" + (calculatePrice(originalPrice, rule.discount) * rule.quantity).toFixed(2)
