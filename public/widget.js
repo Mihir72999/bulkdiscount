@@ -153,14 +153,17 @@ const priceElement =[
     priceElement.textContent.replace(/[^0-9.]/g, "")
 );
 
-const colors = [
-  ...new Set(
-    variant?.flatMap(v =>
-      v.option_values
-        .map(o => o.label)
-    )
-  ),
-];
+function getColors() {
+   const colors = getColors();
+  return [
+    ...new Set(
+      variant.flatMap(v =>
+        v.option_values
+          .map(o => o.label)
+      )
+    ),
+  ];
+}
 
 function renderColorSelectors(quantity) {
   return Array.from({ length: quantity }, (_, index) => `
