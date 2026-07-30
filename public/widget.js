@@ -154,7 +154,7 @@ const priceElement =[
 );
 
 function getColors() {
-   const colors = getColors();
+ 
   return [
     ...new Set(
       variant.flatMap(v =>
@@ -166,6 +166,7 @@ function getColors() {
 }
 
 function renderColorSelectors(quantity) {
+    const colors = getColors();
   return Array.from({ length: quantity }, (_, index) => `
     <div class="bc-color-select">
       <label>#${index + 1} Select Color</label>
