@@ -60,7 +60,7 @@
   }
 
 ////variant Array
-let variant;
+let variant = [];
 let discountType = 'percent'
 let rules = null;
 
@@ -155,9 +155,8 @@ const priceElement =[
 
 const colors = [
   ...new Set(
-    variant.flatMap(v =>
+    variant?.flatMap(v =>
       v.option_values
-        .filter(o => o.option_display_name === "Color")
         .map(o => o.label)
     )
   ),
@@ -222,7 +221,7 @@ function renderColorSelectors(quantity) {
               </div>
              
                 ${variant.length > 0 ? `<div class="bc-color-options">
-                 ${renderColorSelectors(qty)}
+                 ${renderColorSelectors(rule.quantity)}
                      </div>` : ``}
 
              <div class="bc-rule-right">)
