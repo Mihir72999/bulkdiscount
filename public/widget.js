@@ -169,7 +169,6 @@ function renderColorSelectors(quantity) {
     const colors = getColors();
   return Array.from({ length: quantity }, (_, index) => `
     <div class="bc-color-select"
-     style="display:flex; "
     >
       <label>#${index + 1}</label>
 
