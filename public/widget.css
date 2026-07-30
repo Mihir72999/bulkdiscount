@@ -87,11 +87,12 @@
 .bc-rule:has(input[type="radio"]:checked) .bc-color-options{
     display: flex;
     flex-direction: column;
+    gap: 5px;
 }
 
 .bc-color-select{
 display: flex;
-gap: 5px;
+gap: 10px;
 }
 
 
