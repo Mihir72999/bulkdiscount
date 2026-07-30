@@ -173,18 +173,17 @@ function renderColorSelectors(quantity) {
       <label>#${index + 1}</label>
 
       <select class="bc-color" data-index="${index}">
-      
+     
       ${colors
         .map(
           color => `
-          <option value="">${color}</option>
               <option value="${color}">
                 ${color}
               </option>
-              </select>
-            `
-          )
-          .join("")}
+              `
+            )
+            .join("")}
+            </select>
     </div>
   `).join("");
 }
