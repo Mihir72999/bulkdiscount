@@ -82,12 +82,12 @@ async function loadWidgetSettings() {
     widgetSettings = data.data;
       document.documentElement.style.setProperty(
     "--border-radius",
-    `${widgetSettings.borderRadius}px`
+    `${widgetSettings?.borderRadius}px`
   );
 
   document.documentElement.style.setProperty(
     "--border-color",
-    widgetSettings.borderColor
+    widgetSettings?.borderColor
   );
 
     
@@ -152,11 +152,44 @@ const priceElement =[
   let originalPrice = parseFloat(
     priceElement.textContent.replace(/[^0-9.]/g, "")
 );
+
+const colors = [
+  ...new Set(
+    variant.flatMap(v =>
+      v.option_values
+        .filter(o => o.option_display_name === "Color")
+        .map(o => o.label)
+    )
+  ),
+];
+
+function renderColorSelectors(quantity) {
+  return Array.from({ length: quantity }, (_, index) => `
+    <div class="bc-color-select">
+      <label>#${index + 1} Select Color</label>
+
+      <select class="bc-color" data-index="${index}">
+        <option value="">Choose Color</option>
+
+        ${colors
+          .map(
+            color => `
+              <option value="${color}">
+                ${color}
+              </option>
+            `
+          )
+          .join("")}
+      </select>
+    </div>
+  `).join("");
+}
+
   function renderRules() {
     if (!rules.length) {
       return "";
     }
-    
+        
     return `
       <div class="bc-discount-widget">
 
@@ -187,8 +220,12 @@ const priceElement =[
                 }
                 </small>
               </div>
+             
+                ${variant.length > 0 ? `<div class="bc-color-options">
+                 ${renderColorSelectors(qty)}
+                     </div>` : ``}
 
-             <div class="bc-rule-right">
+             <div class="bc-rule-right">)
              <span class="bc-rule-middle-span">
                 ${
                  "$" + (calculatePrice(originalPrice, rule.discount) * rule.quantity).toFixed(2)
