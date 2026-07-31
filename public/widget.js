@@ -189,7 +189,8 @@ function renderColorSelectors(quantity) {
 }
 
 const hasVariantOptions = variant.some(v => v.option_values?.length > 0);
-
+console.log(variant , 'variant')
+console.log(hasVariantOptions , 'hasVariantOptions')
   function renderRules() {
     if (!rules.length) {
       return "";
