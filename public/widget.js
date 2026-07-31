@@ -89,7 +89,6 @@ async function loadWidgetSettings() {
     widgetSettings?.borderColor
   );
 
-    
     return widgetSettings;
   } catch (err) {
     console.error(err);
