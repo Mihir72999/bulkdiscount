@@ -159,9 +159,10 @@ function getWasPrice(){
     document.querySelector("[data-product-non-sale-price-without-tax]")
   );
 }
-function updateWasPrice() {
+function updateWasPrice(quantity) {
+  
   const wasPriceElement = getWasPrice();
-
+  
   if (!wasPriceElement) return;
 
   const originalWasPrice = parseFloat(
@@ -173,14 +174,6 @@ function updateWasPrice() {
   if (!wasPriceElement.dataset.originalPrice) {
     wasPriceElement.dataset.originalPrice = originalWasPrice;
   }
-
-  const checked = document.querySelector(
-    'input[name="discountQty"]:checked'
-  );
-
-  if (!checked) return;
-
-  const quantity = Number(checked.value);
 
   wasPriceElement.textContent =
     "$" + (originalWasPrice * quantity).toFixed(2);
@@ -430,9 +423,6 @@ function bindEvents() {
         qtyInput.dispatchEvent(new Event("input", { bubbles: true }));
         qtyInput.dispatchEvent(new Event("change", { bubbles: true }));
 
-        // update wasPrice
-          updateWasPrice();
-          
         // Update price
         quantityChanged(qtyInput.value);
 
@@ -503,6 +493,8 @@ async function quantityChanged(qty) {
 
     qty = Number(qty);
     
+    updateWasPrice(qty)
+
     let rule = rules.find(r => r.quantity === qty);
    
     const arr = rules.map(r =>{
