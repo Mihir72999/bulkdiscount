@@ -185,8 +185,10 @@ function renderColorSelectors(quantity) {
             .join("")}
             </select>
     </div>
-  `).join("");
+  `).join("");  
 }
+
+const hasVariantOptions = variant.some(v => v.option_values?.length > 0);
 
   function renderRules() {
     if (!rules.length) {
@@ -223,7 +225,7 @@ function renderColorSelectors(quantity) {
                 }
                 </small>
               </div>
-                     ${variant.length > 0 && variant[0].option_values ? `<div class="bc-color-options">
+                     ${ hasVariantOptions ? `<div class="bc-color-options">
                  ${renderColorSelectors(rule.quantity)}
                      </div>` : ``}
 
