@@ -154,10 +154,9 @@ const priceElement =[
 );
 
 function getWasPrice(){
-   return (
-    document.querySelector("[data-product-non-sale-price-with-tax]") ||
-    document.querySelector("[data-product-non-sale-price-without-tax]")
-  );
+   return [
+    ...document.querySelectorAll("[data-product-non-sale-price-with-tax] , [data-product-non-sale-price-without-tax]")
+   ].find(el => el.textContent.trim() !== "");
 }
 function updateWasPrice(quantity) {
   
