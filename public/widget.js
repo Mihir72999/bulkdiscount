@@ -188,7 +188,6 @@ function renderColorSelectors(quantity) {
   `).join("");  
 }
 
-
 const hasVariantOptions = variant.some(v => v.option_values?.length > 0);
 console.log(variant , 'variant')
 console.log(hasVariantOptions , 'hasVariantOptions')
