@@ -62,7 +62,7 @@
 let variant ;
 let discountType = 'percent'
 let rules = null;
-
+const hasVariantOptions;
 let widgetSettings = null;
 
 async function loadWidgetSettings() {
@@ -131,6 +131,7 @@ async function getRules() {
            sku: v.sku,
            option_values: v.option_values  
           }))
+          hasVariantOptions = (variant ?? []).some(v => v.option_values?.length > 0);
         }
       rules = r.rules
       return rules 
@@ -186,14 +187,15 @@ function renderColorSelectors(quantity) {
   `).join("");  
 }
 
-const hasVariantOptions =  (variant ?? []).some(v => v.option_values?.length > 0);
-console.log(variant , 'variant')
-console.log(hasVariantOptions , 'hasVariantOptions')
+
+
   function renderRules() {
     if (!rules.length) {
       return "";
     }
-        
+    
+    console.log(variant , 'variant')
+    console.log(hasVariantOptions , 'hasVariantOptions')    
     return `
       <div class="bc-discount-widget">
 
