@@ -64,6 +64,7 @@ let discountType = 'percent'
 let rules = null;
 let hasVariantOptions;
 let widgetSettings = null;
+const selections = [];
 
 async function loadWidgetSettings() {
   const product_id = getProductId()
@@ -152,50 +153,45 @@ const priceElement =[
     priceElement.textContent.replace(/[^0-9.]/g, "")
 );
 
-function getColors() {
- 
-  return [
-    ...new Set(
-      variant.flatMap(v =>
-        v.option_values
-          .map(o => o.label)
-      )
-    ),
-  ];
+function getWasPrice(){
+   return (
+    document.querySelector("[data-product-non-sale-price-with-tax]") ||
+    document.querySelector("[data-product-non-sale-price-without-tax]")
+  );
 }
+function updateWasPrice() {
+  const wasPriceElement = getWasPrice();
 
-function renderColorSelectors(quantity) {
-    const colors = getColors();
-  return Array.from({ length: quantity }, (_, index) => `
-    <div class="bc-color-select"
-    >
-      <label>#${index + 1}</label>
+  if (!wasPriceElement) return;
 
-      <select class="bc-color" data-index="${index}">
-     
-      ${colors
-        .map(
-          color => `
-              <option value="${color}">
-                ${color}
-              </option>
-              `
-            )
-            .join("")}
-            </select>
-    </div>
-  `).join("");  
+  const originalWasPrice = parseFloat(
+    wasPriceElement.dataset.originalPrice ||
+    wasPriceElement.textContent.replace(/[^0-9.]/g, "")
+  );
+
+  // Save original only once
+  if (!wasPriceElement.dataset.originalPrice) {
+    wasPriceElement.dataset.originalPrice = originalWasPrice;
+  }
+
+  const checked = document.querySelector(
+    'input[name="discountQty"]:checked'
+  );
+
+  if (!checked) return;
+
+  const quantity = Number(checked.value);
+
+  wasPriceElement.textContent =
+    "$" + (originalWasPrice * quantity).toFixed(2);
 }
-
-
 
   function renderRules() {
+    const wasPriceElement = getWasPrice()
     if (!rules.length) {
       return "";
     }
-    
-    console.log(variant , 'variant')
-    console.log(hasVariantOptions , 'hasVariantOptions')    
+
     return `
       <div class="bc-discount-widget">
 
@@ -226,9 +222,6 @@ function renderColorSelectors(quantity) {
                 }
                 </small>
               </div>
-                     ${ hasVariantOptions ? `<div class="bc-color-options">
-                 ${renderColorSelectors(rule.quantity)}
-                     </div>` : ``}
 
              <div class="bc-rule-right">
              <span class="bc-rule-middle-span">
@@ -432,11 +425,14 @@ function bindEvents() {
         
         // Update quantity
         qtyInput.value = input.value;
-
+       
         // Notify BigCommerce
         qtyInput.dispatchEvent(new Event("input", { bubbles: true }));
         qtyInput.dispatchEvent(new Event("change", { bubbles: true }));
 
+        // update wasPrice
+          updateWasPrice();
+          
         // Update price
         quantityChanged(qtyInput.value);
 
