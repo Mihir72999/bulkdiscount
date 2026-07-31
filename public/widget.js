@@ -62,7 +62,7 @@
 let variant ;
 let discountType = 'percent'
 let rules = null;
-const hasVariantOptions;
+let hasVariantOptions;
 let widgetSettings = null;
 
 async function loadWidgetSettings() {
