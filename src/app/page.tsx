@@ -36,6 +36,7 @@ export type DiscountRule = {
     const [name , setName] = useState('')
     const [description,setDescription] = useState('')
     const [search, setSearch] = useState("");
+    const [widgetLoading , setWidgetLoading] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
   const [discounts, setDiscounts] = useState<DiscountRule[]>([]);
   const debouncedKeyword = useDebounce(search.length >= 3 ? search : "", 300);
@@ -51,6 +52,7 @@ export type DiscountRule = {
     "#55e912"
     ]
     async function handleSave(){
+      setWidgetLoading(true)
       try {
       
       await saveWidgetSettings({
@@ -67,10 +69,11 @@ export type DiscountRule = {
       )
     );
       toast.success('your settings saved successfully')
-      
+      setWidgetLoading(false)
     } catch (err) {
       console.error(err);
       toast.error(`your settings saved successfully ${JSON.stringify(err)}`)
+      setWidgetLoading(false)
     } 
     }
     
@@ -230,8 +233,9 @@ export type DiscountRule = {
 
               <Button className={'cursor-pointer'} 
               onClick={handleSave}
+              disabled={widgetLoading}
                 >
-                Save Offer
+               ${widgetLoading ? 'Saving...' : 'Save Offer'}
               </Button>
             </div>
 
