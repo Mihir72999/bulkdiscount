@@ -78,11 +78,12 @@ export function useGetProductSettings(){
   const { context } = useSession();
       const params = new URLSearchParams({ context }).toString();
 
-  const {data, error , isLoading} = useSWR(context ? ['api/rules', params] : null , fetcher)
+  const {data, error , isLoading , mutate} = useSWR(context ? ['api/rules', params] : null , fetcher)
   return {
     setting:data ,
     error,
-    isLoading
+    isLoading,
+    serverMutate:mutate
   }
 }
 

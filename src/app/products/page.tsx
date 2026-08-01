@@ -56,7 +56,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 
 const Products = () => {
 const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | never[] , isLoading:boolean}
-  const [data, setData] = useState(setting);
+  const [data, setData] = useState([]);
   const [activeBundles, setActiveBundles] = useState<Record<number, boolean>>({});
   const [selectedIds, setSelectedIds] = useState<Record<number, boolean>>({});
 
@@ -83,6 +83,13 @@ const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | neve
       setSelectedIds(allSelected);
     }
   };
+
+
+  useEffect(() => {
+    if (setting && setting.length > 0) {
+      setData(setting);
+    }
+  },[setting])
 
    // Mass deletion action handler
   const handleDeleteSelected = () => {
