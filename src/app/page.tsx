@@ -235,7 +235,7 @@ export type DiscountRule = {
               onClick={handleSave}
               disabled={widgetLoading}
                 >
-               ${widgetLoading ? 'Saving...' : 'Save Offer'}
+               {widgetLoading ? 'Saving...' : 'Save Offer'}
               </Button>
             </div>
 
