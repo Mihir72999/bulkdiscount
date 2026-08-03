@@ -73,9 +73,7 @@ const selectedCount = Object.values(selectedIds).filter(Boolean).length;
 if(isLoading) return <Loading/>
   
     useEffect(() => {
-    if (setting && setting.length > 0) {
       setData(setting);
-    }
   },[setting])
 
 
