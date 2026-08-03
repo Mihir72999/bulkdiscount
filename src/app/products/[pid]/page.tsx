@@ -8,7 +8,7 @@ const ProductInfo = () => {
    const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | never[] , isLoading:boolean}
    const [data, setData]=useState([]) 
    const {pid} = useParams() as {pid:string}
-   const [findSetting , setSetting] = useState<{id:string , name:string}[]>([])
+   const [findSetting , setSetting] = useState<{id:number , name:string}[]>([])
    if(isLoading){
     return <Loading/>
    }
@@ -16,7 +16,6 @@ const ProductInfo = () => {
    useEffect(()=>{
     if(setting.length > 0){
         setData(setting)
-        
         const find = data.filter((data:{id:string , name:string})=> data.id === pid)
         console.log('find',find)
         setSetting(find ?? [])
