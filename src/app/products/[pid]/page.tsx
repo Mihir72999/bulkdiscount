@@ -5,28 +5,19 @@ import { useGetProductSettings} from '../../../../lib/hooks';
 import { useEffect, useState } from 'react';
 
 const ProductInfo = () => {
-   const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | never[] , isLoading:boolean}
-   const [data, setData]=useState([]) 
+   const {setting = [] , isLoading} = useGetProductSettings() as {setting:[{id:number , name:string}] | never[] , isLoading:boolean} 
    const {pid} = useParams() as {pid:string}
-   const [findSetting , setSetting] = useState<{id:number , name:string}[]>([])
    if(isLoading){
     return <Loading/>
    }
    
-   useEffect(()=>{
-    if(setting.length > 0){
-        setData(setting)
-        const find = data.filter((data:{id:string , name:string})=> data.id === pid)
-        console.log('find',find)
-        setSetting(find ?? [])
-    }
-   },[setting , pid])
-   console.log('findSetting',findSetting)
-   if(findSetting.length === 0){
+   const findSetting = setting.find((item)=> item.id === Number(pid)) 
+
+   if(!findSetting){
     notFound()
    }
     return (
-        <div>Its a product Settings {findSetting[0]?.name} info page</div>
+        <div>Its a product Settings {findSetting?.name} info page</div>
     );
 };
 
