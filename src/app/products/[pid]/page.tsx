@@ -1,52 +1,27 @@
 'use client'
-import { notFound, useParams, useRouter } from 'next/navigation';
-import ErrorMessage from '../../../../components/error';
-import Form from '../../../../components/forms';
+import { notFound, useParams} from 'next/navigation';
 import Loading from '../../../../components/loading';
-import { useSession } from '../../../../context/session';
-import { useProductInfo, useProductList } from '../../../../lib/hooks';
-import { FormData } from '../../../../types';
+import { useGetProductSettings} from '../../../../lib/hooks';
+import { useEffect, useState } from 'react';
 
 const ProductInfo = () => {
-    const router = useParams();
-    const postRouter = useRouter() 
-    const encodedContext = useSession()?.context;
-    const pid = Number(router?.pid);
-    const { error, isLoading, list = [], mutateList } = useProductList();
-    const { isLoading: isInfoLoading, product } = useProductInfo(pid, list);
-    const { description, is_visible, name, price, inventory_level, type } = product ?? {};
-    const formData = { description, is_visible, name, price, inventory_level, type };
-
-    const handleCancel = () => postRouter.push('/products');
-
-    const handleSubmitData = async (data: FormData) => {
-        try {
-            const filteredList = list.filter((item:{id:number}) => item.id !== pid);
-            const { description, is_visible, name, price, inventory_level, type } = data;
-            const apiFormattedData = { description,is_visible, name, price, inventory_level, type };
-
-            // Update local data immediately (reduce latency to user)
-            mutateList([...filteredList, { ...product, ...data }], false);
-
-            // Update product details
-            await fetch(`/api/products/${pid}?context=${encodedContext}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(apiFormattedData),
-            });
-
-            // Refetch to validate local data
-            mutateList();
-            postRouter.push('/products');
-        } catch (error) {
-            console.error('Error updating the product: ', error);
-        }
-    };
-    if (isLoading || isInfoLoading) return <Loading />;
-    if (error) return <ErrorMessage error={error} />;
-    if(!list) return notFound()
+   const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | never[] , isLoading:boolean} 
+   const {pid} = useParams() as {pid:string}
+   const [findSetting , setSetting] = useState<{id:string , name:string}[]>([])
+   if(isLoading){
+    return <Loading/>
+   }
+   if(setting.length === 0){
+    notFound()
+   }
+   useEffect(()=>{
+    if(setting.length > 0){
+        const find = setting.find((data:{id:string , name:string})=> data.id === pid)
+        setSetting(find ?? [])
+    }
+   },[setting])
     return (
-        <Form formData={formData} onCancel={handleCancel} onSubmit={handleSubmitData} />
+        <div>Its a product Settings {findSetting[0]?.name} info page</div>
     );
 };
 

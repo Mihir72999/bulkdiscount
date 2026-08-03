@@ -1,12 +1,9 @@
 'use client'
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ReactElement , useState , useEffect} from 'react';
-import ErrorMessage from '../../../components/error';
+import { useState , useEffect} from 'react';
 import Loading from '../../../components/loading';
-import { useGetProductSettings, useProductList } from '../../../lib/hooks';
-import { TableItem } from '../../../types';
-import { MoreHorizontal } from "lucide-react";
+import { useGetProductSettings} from '../../../lib/hooks';
+
 import {
   Card,
 } from "@/components/ui/card";
@@ -25,28 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { StatsCard } from '../section/statCards';
 import { BitcoinBagIcon, ChartAverageFreeIcons, Coins01Icon } from '@hugeicons/core-free-icons';
@@ -59,7 +34,7 @@ const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | neve
   const [data, setData] = useState([]);
   const [activeBundles, setActiveBundles] = useState<Record<number, boolean>>({});
   const [selectedIds, setSelectedIds] = useState<Record<number, boolean>>({});
-
+  const router = useRouter();
  // Active status toggle handler
   const handleToggleActive = (id: number) => {
     setActiveBundles((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -215,7 +190,9 @@ return (
                       aria-label={`Select row ${bundle.name}`}
                     />
                   </TableCell>
-                  <TableCell className="font-medium text-slate-700 dark:text-slate-300">
+                  <TableCell 
+                  onClick={() => router.push(`/products/${bundle.id}`)}
+                  className="font-medium text-slate-700 dark:text-slate-300">
                     {bundle.name}
                   </TableCell>
                   <TableCell className="text-right pr-4">

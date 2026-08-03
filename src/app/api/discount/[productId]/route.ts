@@ -27,17 +27,6 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
   storeHash: string;
 };
 
-
-// const sql = `
-//     SELECT *
-//     FROM discountedProduct
-//     WHERE storeHash = ?
-//     AND productId = ?
-//     ORDER BY quantity ASC
-// `;
-// const values = {storeHash:store?.storeHash, productId};
-
-// const { results: rows } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash);
 
 const [variants, response] = await Promise.all([
@@ -47,66 +36,18 @@ const [variants, response] = await Promise.all([
 
 if(!response.data || response.data.length === 0){
 
-// await db.prepare(`
-//   DELETE FROM discountedProduct
-//   WHERE productId = ?
-// `)
-// .bind(productId)
-// .run();
-
 return NextResponse.json({
       success: false,
       rules: [],
     },{status:200 , headers:headers});
 }
 
-// const match:boolean =
-//   response.data.length === rows.length - 1 &&
-//   response.data.every((bc:any) =>
-//     rows.some(db =>
-//       db.quantity === bc.quantity_min &&
-//       Number(db.discount) === Number(bc.amount) &&
-//       db.discountType === bc.type
-//     )
-//   );
-
-//  if(match === Boolean(0)) {
-//    const sql2 = `
-//   DELETE FROM discountedProduct
-//   WHERE productId = ?
-// `;
-
-//   await db.prepare(sql2).bind(productId).run()
-  
-//   const values1 = response.data.map((rule:any) => [
-//     store.storeHash,
-//     Number(productId),
-//     rule.quantity_min,
-//     rule.amount,
-//     rule.type,
-//     `${rule.amount} % OFF`,
-//   ])
-
-//   values1.unshift([store.storeHash, Number(productId), 1, 0, response.data[0]?.type, "single"]);
-
-
-// const placeholders = values1
-//   .map(() => "(?, ?, ?, ?, ?, ?)")
-//   .join(", ");
-
-// const bindings = values1.flat();
-
-//   await db.prepare(`INSERT INTO discountedProduct
-//       (storeHash, productId, quantity, discount, discountType, label) 
-//         VALUES ${placeholders} `).bind(...bindings).run()
-//   }
-
-//     const { results: rules } = await db.prepare(sql).bind(values.storeHash,values.productId).run();
    const rules = response.data.map((data:any)=>{
 
     return{
       productId,
       quantity: data.quantity_min,
+      maxQuantity: data.quantity_max,
       discountType:data.type,
       discount:data.amount,
       label:`${data.amount} % OFF`
