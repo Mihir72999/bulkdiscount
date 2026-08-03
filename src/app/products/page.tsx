@@ -8,6 +8,8 @@ import {
   Card,
 } from "@/components/ui/card";
 
+import {type ProductMenuProps} from '../../../types/discount';
+
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2 } from "lucide-react"; // Accessible icon asset
@@ -48,13 +50,13 @@ const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | neve
   };
 
    // Global header checkbox change handler
-  const isAllSelected = data.length > 0 && data.every((item:{id:number , name:string}) => selectedIds[item.id]);
+  const isAllSelected = data.length > 0 && data.every((item:ProductMenuProps) => selectedIds[item.id]);
   const handleSelectAll = () => {
     if (isAllSelected) {
       setSelectedIds({});
     } else {
       const allSelected: Record<number, boolean> = {};
-      data.forEach((item:{id:number , name:string}) => {
+      data.forEach((item:ProductMenuProps) => {
         allSelected[item?.id] = true;
       });
       setSelectedIds(allSelected);
@@ -64,7 +66,7 @@ const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | neve
 
    // Mass deletion action handler
   const handleDeleteSelected = () => {
-    const remainingData = data.filter((item:{id:number,name:string}) => !selectedIds[item.id]);
+    const remainingData = data.filter((item:ProductMenuProps) => !selectedIds[item.id]);
     setData(remainingData);
     setSelectedIds({}); // Reset selection state
   }; 
