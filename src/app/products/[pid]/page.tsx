@@ -7,14 +7,14 @@ import { useEffect, useState } from 'react';
 const ProductInfo = () => {
    const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | never[] , isLoading:boolean} 
    const {pid} = useParams() as {pid:string}
-   const [findSetting , setSetting] = useState<{id:string , name:string}[]>([])
+   const [findSetting , setSetting] = useState<{id:number , name:string}[]>([])
    if(isLoading){
     return <Loading/>
    }
    
    useEffect(()=>{
     if(setting.length > 0){
-        const find = setting.filter((data:{id:string , name:string})=> data.id === Number(pid))
+        const find = setting.filter((data:{id:number , name:string})=> data.id === Number(pid))
         console.log('find',find)
         setSetting(find ?? [])
     }
