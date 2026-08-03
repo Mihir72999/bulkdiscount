@@ -8,15 +8,18 @@ import { MoveLeft } from 'lucide-react';
 const ProductInfo = () => {
    const {setting = [] , isLoading} = useGetProductSettings() as {setting:[{id:number , name:string}] | never[] , isLoading:boolean}
    const {pid} = useParams() as {pid:string}
-   if(isLoading){ 
-    return <Loading/>
-   }
+   
    
    const findSetting = setting.find((item)=> item.id === Number(pid)) 
 
    if(!findSetting){
     notFound()
    }
+
+   if(isLoading){ 
+    return <Loading/>
+   }
+   
     return (
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
   <Card>
