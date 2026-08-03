@@ -190,7 +190,7 @@ return (
                 >
                   <TableCell className="pl-4">
                     <Checkbox
-                      className="pointer-events-auto"
+                      className="cursor-pointer"
                       checked={!!selectedIds[bundle.id]}
                       onCheckedChange={() => handleSelectRow(bundle.id)}
                       aria-label={`Select row ${bundle.name}`}
@@ -198,7 +198,7 @@ return (
                   </TableCell>
                   <TableCell 
                   onClick={() => router.push(`/products/${bundle.id}`)}
-                  className="font-medium text-slate-700 dark:text-slate-300">
+                  className="cursor-pointer font-medium text-slate-700 dark:text-slate-300">
                     {bundle.name}
                   </TableCell>
                   <TableCell className="text-right pr-4">
