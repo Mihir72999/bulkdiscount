@@ -27,13 +27,13 @@ const ProductInfo = () => {
   <div className="flex gap-2" onClick={() => router.back()}>
     <MoveLeft /> Bundle deal
   </div>
-  <div className="flex flex-col gap-4 border justify-center items-center border-amber-50 rounded-lg p-4 shadow-md">
+  <div className="border border-amber-50 rounded-lg p-4 shadow-md">
        
        <ProductMenu products={findSetting.product} />
        
     </div>
 
-  <div className="flex flex-col gap-4 justify-center items-center border border-amber-50 rounded-lg p-4 shadow-md">
+  <div className=" border border-amber-50 rounded-lg p-4 shadow-md">
     Preview
   </div>
 </div>
