@@ -11,15 +11,17 @@ const ProductInfo = () => {
    if(isLoading){
     return <Loading/>
    }
-   if(setting.length === 0){
-    notFound()
-   }
+   
    useEffect(()=>{
     if(setting.length > 0){
         const find = setting.filter((data:{id:string , name:string})=> data.id === pid)
         setSetting(find ?? [])
     }
-   },[setting])
+   },[setting , pid])
+   console.log('findSetting',findSetting)
+   if(findSetting.length === 0){
+    notFound()
+   }
     return (
         <div>Its a product Settings {findSetting[0]?.name} info page</div>
     );
