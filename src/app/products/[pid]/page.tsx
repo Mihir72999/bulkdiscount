@@ -16,7 +16,7 @@ const ProductInfo = () => {
    }
    useEffect(()=>{
     if(setting.length > 0){
-        const find = setting.find((data:{id:string , name:string})=> data.id === pid)
+        const find = setting.filter((data:{id:string , name:string})=> data.id === pid)
         setSetting(find ?? [])
     }
    },[setting])
