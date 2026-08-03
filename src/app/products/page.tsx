@@ -35,6 +35,15 @@ const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | neve
   const [activeBundles, setActiveBundles] = useState<Record<number, boolean>>({});
   const [selectedIds, setSelectedIds] = useState<Record<number, boolean>>({});
   const router = useRouter();
+
+  if(isLoading) return <Loading/>
+  
+    useEffect(() => {
+    if (setting && setting.length > 0) {
+      setData(setting);
+    }
+  },[setting])
+
  // Active status toggle handler
   const handleToggleActive = (id: number) => {
     setActiveBundles((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -60,12 +69,6 @@ const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | neve
   };
 
 
-  useEffect(() => {
-    if (setting && setting.length > 0) {
-      setData(setting);
-    }
-  },[setting])
-
    // Mass deletion action handler
   const handleDeleteSelected = () => {
     const remainingData = data.filter((item:{id:number,name:string}) => !selectedIds[item.id]);
@@ -73,7 +76,6 @@ const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | neve
     setSelectedIds({}); // Reset selection state
   }; 
 const selectedCount = Object.values(selectedIds).filter(Boolean).length;
-if(isLoading) return <Loading/>
 
 return (
   <div className="max-w-5xl mx-auto p-6 space-y-6">
@@ -185,6 +187,7 @@ return (
                 >
                   <TableCell className="pl-4">
                     <Checkbox
+                      className="pointer-events-auto"
                       checked={!!selectedIds[bundle.id]}
                       onCheckedChange={() => handleSelectRow(bundle.id)}
                       aria-label={`Select row ${bundle.name}`}

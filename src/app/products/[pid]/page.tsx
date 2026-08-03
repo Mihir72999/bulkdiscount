@@ -2,12 +2,13 @@
 import { notFound, useParams} from 'next/navigation';
 import Loading from '../../../../components/loading';
 import { useGetProductSettings} from '../../../../lib/hooks';
-import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { MoveLeft } from 'lucide-react';
 
 const ProductInfo = () => {
-   const {setting = [] , isLoading} = useGetProductSettings() as {setting:[{id:number , name:string}] | never[] , isLoading:boolean} 
+   const {setting = [] , isLoading} = useGetProductSettings() as {setting:[{id:number , name:string}] | never[] , isLoading:boolean}
    const {pid} = useParams() as {pid:string}
-   if(isLoading){
+   if(isLoading){ 
     return <Loading/>
    }
    
@@ -17,7 +18,25 @@ const ProductInfo = () => {
     notFound()
    }
     return (
-        <div>Its a product Settings {findSetting?.name} info page</div>
+ <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <Card>
+    <CardHeader>
+      <CardTitle><MoveLeft /> Bundle deal</CardTitle>
+    </CardHeader>
+    <CardContent>
+      {/* Left content */}
+    </CardContent>
+  </Card>
+
+  <Card>
+    <CardHeader>
+      <CardTitle>Preview</CardTitle>
+    </CardHeader>
+    <CardContent>
+      {/* Right content */}
+    </CardContent>
+  </Card>
+</div>
     );
 };
 
