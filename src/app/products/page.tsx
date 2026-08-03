@@ -70,12 +70,12 @@ const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | neve
   }; 
 const selectedCount = Object.values(selectedIds).filter(Boolean).length;
 
-if(isLoading) return <Loading/>
   
     useEffect(() => {
       setData(setting);
   },[setting])
 
+if(isLoading) return <Loading/>
 
 
 return (
