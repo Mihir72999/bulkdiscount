@@ -36,14 +36,7 @@ const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | neve
   const [selectedIds, setSelectedIds] = useState<Record<number, boolean>>({});
   const router = useRouter();
 
-  if(isLoading) return <Loading/>
   
-    useEffect(() => {
-    if (setting && setting.length > 0) {
-      setData(setting);
-    }
-  },[setting])
-
  // Active status toggle handler
   const handleToggleActive = (id: number) => {
     setActiveBundles((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -76,6 +69,16 @@ const {setting = [] , isLoading} = useGetProductSettings() as {setting:[] | neve
     setSelectedIds({}); // Reset selection state
   }; 
 const selectedCount = Object.values(selectedIds).filter(Boolean).length;
+
+if(isLoading) return <Loading/>
+  
+    useEffect(() => {
+    if (setting && setting.length > 0) {
+      setData(setting);
+    }
+  },[setting])
+
+
 
 return (
   <div className="max-w-5xl mx-auto p-6 space-y-6">
