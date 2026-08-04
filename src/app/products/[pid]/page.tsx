@@ -23,7 +23,7 @@ const ProductInfo = () => {
    
 
     return (
- ,<div>     
+ <div>     
   <div className="flex gap-2" onClick={() => router.back()}>
     <MoveLeft /> Bundle deal
   </div>
