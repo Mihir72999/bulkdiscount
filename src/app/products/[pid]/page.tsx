@@ -23,10 +23,11 @@ const ProductInfo = () => {
    
 
     return (
- <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-8">
+ ,<div>     
   <div className="flex gap-2" onClick={() => router.back()}>
     <MoveLeft /> Bundle deal
   </div>
+ <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-8">
   <div className="border border-amber-50 rounded-lg p-4 shadow-md">
        
        <ProductMenu products={findSetting.product} />
@@ -35,6 +36,7 @@ const ProductInfo = () => {
 
   <div className=" border border-amber-50 rounded-lg p-4 shadow-md">
     Preview
+  </div>
   </div>
 </div>
     );
