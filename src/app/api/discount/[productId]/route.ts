@@ -11,7 +11,7 @@ function corsHeaders(origin: string | null , allowedOrigins: string[]) {
   };
 
   if (origin && allowedOrigins?.includes(origin)) {
-    headers["Access-Control-Allow-Origin"] = origin;
+    headers["Access-Control-Allow-Origin"] = `https://${origin}`;
   }
 
   return headers;
@@ -37,6 +37,7 @@ request: NextRequest
 ) {
   const allowedOrigins = await getStoreDomain();
    const origin = request.headers.get("origin") || "";
+
    return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) })
 }
 
