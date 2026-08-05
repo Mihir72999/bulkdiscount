@@ -46,6 +46,7 @@ export async function GET(
     { params }: { params: Promise<{ productId: string }> }
 ){
   const domain = request.nextUrl.searchParams.get('domain')
+  const origin = request.headers.get("origin") || "";
   const allowedOrigins = await getStoreDomain();    
   try {
   const {productId} = await params  
@@ -68,7 +69,7 @@ if(!response.data || response.data.length === 0){
 return NextResponse.json({
       success: false,
       rules: [],
-    },{status:200 , headers:corsHeaders(domain, allowedOrigins)});
+    },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
 }
 
    const rules = response.data.map((data:any)=>{
@@ -87,7 +88,7 @@ return NextResponse.json({
     succes:true,
     rules,
     variants : variants?.data
-   },{headers:corsHeaders(domain, allowedOrigins)})
+   },{headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)})
 
      } catch (error) {
 
@@ -98,7 +99,7 @@ return NextResponse.json({
 
     return NextResponse.json(
       { message },
-      { status: response?.status ?? 500 , headers:corsHeaders(domain, allowedOrigins)}
+      { status: response?.status ?? 500 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)}
     ); 
   } 
 }

@@ -180,18 +180,7 @@ export async function hasStoreUser(storeHash: string, userId: string) {
     return results?.length > 0;
 }
 
-// export async function getStoreToken(storeHash: string) {
-//     if (!storeHash) return null;
 
-// const result = await db.prepare(`
-//   SELECT accessToken
-//   FROM stores
-//   WHERE storeHash = ?
-// `)
-// .bind(storeHash)
-// .first();
-//     return result?.accessToken || null;
-// }
 export async function getStoreToken(
   storeHash: string
 ): Promise<string | null> {

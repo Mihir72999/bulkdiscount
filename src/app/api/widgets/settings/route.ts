@@ -42,9 +42,10 @@ export async function OPTIONS(request: NextRequest){
 export async function GET(req:NextRequest) {
       const allowedOrigins = await getStoreDomain();
         const domain = req.nextUrl.searchParams.get('domain')
+        const origin = req.headers.get("origin") || "";
         const productId = req.nextUrl.searchParams.get('product_id')
         if(!domain || !productId){
-         return NextResponse.json({success:false},{status:404,headers: corsHeaders(domain, allowedOrigins)})
+         return NextResponse.json({success:false},{status:404,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins)})
         }
     try {
  const db = await getDB()
@@ -68,7 +69,7 @@ const settings = await db
     return NextResponse.json({
       success: true,
       data: settings,
-    } ,{headers: corsHeaders(domain, allowedOrigins)});
+    } ,{headers: corsHeaders(normalizeOrigin(origin), allowedOrigins)});
 
   } catch (error) {
 
@@ -77,7 +78,7 @@ const settings = await db
         success: false,
         message: "Something went wrong.",
       },
-      { status: 500 , headers: corsHeaders(domain, allowedOrigins) }
+      { status: 500 , headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) }
     );
   }
 }
