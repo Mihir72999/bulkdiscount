@@ -21,6 +21,10 @@ type Store = {
   domain:string;
 }
 
+function normalizeOrigin(origin: string) {
+  return new URL(origin).hostname.toLowerCase();
+}
+
 async function getStoreDomain(){
 const db = await getDB()
   const {results} = await db.prepare("SELECT domain FROM stores").all<Store>()
@@ -32,8 +36,8 @@ export async function OPTIONS(
 request: NextRequest 
 ) {
   const allowedOrigins = await getStoreDomain();
-   const origin = request.headers.get("origin");
-   return new NextResponse(null,{ status:204,headers: corsHeaders(origin, allowedOrigins) })
+   const origin = request.headers.get("origin") || "";
+   return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) })
 }
 
 export async function GET(
