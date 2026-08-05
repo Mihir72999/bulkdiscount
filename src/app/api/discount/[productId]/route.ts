@@ -2,11 +2,7 @@ import { NextRequest, NextResponse  } from "next/server";
 import { bigcommerceClient } from "../../../../../lib/auth";
 import { getDB } from "../../../../../lib/db";
 export const dynamic = 'force-dynamic';
-const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "*",
-    "Access-Control-Allow-Headers": "*"
-  }
+
 
 function corsHeaders(origin: string | null , allowedOrigins: string[]) {
   const headers: Record<string, string> = {
