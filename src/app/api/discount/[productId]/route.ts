@@ -29,11 +29,10 @@ return allowedOrigins
 }
 
 export async function OPTIONS(
-request: NextRequest ,
-{ params }: { params: Promise<{ productId: string }>}
+request: NextRequest 
 ) {
   const allowedOrigins = await getStoreDomain();
-   const origin = request.nextUrl.searchParams.get("domain");
+   const origin = request.headers.get("origin");
    return new NextResponse(null,{ status:204,headers: corsHeaders(origin, allowedOrigins) })
 }
 
