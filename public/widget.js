@@ -113,8 +113,7 @@ async function getRules() {
         const response = await fetch(url, {
             method: "GET",
               headers: {
-             'Content-Type': 'application/json',
-              "ngrok-skip-browser-warning": "1",
+             'Content-Type': 'application/json'
       },
         });
 
