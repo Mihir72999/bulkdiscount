@@ -28,9 +28,12 @@ const db = await getDB()
 return allowedOrigins
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(
+request: NextRequest ,
+{ params }: { params: Promise<{ productId: string }>}
+) {
   const allowedOrigins = await getStoreDomain();
-   const origin = request.headers.get("origin");
+   const origin = request.nextUrl.searchParams.get("domain");
    return new NextResponse(null,{ status:204,headers: corsHeaders(origin, allowedOrigins) })
 }
 
