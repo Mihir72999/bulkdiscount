@@ -24,7 +24,7 @@ const ProductInfo = () => {
 
     return (
  <div>     
-  <div className="flex gap-2" onClick={() => router.back()}>
+  <div className="flex gap-2 cursor-pointer" onClick={() => router.back()}>
     <MoveLeft /> Bundle deal
   </div>
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-8">
