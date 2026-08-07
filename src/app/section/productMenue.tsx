@@ -30,12 +30,12 @@ export default function ProductMenu({products}: {products: ProductMenuProps['pro
         </Button>
       </CollapsibleTrigger>
 
-      <CollapsibleContent className="mt-2 ml-6 space-y-1 border border-amber-50 rounded-lg">
+      <CollapsibleContent className="mt-2 ml-6 space-y-1 border border-amber-50 rounded-lg p-4">
         {products.map((product) => (
           <Button
             key={product.id}
             variant="ghost"
-            className="w-full justify-start border border-amber-50 mx-4 rounded-lg"
+            className="w-full justify-start border border-amber-50  rounded-lg"
           >
             {product.name}
           </Button>
@@ -43,7 +43,7 @@ export default function ProductMenu({products}: {products: ProductMenuProps['pro
 
         <Button
           variant="outline"
-          className="mt-3 w-full justify-start mx-4"
+          className="mt-3 w-full justify-start "
         >
           <Plus className="mr-2 h-4 w-4" />
           Add Product
