@@ -23,7 +23,7 @@ export default function ProductMenu({products}: {products: ProductMenuProps['pro
           </div>
 
           <ChevronDown
-            className={`h-4 w-4 transition-transform ${
+            className={`h-4 w-4 cursor-pointer transition-transform ${
               open ? "rotate-180" : ""
             }`}
           />
