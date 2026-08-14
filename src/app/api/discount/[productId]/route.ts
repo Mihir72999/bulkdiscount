@@ -60,7 +60,7 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash);
 
 const [promotions, variants, response] = await Promise.all([
-  bigcommerce.get(`/v3/promotions`),
+  bigcommerce.get(`/promotions`),
   bigcommerce.get(`/catalog/products/${productId}/variants`),
   bigcommerce.get(`/catalog/products/${productId}/bulk-pricing-rules`)
 ]);
