@@ -549,9 +549,9 @@ if(missing[qty]){
 
 async function init() {
     console.log("========== Widget Init ==========");
-    const {isCartPage , productId} = findCart();
-    if(isCartPage){
-      console.log(productId)
+    const cart = findCart();
+    if(cart.isCartPage){
+      console.log(cart.productId)
     } 
     
     if (!isProductPage()) {
