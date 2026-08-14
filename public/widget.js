@@ -549,24 +549,43 @@ if(missing[qty]){
 
 async function checkCart() {
   try {
-    const responses = await fetch(
-      `${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`
-    );
-
-    const data = await responses.json();
-
-    console.log("Cart updated:", data);
-
-    // Your logic here
-    if (data?.cart?.line_items?.physical?.length > 0) {
-      console.log("Cart has items");
+// Example logic to check cart and remove coupon if bulk pricing is active
+fetch('/api/storefront/carts')
+  .then(response => response.json())
+  .then(cartData => {
+    if (!cartData || cartData.length === 0) return;
+    
+    const cart = cartData[0];
+    const hasCoupons = cart.coupons && cart.coupons.length > 0;
+    
+    if (hasCoupons) {
+      let bulkPricingDetected = false;
+      
+      // Loop through cart items to see if bulk tier pricing is active
+      cart.lineItems.physicalItems.forEach(item => {
+        // BigCommerce adjusts the item's 'sale_price' when bulk tiers are hit.
+        // Or you can check if item.quantity matches your specific tier rules.
+        if (item.quantity >= 5) { // Replace 5 with your bulk tier threshold
+          bulkPricingDetected = true;
+        }
+      });
+      
+      if (bulkPricingDetected) {
+        const couponCode = cart.coupons[0].code;
+        const cartId = cart.id;
+        
+        // Automatically delete the coupon from the cart
+        fetch(`/api/storefront/carts/${cartId}/coupons/${couponCode}`, {
+          method: 'DELETE'
+        })
+        .then(() => {
+          alert("Coupons cannot be combined with bulk quantity discounts.");
+          window.location.reload(); // Refresh to update the cart total
+        });
+      }
     }
-      const response = await fetch('/api/storefront/carts');
+  });
 
-    const carts = await response.json();
-
-    console.log('Current cart:', carts);
-   return carts;
     
   } catch (error) {
     console.error("Cart API error:", error);
@@ -586,8 +605,7 @@ function watchCouponApply() {
       console.log("🎟️ Coupon applied");
 
       setTimeout(async() => {
-       const data = await checkCart();
-       console.log("Cart after coupon applied:", data);
+        await checkCart();
       }, 1000);
     }
   });
