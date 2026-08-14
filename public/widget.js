@@ -547,18 +547,30 @@ if(missing[qty]){
         });
   }
 
+async function checkCart() {
+  try {
+    const response = await fetch(
+      `${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`
+    );
+
+    const data = await response.json();
+
+    console.log("Cart updated:", data);
+
+    // Your logic here
+    if (data?.cart?.line_items?.physical?.length > 0) {
+      console.log("Cart has items");
+    }
+  } catch (error) {
+    console.error("Cart API error:", error);
+  }
+}
+
 async function init() {
     console.log("========== Widget Init ==========");
     const cart = findCart();
     if(cart.isCartPage){
-      fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data)
-        if(data?.cart?.line_items?.physical?.length > 0){
-          console.log("✅ Cart page with items");
-          console.log(data)
-        }})
+        await checkCart();
     } 
     
     if (!isProductPage()) {
