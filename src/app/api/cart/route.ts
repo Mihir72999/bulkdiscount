@@ -83,7 +83,11 @@ const response = await bigcommerce.post(
   promotion
 );
 
-console.log(response.data);
+const rule = await bigcommerce.put('/promotions/3', { 
+  status: "DISABLED"
+});
+
+console.log(rule.data);
 console.log(
   JSON.stringify(response, null, 2)
 );
