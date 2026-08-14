@@ -581,7 +581,7 @@ fetch('/api/storefront/carts')
         })
         .then(() => {
           console.log("Coupon removed from cart");
-          window.location.reload(); // Refresh to update the cart total
+
         });
       }
     }
