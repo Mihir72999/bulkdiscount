@@ -24,6 +24,19 @@
     document.head.appendChild(link);
   }
 
+////variant Array
+let variant ;
+let discountType = 'percent'
+let rules = null;
+let hasVariantOptions;
+let widgetSettings = null;
+const selections = [];
+const priceElement =[
+    ...document.querySelectorAll("[data-product-price-with-tax], [data-product-price-without-tax]")].find(el => el.textContent.trim() !== "");
+    
+
+  let originalPrice = 0;
+
   function isProductPage() {
       return getProductId() !== null;
   }
@@ -51,37 +64,24 @@
   }
 
   function findCart(){
-    return (
-            document.querySelector("#add-to-cart-wrapper") ||
-            document.querySelector(".add-to-cart-wrapper") 
-    )
+    return {isCartPage :window.location.pathname === '/cart.php' , productId: getProductId()};
   }
 
   function findTarget() {
     return (
+      document.querySelector("#add-to-cart-wrapper") ||
+      document.querySelector(".add-to-cart-wrapper") ||
       document.querySelector(".productView-options") ||
       document.querySelector(".productView")
     );
   }
 
-////variant Array
-let variant ;
-let discountType = 'percent'
-let rules = null;
-let hasVariantOptions;
-let widgetSettings = null;
-const selections = [];
-const priceElement =[
-    ...document.querySelectorAll("[data-product-price-with-tax], [data-product-price-without-tax]")].find(el => el.textContent.trim() !== "");
-    
-
-  let originalPrice = parseFloat(
-    priceElement.textContent.replace(/[^0-9.]/g, "")
-);
-
 
 async function loadWidgetSettings() {
   const product_id = getProductId()
+  originalPrice = parseFloat(
+      priceElement.textContent.replace(/[^0-9.]/g, "")
+     );
   try {
     const res = await fetch(
       `${API_BASE}/api/widgets/settings?domain=${encodeURIComponent(window.location.hostname)}&product_id=${product_id}`
@@ -549,14 +549,19 @@ if(missing[qty]){
 
 async function init() {
     console.log("========== Widget Init ==========");
-
+    const {isCartPage , productId} = findCart();
+    if(isCartPage){
+      console.log(productId)
+    } 
+    
     if (!isProductPage()) {
+      
         console.log("❌ Not a product page");
         return;
     }
 
     console.log("✅ Product page");
-
+   
     loadCSS();
     await loadWidgetSettings()
 
@@ -569,12 +574,7 @@ async function init() {
 
 
     const target = findTarget();
-    const cart = findCart();
-    console.log(cart)
-    if(cart){
-      console.log("cart calling")
-      await getRules();
-    }
+    
  
     if (!target) {
         console.warn("❌ Target element not found");
