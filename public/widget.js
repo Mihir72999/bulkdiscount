@@ -49,10 +49,16 @@
 
     return null;
   }
+
+  function findCart(){
+    return (
+            document.querySelector("#add-to-cart-wrapper") ||
+            document.querySelector(".add-to-cart-wrapper") 
+    )
+  }
+
   function findTarget() {
     return (
-      document.querySelector("#add-to-cart-wrapper") ||
-      document.querySelector(".add-to-cart-wrapper") ||
       document.querySelector(".productView-options") ||
       document.querySelector(".productView")
     );
@@ -65,6 +71,14 @@ let rules = null;
 let hasVariantOptions;
 let widgetSettings = null;
 const selections = [];
+const priceElement =[
+    ...document.querySelectorAll("[data-product-price-with-tax], [data-product-price-without-tax]")].find(el => el.textContent.trim() !== "");
+    
+
+  let originalPrice = parseFloat(
+    priceElement.textContent.replace(/[^0-9.]/g, "")
+);
+
 
 async function loadWidgetSettings() {
   const product_id = getProductId()
@@ -96,6 +110,8 @@ async function loadWidgetSettings() {
     return null;
   }
 }
+
+
 
 async function getRules() {
     const productId = getProductId();
@@ -144,13 +160,7 @@ async function getRules() {
     }
   
   
-const priceElement =[
-    ...document.querySelectorAll("[data-product-price-with-tax], [data-product-price-without-tax]")].find(el => el.textContent.trim() !== "");
-    
 
-  let originalPrice = parseFloat(
-    priceElement.textContent.replace(/[^0-9.]/g, "")
-);
 
 function getWasPrice(){
    return [
@@ -559,7 +569,10 @@ async function init() {
 
 
     const target = findTarget();
-
+    const cart = findCart();
+    if(cart){
+      await getRules();
+    }
  
     if (!target) {
         console.warn("❌ Target element not found");
