@@ -59,13 +59,7 @@ const [promotions] = await Promise.all([
   bigcommerce.get(`/promotions`)
 ]);
 console.log(promotions)
-if(!promotions.data || promotions.data.length === 0){
 
-return NextResponse.json({
-      success: false,
-      rules: [],
-    },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
-}
 return NextResponse.json({
       success: true,
       rules: promotions.data,
