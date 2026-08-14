@@ -576,7 +576,7 @@ fetch('/api/storefront/carts')
         console.log(couponCode, cartId);
 
         // Automatically delete the coupon from the cart
-        fetch(`/api/storefront/carts/${cartId}/coupons/${couponCode}`, {
+        fetch(`/api/storefront/checkouts/${cartId}/coupons/${couponCode}`, {
           method: 'DELETE'
         })
         .then(() => {
