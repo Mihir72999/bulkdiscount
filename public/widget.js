@@ -549,43 +549,44 @@ if(missing[qty]){
 
 async function checkCart() {
   try {
-// Example logic to check cart and remove coupon if bulk pricing is active
-fetch('/api/storefront/carts')
-  .then(response => response.json())
-  .then(cartData => {
-    if (!cartData || cartData.length === 0) return;
+    const resp = await fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`)
+    const cartData = await resp.json();
+    console.log(cartData)
+    // Example logic to check cart and remove coupon if bulk pricing is active
+// fetch('/api/storefront/carts')
+//   .then(response => response.json())
+//   .then(cartData => {
+//     if (!cartData || cartData.length === 0) return;
     
-    const cart = cartData[0];
-    const hasCoupons = cart.coupons && cart.coupons.length > 0;
+//     const cart = cartData[0];
+//     const hasCoupons = cart.coupons && cart.coupons.length > 0;
     
-    if (hasCoupons) {
-      let bulkPricingDetected = false;
+//     if (hasCoupons) {
+//       let bulkPricingDetected = false;
       
-      // Loop through cart items to see if bulk tier pricing is active
-      cart.lineItems.physicalItems.forEach(item => {
-        // BigCommerce adjusts the item's 'sale_price' when bulk tiers are hit.
-        // Or you can check if item.quantity matches your specific tier rules.
-        if (item.quantity >= 1) { // Replace 5 with your bulk tier threshold
-          bulkPricingDetected = true;
-        }
-      });
+//       cart.lineItems.physicalItems.forEach(item => {
+
+//         if (item.quantity >= 1) { 
+//           bulkPricingDetected = true;
+//         }
+//       });
       
-      if (bulkPricingDetected) {
-        const couponCode = cart.coupons[0].code;
-        const cartId = cart.id;
-        console.log(couponCode, cartId);
+//       if (bulkPricingDetected) {
+//         const couponCode = cart.coupons[0].code;
+//         const cartId = cart.id;
+//         console.log(couponCode, cartId);
 
-        // Automatically delete the coupon from the cart
-        fetch(`/api/storefront/checkouts/${cartId}/coupons/${couponCode}`, {
-          method: 'DELETE'
-        })
-        .then(() => {
-          console.log("Coupon removed from cart");
+//         // Automatically delete the coupon from the cart
+//         fetch(`/api/storefront/checkouts/${cartId}/coupons/${couponCode}`, {
+//           method: 'DELETE'
+//         })
+//         .then(() => {
+//           console.log("Coupon removed from cart");
 
-        });
-      }
-    }
-  });
+//         });
+//       }
+//     }
+//   });
 
     
   } catch (error) {

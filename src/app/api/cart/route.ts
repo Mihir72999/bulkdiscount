@@ -55,15 +55,42 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
 
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v3');
 
-const promotions = await bigcommerce.get(`/promotions/codes?code=${encodeURIComponent('SE177331206L1')}`)
+const promotion = {
+  name: "SE177331206L1",
+  redemption_type: "COUPON",
+  rules: [
+    {
+      action: {
+        cart_items: {
+          discount: {
+            percentage_amount: "20"
+          },
+          items: {
+            not: {
+              products: [86]
+            }
+          }
+        }
+      },
+      apply_once: false,
+      stop: false
+    }
+  ]
+};
 
+const response = await bigcommerce.post(
+  "/promotions",
+  promotion
+);
+
+console.log(response.data);
 console.log(
-  JSON.stringify(promotions, null, 2)
+  JSON.stringify(response, null, 2)
 );
 
 return NextResponse.json({
       success: true,
-      rules: promotions.data,
+      rules: response.data,
     },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
       } catch (error) {
     
