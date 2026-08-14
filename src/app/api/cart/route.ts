@@ -53,12 +53,13 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
   storeHash: string;
 };  
 
-const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash);
+const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v3');
 
-const [promotions] = await Promise.all([
-  bigcommerce.get(`/promotions`)
-]);
-console.log(promotions)
+const promotions = await bigcommerce.get(`/promotions`)
+
+console.log(
+  JSON.stringify(promotions.data.data, null, 2)
+);
 
 return NextResponse.json({
       success: true,
