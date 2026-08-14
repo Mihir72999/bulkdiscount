@@ -53,26 +53,17 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
   storeHash: string;
 };  
 
-const url =
-  `https://api.bigcommerce.com/stores/${store?.storeHash}/v3/promotions/codes`;
+const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v3');
 
-const response = await fetch(url, {
-  method: 'GET',
-  headers: {
-    'X-Auth-Token': store?.accessToken,
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  }
-});
+const promotions = await bigcommerce.get(`/promotions/codes/SE177331206L1`)
 
-const data = await response.json();
-
-console.log('Status:', response.status);
-console.log('Data:', JSON.stringify(data, null, 2));
+console.log(
+  JSON.stringify(promotions, null, 2)
+);
 
 return NextResponse.json({
       success: true,
-      rules: data,
+      rules: promotions.data,
     },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
       } catch (error) {
     
