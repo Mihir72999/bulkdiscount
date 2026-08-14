@@ -549,19 +549,25 @@ if(missing[qty]){
 
 async function checkCart() {
   try {
-    const response = await fetch(
-      `${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`
-    );
+    // const response = await fetch(
+    //   `${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`
+    // );
 
-    const data = await response.json();
+    // const data = await response.json();
 
-    console.log("Cart updated:", data);
+    // console.log("Cart updated:", data);
 
-    // Your logic here
-    if (data?.cart?.line_items?.physical?.length > 0) {
-      console.log("Cart has items");
-    }
-   
+    // // Your logic here
+    // if (data?.cart?.line_items?.physical?.length > 0) {
+    //   console.log("Cart has items");
+    // }
+      const response = await fetch('/api/storefront/carts');
+
+    const carts = await response.json();
+
+    console.log('Current cart:', carts);
+   return carts;
+    
   } catch (error) {
     console.error("Cart API error:", error);
   }
@@ -579,8 +585,9 @@ function watchCouponApply() {
     ) {
       console.log("🎟️ Coupon applied");
 
-      setTimeout(() => {
-        checkCart();
+      setTimeout(async() => {
+       const data = await checkCart();
+       console.log("Cart after coupon applied:", data);
       }, 1000);
     }
   });
