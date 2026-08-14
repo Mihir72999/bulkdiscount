@@ -5,6 +5,7 @@ export interface StoreData {
     scope?: string;
     storeHash: string;
     domain: string;
+    account_uuid?: string;
 }
 
 export interface UserData {

@@ -62,22 +62,24 @@ const store = await response.json() as StoreData;
   }
 
   
-  const storeData: StoreData = { accessToken, scope, storeHash, domain:store.domain };
+  const storeData: StoreData = { accessToken, scope, storeHash, domain:store.domain , account_uuid:store.account_uuid};
 
     await db.prepare(`
   REPLACE INTO stores (
     accessToken,
     scope,
     storeHash,
-    domain
+    domain,
+    account_uuid
   )
-  VALUES (?, ?, ?, ?)
+  VALUES (?, ?, ?, ?, ?)
 `)
 .bind(
   storeData.accessToken,
   storeData.scope,
   storeData.storeHash,
-  storeData.domain
+  storeData.domain,
+  storeData.account_uuid
 )
 .run();
 }

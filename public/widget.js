@@ -64,7 +64,7 @@ const priceElement =[
   }
 
   function findCart(){
-    return {isCartPage :window.location.pathname === '/cart.php' , productId: getProductId()};
+    return {isCartPage :window.location.pathname === '/cart.php'};
   }
 
   function findTarget() {
@@ -551,7 +551,14 @@ async function init() {
     console.log("========== Widget Init ==========");
     const cart = findCart();
     if(cart.isCartPage){
-      console.log(cart.productId)
+      fetch(`${API_BASE}/api/cart??domain=${encodeURIComponent(window.location.hostname)}}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data)
+        if(data?.cart?.line_items?.physical?.length > 0){
+          console.log("✅ Cart page with items");
+          console.log(data)
+        }})
     } 
     
     if (!isProductPage()) {
