@@ -561,9 +561,29 @@ async function checkCart() {
     if (data?.cart?.line_items?.physical?.length > 0) {
       console.log("Cart has items");
     }
+   
   } catch (error) {
     console.error("Cart API error:", error);
   }
+}
+
+function watchCouponApply() {
+  document.addEventListener("submit", (event) => {
+    const form = event.target;
+
+    if (
+      form.matches(".coupon-form") ||
+      form.querySelector(
+        'input[name="action"][value="applycoupon"]'
+      )
+    ) {
+      console.log("🎟️ Coupon applied");
+
+      setTimeout(() => {
+        checkCart();
+      }, 1000);
+    }
+  });
 }
 
 async function init() {
@@ -571,6 +591,7 @@ async function init() {
     const cart = findCart();
     if(cart.isCartPage){
         await checkCart();
+        watchCouponApply()
     } 
     
     if (!isProductPage()) {
