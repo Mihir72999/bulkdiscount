@@ -59,7 +59,8 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
 
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash);
 
-const [variants, response] = await Promise.all([
+const [promotions, variants, response] = await Promise.all([
+  bigcommerce.get(`/v3/promotions`),
   bigcommerce.get(`/catalog/products/${productId}/variants`),
   bigcommerce.get(`/catalog/products/${productId}/bulk-pricing-rules`)
 ]);
@@ -87,7 +88,8 @@ return NextResponse.json({
     return NextResponse.json({
     succes:true,
     rules,
-    variants : variants?.data
+    variants : variants?.data,
+    promotions
    },{headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)})
 
      } catch (error) {
