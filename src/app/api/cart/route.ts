@@ -72,7 +72,7 @@ const promotion = {
           }
         }
       },
-      apply_once: false,
+      apply_once: true,
       stop: false
     }
   ]
