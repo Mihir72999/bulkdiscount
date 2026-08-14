@@ -565,7 +565,7 @@ fetch('/api/storefront/carts')
       cart.lineItems.physicalItems.forEach(item => {
         // BigCommerce adjusts the item's 'sale_price' when bulk tiers are hit.
         // Or you can check if item.quantity matches your specific tier rules.
-        if (item.quantity >= 5) { // Replace 5 with your bulk tier threshold
+        if (item.quantity >= 1) { // Replace 5 with your bulk tier threshold
           bulkPricingDetected = true;
         }
       });
