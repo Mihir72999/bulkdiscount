@@ -573,14 +573,14 @@ fetch('/api/storefront/carts')
       if (bulkPricingDetected) {
         const couponCode = cart.coupons[0].code;
         const cartId = cart.id;
-        
-        
+        console.log(couponCode, cartId);
+
         // Automatically delete the coupon from the cart
         fetch(`/api/storefront/carts/${cartId}/coupons/${couponCode}`, {
           method: 'DELETE'
         })
         .then(() => {
-          alert("Coupons cannot be combined with bulk quantity discounts.");
+          console.log("Coupon removed from cart");
           window.location.reload(); // Refresh to update the cart total
         });
       }
