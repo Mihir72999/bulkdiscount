@@ -549,11 +549,11 @@ if(missing[qty]){
 
 async function checkCart() {
   try {
-    const response = await fetch(
+    const responses = await fetch(
       `${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`
     );
 
-    const data = await response.json();
+    const data = await responses.json();
 
     console.log("Cart updated:", data);
 
