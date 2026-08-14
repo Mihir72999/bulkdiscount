@@ -549,18 +549,18 @@ if(missing[qty]){
 
 async function checkCart() {
   try {
-    // const response = await fetch(
-    //   `${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`
-    // );
+    const response = await fetch(
+      `${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`
+    );
 
-    // const data = await response.json();
+    const data = await response.json();
 
-    // console.log("Cart updated:", data);
+    console.log("Cart updated:", data);
 
-    // // Your logic here
-    // if (data?.cart?.line_items?.physical?.length > 0) {
-    //   console.log("Cart has items");
-    // }
+    // Your logic here
+    if (data?.cart?.line_items?.physical?.length > 0) {
+      console.log("Cart has items");
+    }
       const response = await fetch('/api/storefront/carts');
 
     const carts = await response.json();
