@@ -55,7 +55,7 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
 
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v3');
 
-const promotions = await bigcommerce.get(`/promotions/codes/SE177331206L1`)
+const promotions = await bigcommerce.get(`/promotions/codes/${encodeURIComponent('SE177331206L1')}`)
 
 console.log(
   JSON.stringify(promotions, null, 2)
