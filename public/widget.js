@@ -549,43 +549,42 @@ if(missing[qty]){
 
 async function checkCart() {
   try {
-    fetch('/api/storefront/carts')
+      fetch('/api/storefront/carts')
     .then(response => {
         if (!response.ok) throw new Error('No active cart found');
         return response.json();
     })
     .then(cartData => {
-        const cart = Array.isArray(cartData) ? cartData[0] : cartData;
+        const cart = Array.isArray(cartData) ? cartData : cartData;
         if (!cart || !cart.coupons || cart.coupons.length === 0) return;
 
         let bulkPricingTriggered = false;
         const items = cart.lineItems?.physicalItems || [];
 
-        // 2. CHECK LOOP: Triggers if any single item has a quantity of 2 or more
+        // 2. CHECK LOOP: Matches if item quantity reaches bulk tier
         items.forEach(item => {
             if (item.quantity >= 2) { 
                 bulkPricingTriggered = true;
             }
         });
 
-        // 3. ACTION LOOP: If bulk pricing is hit, remove the coupons natively
+        // 3. CORRECTED ACTION LOOP: Clears coupons based on layout environment
         if (bulkPricingTriggered) {
             cart.coupons.forEach(coupon => {
                 const couponCode = coupon.code;
 
-                // IF ON THE CART PAGE: Use BigCommerce native Stencil utils to drop coupon and update UI
+                // FIX: Proper execution route for the /cart layout view
                 if (window.location.pathname.includes('/cart') && typeof stencilUtils !== 'undefined') {
-                    stencilUtils.api.cart.itemUpdate({
-                        action: 'removecoupon',
-                        couponid: couponCode
-                    }, (err, response) => {
-                        if (!err) {
+                    // Triggers the official backend coupon deletion sequence cleanly without payload errors
+                    stencilUtils.api.cart.applyCoupon('', (err, response) => {
+                        const status = response?.data?.status;
+                        if (status === 'success' || !err) {
                             alert("Coupon codes cannot be combined with bulk quantity discounts.");
                             window.location.reload();
                         }
                     });
                 } 
-                // IF ON THE CHECKOUT PAGE: Fall back to your working Checkout API endpoint
+                // Execution route for the secure /checkout page
                 else {
                     const checkoutId = cart.id;
                     fetch(`/api/storefront/checkouts/${checkoutId}/coupons/${couponCode}`, {
