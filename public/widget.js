@@ -549,46 +549,63 @@ if(missing[qty]){
 
 async function checkCart() {
   try {
-    const resp = await fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`)
-    const cartData = await resp.json();
-    console.log(cartData)
-    // Example logic to check cart and remove coupon if bulk pricing is active
-// fetch('/api/storefront/carts')
-//   .then(response => response.json())
-//   .then(cartData => {
-//     if (!cartData || cartData.length === 0) return;
-    
-//     const cart = cartData[0];
-//     const hasCoupons = cart.coupons && cart.coupons.length > 0;
-    
-//     if (hasCoupons) {
-//       let bulkPricingDetected = false;
-      
-//       cart.lineItems.physicalItems.forEach(item => {
+    fetch('/api/storefront/carts')
+    .then(response => {
+        if (!response.ok) throw new Error('No active cart found');
+        return response.json();
+    })
+    .then(cartData => {
+        const cart = Array.isArray(cartData) ? cartData[0] : cartData;
+        if (!cart || !cart.coupons || cart.coupons.length === 0) return;
 
-//         if (item.quantity >= 1) { 
-//           bulkPricingDetected = true;
-//         }
-//       });
-      
-//       if (bulkPricingDetected) {
-//         const couponCode = cart.coupons[0].code;
-//         const cartId = cart.id;
-//         console.log(couponCode, cartId);
+        let bulkPricingTriggered = false;
+        const items = cart.lineItems?.physicalItems || [];
 
-//         // Automatically delete the coupon from the cart
-//         fetch(`/api/storefront/checkouts/${cartId}/coupons/${couponCode}`, {
-//           method: 'DELETE'
-//         })
-//         .then(() => {
-//           console.log("Coupon removed from cart");
+        // 2. CHECK LOOP: Triggers if any single item has a quantity of 2 or more
+        items.forEach(item => {
+            if (item.quantity >= 2) { 
+                bulkPricingTriggered = true;
+            }
+        });
 
-//         });
-//       }
-//     }
-//   });
+        // 3. ACTION LOOP: If bulk pricing is hit, remove the coupons natively
+        if (bulkPricingTriggered) {
+            cart.coupons.forEach(coupon => {
+                const couponCode = coupon.code;
 
-    
+                // IF ON THE CART PAGE: Use BigCommerce native Stencil utils to drop coupon and update UI
+                if (window.location.pathname.includes('/cart') && typeof stencilUtils !== 'undefined') {
+                    stencilUtils.api.cart.itemUpdate({
+                        action: 'removecoupon',
+                        couponid: couponCode
+                    }, (err, response) => {
+                        if (!err) {
+                            alert("Coupon codes cannot be combined with bulk quantity discounts.");
+                            window.location.reload();
+                        }
+                    });
+                } 
+                // IF ON THE CHECKOUT PAGE: Fall back to your working Checkout API endpoint
+                else {
+                    const checkoutId = cart.id;
+                    fetch(`/api/storefront/checkouts/${checkoutId}/coupons/${couponCode}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(res => {
+                        if (res.ok) {
+                            alert("Coupon codes cannot be combined with bulk quantity discounts.");
+                            window.location.reload();
+                        }
+                    });
+                }
+            });
+        }
+    })
   } catch (error) {
     console.error("Cart API error:", error);
   }
