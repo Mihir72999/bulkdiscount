@@ -45,6 +45,7 @@ export async function GET(request:NextRequest){
     const domain = request.nextUrl.searchParams.get('domain')
   const origin = request.headers.get("origin") || "";
   const allowedOrigins = await getStoreDomain();      
+  try{
   const db = await getDB()
 
 const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE domain = ?").bind(domain).first()  as {
@@ -57,6 +58,7 @@ const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash);
 const [promotions] = await Promise.all([
   bigcommerce.get(`/promotions`)
 ]);
+console.log(promotions)
 if(!promotions.data || promotions.data.length === 0){
 
 return NextResponse.json({
@@ -68,4 +70,16 @@ return NextResponse.json({
       success: true,
       rules: promotions.data,
     },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+      } catch (error) {
+    
+        const { message, response } = error as {
+          message: string;
+          response?: { status?: number };
+        };
+    
+        return NextResponse.json(
+          { message },
+          { status: response?.status ?? 500 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)}
+        ); 
+      }
 }
