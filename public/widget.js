@@ -570,7 +570,9 @@ async function init() {
 
     const target = findTarget();
     const cart = findCart();
+    console.log(cart)
     if(cart){
+      console.log("cart calling")
       await getRules();
     }
  
