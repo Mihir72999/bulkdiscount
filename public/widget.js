@@ -551,7 +551,7 @@ async function init() {
     console.log("========== Widget Init ==========");
     const cart = findCart();
     if(cart.isCartPage){
-      fetch(`${API_BASE}/api/cart??domain=${encodeURIComponent(window.location.hostname)}}`)
+      fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}}`)
       .then(res => res.json())
       .then(data => {
         console.log(data)
