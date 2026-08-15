@@ -601,7 +601,6 @@ function watchCouponApply() {
             form.querySelector('input[name="action"][value="applycoupon"]')
         ) {
             // FIX 4: Halted native submission immediate processing to allow your custom async engine time to run
-            event.preventDefault(); 
             console.log("🎟️ Coupon submission intercepted");
 
             // FIX 5: Safely scope target extraction inputs relative strictly to this specific active form context
