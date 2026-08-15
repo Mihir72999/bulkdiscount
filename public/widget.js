@@ -547,9 +547,42 @@ if(missing[qty]){
         });
   }
   
+async function loadProductIds(){
+  try {
+    const response = await fetch(
+  `/api/storefront/checkouts/${checkoutId}`
+);
+const checkout = await response.json();
+const coupons = checkout.coupons || [];
+
+if (coupons.length > 0) {
+  console.log("Coupon applied:", coupons);
+
+
+  fetch('/api/storefront/carts')
+  .then(response => response.json())
+  .then(cartData => {
+    if (!cartData || cartData.length === 0) return;
+       const cart = cartData[0];
+       const productIds = cart.lineItems.physicalItems.map(item=>item.productId)
+             fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}&ids=${JSON.stringify(productIds)}`)
+          .then(response => response.json())
+          .then(data => {
+            console.log("Bulk pricing detected for products:", data);
+            
+          })
+          .catch(error => {
+            console.error("Error fetching bulk pricing data:", error);
+          });
+      })
+  }
+    } catch (error) {
+    console.error('something went wrong', error)
+  }
+}
 
 async function checkCart() {
-    try {
+    try {    
    fetch('/api/storefront/carts')
   .then(response => response.json())
   .then(cartData => {
@@ -557,7 +590,7 @@ async function checkCart() {
     
     const cart = cartData[0];
     const hasCoupons = cart.coupons && cart.coupons.length > 0;
-    let productIds = cart.lineItems.physicalItems.map(item => item.productId);
+    let productIds = []
             
     if (hasCoupons) {
       let bulkPricingDetected = false;
@@ -580,7 +613,7 @@ async function checkCart() {
           .catch(error => {
             console.error("Error fetching bulk pricing data:", error);
           });
-        return productIds    
+    
       } else{
         console.log("No bulk pricing detected in the cart.");
       }
@@ -626,22 +659,8 @@ async function init() {
     console.log("========== Widget Init ==========");
     const cart = findCart();
     if(cart.isCartPage){
-       const productIds =  await checkCart();
-       console.log(productIds)
-       const url = `${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`
-       console.log(url) 
-       fetch(url,{
-          method:'POST',
-          headers:{
-             'Content-Type': 'application/json',
-          },
-          body:JSON.stringify(productIds)
-        })
-          .then(response => response.json())
-          .then(data => {
-            console.log("Bulk pricing detected for products:", data);
-            
-          }).catch(error=>console.log('error in fetch data',error))
+       await checkCart();
+
         watchCouponApply()
     } 
     
