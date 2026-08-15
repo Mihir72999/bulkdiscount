@@ -571,9 +571,16 @@ async function checkCart() {
       });
        console.log(productIds)
       if (bulkPricingDetected) {
- 
+        fetch(`/api/cart?domain=${encodeURIComponent(window.location.hostname)}&ids=${JSON.stringify(productIds)}`)
+          .then(response => response.json())
+          .then(data => {
+            console.log("Bulk pricing detected for products:", data);
+          })
+          .catch(error => {
+            console.error("Error fetching bulk pricing data:", error);
+          });  
       } else{
-
+        console.log("No bulk pricing detected in the cart.");
       }
     }
   });

@@ -43,7 +43,9 @@ request: NextRequest
 
 export async function GET(request:NextRequest){
     const domain = request.nextUrl.searchParams.get('domain')
-  const origin = request.headers.get("origin") || "";
+    const getIds = request.nextUrl.searchParams.get('ids')
+    const getStoreIds = JSON.parse(getIds || '[]') as number[]
+    const origin = request.headers.get("origin") || "";
   const allowedOrigins = await getStoreDomain();      
   try{
   const db = await getDB()
@@ -52,18 +54,19 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
   accessToken: string;
   storeHash: string;
 };  
-const couponId = 1
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v2');
+const {data:coupons} = await bigcommerce.get('/coupons')
+const couponId = coupons[0]?.id
+const couponsIds = coupons[0]?.applies_to.ids.filter((id:number) => !getStoreIds.includes(id))
 
 const promotion = {
   applies_to: {
     entity: 'products',
-    ids: [86]
+    ids: couponsIds
   }
 };
 const rule = await bigcommerce.put(`/coupons/${couponId}` , promotion);
 
-console.log(rule.data);
 
 
 return NextResponse.json({
