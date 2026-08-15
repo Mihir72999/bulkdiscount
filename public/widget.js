@@ -660,7 +660,7 @@ async function init() {
     const cart = findCart();
     if(cart.isCartPage){
        await loadProductIds()
-       await checkCart();
+      //  await checkCart();
         watchCouponApply()
     } 
     
