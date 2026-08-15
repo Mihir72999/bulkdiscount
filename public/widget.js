@@ -578,9 +578,7 @@ async function checkCart() {
           })
           .catch(error => {
             console.error("Error fetching bulk pricing data:", error);
-          });
-    
-     
+          }); 
     }
   });
     } catch (error) {
@@ -589,21 +587,32 @@ async function checkCart() {
 }
 
 function watchCouponApply() {
-    document.addEventListener("submit", async(event) => {
+    document.addEventListener("click", async(event) => {
         const form = event.target;
 
         // Verify if the submitted form matches your coupon targets
-        if (
-            form.matches(".coupon-form") ||
-            form.querySelector('input[name="action"][value="applycoupon"]')
-        ) {
+        // if (
+        //     form.matches(".coupon-form") ||
+        //     form.querySelector('input[name="action"][value="applycoupon"]')
+        // ) {
+
+    const button = event.target.closest(
+      '.coupon-form button[type="submit"], .coupon-form input[type="submit"]'
+    );
+
+    if (!button) return;
+
             console.log("🎟️ Coupon submission intercepted");
 
-
-            // Initiate checking architecture
-                    await checkCart();
+            try {
+              
+              // Initiate checking architecture
+              await checkCart();
+            } catch (error) {
+              console.log(error)
+            }
     
-        }
+        // }
     });
 }
 
