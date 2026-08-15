@@ -564,7 +564,8 @@ async function checkCart() {
       // Loop through cart items to see if bulk tier pricing is active
       cart.lineItems.physicalItems.forEach(item => {
         console.log(item)
-        if (item.quantity > 1) { // Replace 5 with your bulk tier threshold
+        if(item.listPrice !== item.originalPrice){
+         // Replace 5 with your bulk tier threshold
           bulkPricingDetected = true;
         }
       });
