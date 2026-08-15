@@ -547,40 +547,6 @@ if(missing[qty]){
         });
   }
   
-async function loadProductIds(){
-  try {
-    const response = await fetch(
-  `/api/storefront/checkouts/${checkoutId}`
-);
-const checkout = await response.json();
-const coupons = checkout.coupons || [];
-
-if (coupons.length > 0) {
-  console.log("Coupon applied:", coupons);
-
-
-  fetch('/api/storefront/carts')
-  .then(response => response.json())
-  .then(cartData => {
-    if (!cartData || cartData.length === 0) return;
-       const cart = cartData[0];
-       const productIds = cart.lineItems.physicalItems.map(item=>item.productId)
-             fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}&ids=${JSON.stringify(productIds)}`)
-          .then(response => response.json())
-          .then(data => {
-            console.log("Bulk pricing detected for products:", data);
-            
-          })
-          .catch(error => {
-            console.error("Error fetching bulk pricing data:", error);
-          });
-      })
-  }
-    } catch (error) {
-    console.error('something went wrong', error)
-  }
-}
-
 async function checkCart() {
     try {    
    fetch('/api/storefront/carts')
@@ -603,7 +569,7 @@ async function checkCart() {
           productIds.push(item.productId)
         }
       });
-          ignoreIds.filter(id => !productIds.includes(id));
+        ignoreIds = ignoreIds.filter(id => !productIds.includes(id));
 
        console.log(productIds)
        console.log(ignoreIds)  
