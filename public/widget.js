@@ -569,7 +569,7 @@ async function checkCart() {
           productIds.push(item.productId)
         }
       });
-       console.log(productIds)
+       console.log(productIds)  
       if (bulkPricingDetected) {
         fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}&ids=${JSON.stringify(productIds)}`)
           .then(response => response.json())

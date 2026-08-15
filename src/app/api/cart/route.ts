@@ -56,9 +56,10 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
 };  
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v2');
 const coupons = await bigcommerce.get('/coupons')
-console.log("coupons",coupons)
+console.log("coupons",JSON.stringify(coupons,null,2))
 const couponId = coupons[0]?.id
 const couponsIds = coupons[0]?.applies_to.ids.filter((id:number) => !getStoreIds.includes(id))
+console.log("couponsIds",JSON.stringify(couponsIds,null,2))
 const promotion = {
   applies_to: {
     entity: 'products',
@@ -66,7 +67,7 @@ const promotion = {
   }
 };
 const rule = await bigcommerce.put(`/coupons/${couponId}` , promotion);
-
+console.log("rule",JSON.stringify(rule,null,2))
 
 
 return NextResponse.json({
