@@ -617,14 +617,33 @@ async function checkCart(activeCoupon) {
         .then(res => res.json())
         .then(cartData => {
             // Normalize return shape handles
-            const cart = Array.isArray(cartData) ? cartData : cartData;
+                 let cart = null;
+            if (Array.isArray(cartData) && cartData.length > 0) {
+                cart = cartData[0]; // Extract the actual cart object from index 0
+            } else if (cartData && !Array.isArray(cartData)) {
+                cart = cartData; // Fallback if BigCommerce returns a direct object
+            }
+
+            if (!cart || !cart.id) {
+                console.warn("No active cart session object or valid ID found.");
+                return;
+            }
             
+            const cartId = cart.id; // Resolves cleanly to a string ID (e.g., "f9b9e542-...")
+            console.log("Active Cart ID Found:", cartId);
+
+
             // If checking on page load and no coupon is passed/active, exit quietly
             if (!activeCoupon && (!cart || !cart.coupons || cart.coupons.length === 0)) return;
             
-            // Fall back to the active applied coupon code if running a generic sweep scan
-            const targetCoupon = activeCoupon || cart.coupons[0].code;
-            const cartId = cart.id;
+                let appliedCouponCode = null;
+            if (cart.coupons && cart.coupons.length > 0) {
+                appliedCouponCode = cart.coupons[0].code;
+            }
+            
+
+              const targetCoupon = activeCoupon || appliedCouponCode;
+            if (!targetCoupon) return
             const items = cart.lineItems?.physicalItems || [];
             let bulkTargetIds = [];
 
