@@ -63,7 +63,7 @@ console.log("couponsIds",JSON.stringify(couponsIds,null,2))
 const promotion = {
   applies_to: {
     entity: 'products',
-    ids: couponsIds.length > 0 ? couponsIds : [0]
+    ids: couponsIds.length > 0 ? couponsIds : coupons[0]?.applies_to.ids
   }
 };
 const rule = await bigcommerce.put(`/coupons/${couponId}` , promotion);
