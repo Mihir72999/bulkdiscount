@@ -58,7 +58,7 @@ const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v2
 const {data:coupons} = await bigcommerce.get('/coupons')
 const couponId = coupons[0]?.id
 const couponsIds = coupons[0]?.applies_to.ids.filter((id:number) => !getStoreIds.includes(id))
-
+console.log(coupons)
 const promotion = {
   applies_to: {
     entity: 'products',
