@@ -592,7 +592,7 @@ async function checkCart() {
 }
 
 function watchCouponApply() {
-    document.addEventListener("submit", (event) => {
+    document.addEventListener("submit", async(event) => {
         const form = event.target;
 
         // Verify if the submitted form matches your coupon targets
@@ -600,21 +600,11 @@ function watchCouponApply() {
             form.matches(".coupon-form") ||
             form.querySelector('input[name="action"][value="applycoupon"]')
         ) {
-            // FIX 4: Halted native submission immediate processing to allow your custom async engine time to run
             console.log("🎟️ Coupon submission intercepted");
 
-            // FIX 5: Safely scope target extraction inputs relative strictly to this specific active form context
-            const promoInputEl = form.querySelector('input[type="text"]') || 
-                                 document.querySelector('#couponcode') || 
-                                 document.querySelector('.coupon-input');
-
-            const activeCoupon = promoInputEl ? promoInputEl.value.trim() : '';
-            if (!activeCoupon) return alert("Please enter a valid coupon code.");
 
             // Initiate checking architecture
-                 setTimeout(async() => {  
                     await checkCart();
-               }, 1000);
     
         }
     });
