@@ -623,7 +623,6 @@ async function init() {
     if(cart.isCartPage){
        await checkCart();
       } 
-      watchCouponApply()
     
     if (!isProductPage()) {
       
@@ -684,7 +683,8 @@ async function init() {
     );
 
     await bindEvents();
-
+      watchCouponApply()
+    
     console.log("✅ Widget Rendered");
 }
 
