@@ -587,28 +587,11 @@ async function checkCart() {
 }
 
 function watchCouponApply() {
-    document.addEventListener("submit", async(event) => {
-        const form = event.target;
+document.addEventListener("click", async (event) => {
+  if (!event.target.closest(".coupon-code-add")) return;
 
-        // Verify if the submitted form matches your coupon targets
-        if (
-            form.matches(".coupon-form") ||
-            form.querySelector('input[name="action"][value="applycoupon"]')
-        ) {
-
-
-            console.log("🎟️ Coupon submission intercepted");
-
-            try {
-              
-              // Initiate checking architecture
-              await checkCart();
-            } catch (error) {
-              console.log(error)
-            }
-    
-        }
-    });
+  await checkCart();
+});
 }
 
 
