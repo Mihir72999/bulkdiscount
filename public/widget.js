@@ -546,78 +546,90 @@ if(missing[qty]){
 
         });
   }
-  function processMixedCheckout(cartId, couponCode, bulkItems) {
-        const structuralDrops = bulkItems.map(item => {
-            return fetch(`/api/storefront/carts/${cartId}/items/${item.itemId}`, {
-                method: 'DELETE',
-                headers: { 'Accept': 'application/json' }
-            });
+  
+function processMixedCheckout(cartId, couponCode, bulkItems) {
+    const structuralDrops = bulkItems.map(item => {
+        return fetch(`/api/storefront/carts/${cartId}/items/${item.itemId}`, {
+            method: 'DELETE',
+            headers: { 'Accept': 'application/json' }
         });
+    });
 
-        Promise.all(structuralDrops)
-        .then(() => {
-            // Apply coupon layout properties to standard item remnants
-            return fetch(`/api/storefront/checkouts/${cartId}/coupons`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ "couponCode": couponCode })
-            });
-        })
-        .then(() => {
-            // Re-instantiate your isolated custom widget products at original tier parameters
-            const restorePayload = {
-                lineItems: bulkItems.map(item => ({
-                    quantity: item.quantity,
-                    productId: item.productId,
-                    variantId: item.variantId
-                }))
-            };
-
-            return fetch(`/api/storefront/carts/${cartId}/items`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(restorePayload)
-            });
-        })
-      }
-
- function executeCouponPost(cartId, couponCode) {
-        fetch(`/api/storefront/checkouts/${cartId}/coupons`, {
+    Promise.all(structuralDrops)
+    .then(() => {
+        console.log("Bulk items dropped. Injecting checkout coupon payload...");
+        // Apply coupon layout properties to standard item remnants
+        return fetch(`/api/storefront/checkouts/${cartId}/coupons`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ "couponCode": couponCode })
-        })
-        .then(res => {
-            if (res.ok) window.location.reload();
-            else alert("Invalid coupon code.");
         });
-    }      
+    })
+    .then(() => {
+        console.log("Re-inserting isolated bulk product IDs back into cart...");
+        // Re-instantiate your isolated custom widget products at original tier parameters
+        const restorePayload = {
+            lineItems: bulkItems.map(item => ({
+                quantity: item.quantity,
+                productId: item.productId,
+                variantId: item.variantId
+            }))
+        };
+
+        return fetch(`/api/storefront/carts/${cartId}/items`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(restorePayload)
+        });
+    })
+    .then(() => {
+        console.log("Workspace rebuilt. Refreshing view context...");
+        window.location.reload(); // FIX 2: Added screen refresh to show the calculations
+    })
+    .catch(err => console.error("Error in mixed checkout workflow:", err));
+}
 
 
-async function checkCart() {
-      fetch('/api/storefront/carts')
+function executeCouponPost(cartId, couponCode) {
+    fetch(`/api/storefront/checkouts/${cartId}/coupons`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ "couponCode": couponCode })
+    })
+    .then(res => {
+        if (res.ok) window.location.reload();
+        else alert("Invalid coupon code.");
+    });
+}      
+
+async function checkCart(activeCoupon) {
+    try {
+        fetch('/api/storefront/carts')
         .then(res => res.json())
-            .then(cartData => {
+        .then(cartData => {
+            // Normalize return shape handles
             const cart = Array.isArray(cartData) ? cartData : cartData;
-            if (!cart || !cart.id) return;
-
+            
+            // If checking on page load and no coupon is passed/active, exit quietly
+            if (!activeCoupon && (!cart || !cart.coupons || cart.coupons.length === 0)) return;
+            
+            // Fall back to the active applied coupon code if running a generic sweep scan
+            const targetCoupon = activeCoupon || cart.coupons[0].code;
             const cartId = cart.id;
             const items = cart.lineItems?.physicalItems || [];
             let bulkTargetIds = [];
 
-            // 3. COMPARISON LOOP: Inspect item arrays against your custom worker script indicators
+            // COMPARISON LOOP: Inspect item arrays against your custom worker script indicators
             items.forEach(item => {
-                // Check if the item quantity has activated a bulk tier (e.g., quantity of 2 or more vials)
-                // Or check if the original price differs from the final line calculation price
                 if (item.quantity >= 2 || item.originalPrice > item.listPrice) {
                     bulkTargetIds.push({
                         itemId: item.id,
@@ -628,49 +640,47 @@ async function checkCart() {
                 }
             });
 
-            // ROUTE A: Standard uniform checkout -> Apply normal POST mutation
             if (bulkTargetIds.length === 0) {
-                executeCouponPost(cartId, activeCoupon);
+                // If coupon isn't applied yet, push it through standard route
+                if (activeCoupon) executeCouponPost(cartId, targetCoupon);
                 return;
             }
 
-            // ROUTE B: Mixed ID Conflict Found -> Run structural separation protocol
             console.log("Isolating your custom worker app product IDs...", bulkTargetIds);
-            processMixedCheckout(cartId, activeCoupon, bulkTargetIds);
+            processMixedCheckout(cartId, targetCoupon, bulkTargetIds);
         });
-    
-
-  try {
-
-
-  } catch (error) {
-    console.error("Cart API error:", error);
-  }
+    } catch (error) {
+        console.error("Cart API error:", error);
+    }
 }
 
 function watchCouponApply() {
-  document.addEventListener("submit", (event) => {
-    const form = event.target;
-       const promoInputEl = promoForm.querySelector('input[type="text"]') || 
-                             document.querySelector('#couponcode') || 
-                             document.querySelector('.coupon-input');
+    document.addEventListener("submit", (event) => {
+        const form = event.target;
 
-    if (
-      form.matches(".coupon-form") ||
-      form.querySelector(
-        'input[name="action"][value="applycoupon"]'
-      )
-    ) {
-      console.log("🎟️ Coupon applied");
-       const activeCoupon = promoInputEl ? promoInputEl.value.trim() : '';
-        if (!activeCoupon) return alert("Please enter a valid coupon code.");
+        // Verify if the submitted form matches your coupon targets
+        if (
+            form.matches(".coupon-form") ||
+            form.querySelector('input[name="action"][value="applycoupon"]')
+        ) {
+            // FIX 4: Halted native submission immediate processing to allow your custom async engine time to run
+            event.preventDefault(); 
+            console.log("🎟️ Coupon submission intercepted");
 
-      setTimeout(async() => {
-        await checkCart();
-      }, 1000);
-    }
-  });
+            // FIX 5: Safely scope target extraction inputs relative strictly to this specific active form context
+            const promoInputEl = form.querySelector('input[type="text"]') || 
+                                 document.querySelector('#couponcode') || 
+                                 document.querySelector('.coupon-input');
+
+            const activeCoupon = promoInputEl ? promoInputEl.value.trim() : '';
+            if (!activeCoupon) return alert("Please enter a valid coupon code.");
+
+            // Initiate checking architecture
+            checkCart(activeCoupon);
+        }
+    });
 }
+
 
 async function init() {
     console.log("========== Widget Init ==========");
