@@ -68,7 +68,7 @@ const response = await fetch(
   }
 );
 
-const couponsFetchData = await response.text();
+const couponsFetchData = await response.json();
 
 console.log('coupons:', couponsFetchData);
 
