@@ -630,6 +630,9 @@ async function init() {
        console.log(productIds)
         fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`,{
           method:'POST',
+          headers:{
+             'Content-Type': 'application/json',
+          },
           body:JSON.stringify(productIds)
         })
           .then(response => response.json())
