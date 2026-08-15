@@ -555,10 +555,10 @@ async function checkCart() {
     if (!cartData || cartData.length === 0) return;
     
     const cart = cartData[0];
-    const hasCoupons = cart.coupons && cart.coupons.length > 0;
+    // const hasCoupons = cart.coupons && cart.coupons.length > 0;
     let ignoreIds = cart.lineItems.physicalItems.map(item=>item.productId)
     
-    if (hasCoupons) {
+    // if (hasCoupons) {
       let bulkPricingDetected = false;
       // Loop through cart items to see if bulk tier pricing is active
       cart.lineItems.physicalItems.forEach(item => {
@@ -579,7 +579,7 @@ async function checkCart() {
           .catch(error => {
             console.error("Error fetching bulk pricing data:", error);
           }); 
-    }
+    // }
   });
     } catch (error) {
         console.error("Cart API error:", error);
@@ -619,10 +619,10 @@ function watchCouponApply() {
 
 async function init() {
     console.log("========== Widget Init ==========");
-    // const cart = findCart();
-    // if(cart.isCartPage){
-    // } 
-    await  checkCart();
+    const cart = findCart();
+    if(cart.isCartPage){
+      await  checkCart();
+    } 
     
     if (!isProductPage()) {
       
