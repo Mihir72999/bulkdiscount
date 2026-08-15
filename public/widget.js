@@ -619,10 +619,10 @@ function watchCouponApply() {
 
 async function init() {
     console.log("========== Widget Init ==========");
-    const cart = findCart();
-    if(cart.isCartPage){
-       await checkCart();
-      } 
+    // const cart = findCart();
+    // if(cart.isCartPage){
+    // } 
+    await  checkCart();
     
     if (!isProductPage()) {
       
