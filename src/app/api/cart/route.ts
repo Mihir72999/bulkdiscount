@@ -52,47 +52,23 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
   accessToken: string;
   storeHash: string;
 };  
-
-const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v3');
+const couponId = 1
+const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v2');
 
 const promotion = {
-  name: "SE177331206L1",
-  redemption_type: "COUPON",
-  rules: [
-    {
-      action: {
-        cart_items: {
-          discount: {
-            percentage_amount: "20"
-          },
-          items: {
-            not: {
-              products: [86]
-            }
-          }
-        }
-      },
-      apply_once: true,
-      stop: false
-    }
-  ]
+  applies_to: {
+    entity: 'products',
+    ids: [86]
+  }
 };
-
-const response = await bigcommerce.post(
-  "/promotions",
-  promotion
-);
-
-const rule = await bigcommerce.put(`/promotions/${response.data.id}`, { 
-  status: "DISABLED"
-});
+const rule = await bigcommerce.put(`/coupons/${couponId}` , promotion);
 
 console.log(rule.data);
 
 
 return NextResponse.json({
       success: true,
-      rules: response.data,
+      rules: rule,
     },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
       } catch (error) {
     

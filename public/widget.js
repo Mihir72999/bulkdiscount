@@ -560,29 +560,18 @@ async function checkCart() {
     
     if (hasCoupons) {
       let bulkPricingDetected = false;
-      
+      let productIds = []
       // Loop through cart items to see if bulk tier pricing is active
       cart.lineItems.physicalItems.forEach(item => {
-        console.log(item)
         if(item.listPrice !== item.originalPrice){
          // Replace 5 with your bulk tier threshold
           bulkPricingDetected = true;
+          productIds.push(item.productId)
         }
       });
-      
+       console.log(productIds)
       if (bulkPricingDetected) {
-        const couponCode = cart.coupons[0].code;
-        const cartId = cart.id;
-        
-        // Automatically delete the coupon from the cart
-        fetch(`/api/storefront/checkouts/${cartId}/coupons/${couponCode}`, {
-          method: 'DELETE'
-        })
-        .then(() => {
-          console.log(`Coupon ${couponCode} removed due to bulk pricing.`);
-          // alert("Coupons cannot be combined with bulk quantity discounts.");
-          // window.location.reload(); // Refresh to update the cart total
-        });
+ 
       } else{
 
       }
