@@ -549,7 +549,7 @@ if(missing[qty]){
 
 async function checkCart() {
   try {
-      fetch('/api/storefront/carts')
+         fetch('/api/storefront/carts')
     .then(response => {
         if (!response.ok) throw new Error('No active cart found');
         return response.json();
@@ -557,7 +557,7 @@ async function checkCart() {
     .then(cartData => {
         const cart = Array.isArray(cartData) ? cartData : cartData;
         if (!cart || !cart.coupons || cart.coupons.length === 0) return;
-
+        console.log(cartData)
         let bulkPricingTriggered = false;
         const items = cart.lineItems?.physicalItems || [];
 
@@ -605,6 +605,8 @@ async function checkCart() {
             });
         }
     })
+
+
   } catch (error) {
     console.error("Cart API error:", error);
   }
