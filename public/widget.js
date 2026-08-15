@@ -557,10 +557,10 @@ async function checkCart() {
     
     const cart = cartData[0];
     const hasCoupons = cart.coupons && cart.coupons.length > 0;
-    
+    let productIds = cart.lineItems.physicalItems.map(item => item.productId);
+            
     if (hasCoupons) {
       let bulkPricingDetected = false;
-      let productIds = [0]
       // Loop through cart items to see if bulk tier pricing is active
       cart.lineItems.physicalItems.forEach(item => {
         if(item.listPrice !== item.originalPrice){
@@ -575,10 +575,12 @@ async function checkCart() {
           .then(response => response.json())
           .then(data => {
             console.log("Bulk pricing detected for products:", data);
+            
           })
           .catch(error => {
             console.error("Error fetching bulk pricing data:", error);
-          });  
+          });
+        return productIds    
       } else{
         console.log("No bulk pricing detected in the cart.");
       }
@@ -624,7 +626,17 @@ async function init() {
     console.log("========== Widget Init ==========");
     const cart = findCart();
     if(cart.isCartPage){
-        await checkCart();
+       const productIds =  await checkCart();
+       console.log(productIds)
+        fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`,{
+          method:'POST',
+          body:JSON.stringify(productIds)
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log("Bulk pricing detected for products:", data);
+            
+          }).catch(error=>console.log('error in fetch data',error))
         watchCouponApply()
     } 
     
