@@ -587,20 +587,15 @@ async function checkCart() {
 }
 
 function watchCouponApply() {
-    document.addEventListener("click", async(event) => {
+    document.addEventListener("submit", async(event) => {
         const form = event.target;
 
         // Verify if the submitted form matches your coupon targets
-        // if (
-        //     form.matches(".coupon-form") ||
-        //     form.querySelector('input[name="action"][value="applycoupon"]')
-        // ) {
+        if (
+            form.matches(".coupon-form") ||
+            form.querySelector('input[name="action"][value="applycoupon"]')
+        ) {
 
-    const button = event.target.closest(
-      '.coupon-form button[type="submit"], .coupon-form input[type="submit"]'
-    );
-
-    if (!button) return;
 
             console.log("🎟️ Coupon submission intercepted");
 
@@ -612,7 +607,7 @@ function watchCouponApply() {
               console.log(error)
             }
     
-        // }
+        }
     });
 }
 
