@@ -547,127 +547,46 @@ if(missing[qty]){
         });
   }
   
-function processMixedCheckout(cartId, couponCode, bulkItems) {
-    const structuralDrops = bulkItems.map(item => {
-        return fetch(`/api/storefront/carts/${cartId}/items/${item.itemId}`, {
-            method: 'DELETE',
-            headers: { 'Accept': 'application/json' }
-        });
-    });
 
-    Promise.all(structuralDrops)
-    .then(() => {
-        console.log("Bulk items dropped. Injecting checkout coupon payload...");
-        // Apply coupon layout properties to standard item remnants
-        return fetch(`/api/storefront/checkouts/${cartId}/coupons`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ "couponCode": couponCode })
-        });
-    })
-    .then(() => {
-        console.log("Re-inserting isolated bulk product IDs back into cart...");
-        // Re-instantiate your isolated custom widget products at original tier parameters
-        const restorePayload = {
-            lineItems: bulkItems.map(item => ({
-                quantity: item.quantity,
-                productId: item.productId,
-                variantId: item.variantId
-            }))
-        };
-
-        return fetch(`/api/storefront/carts/${cartId}/items`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(restorePayload)
-        });
-    })
-    .then(() => {
-        console.log("Workspace rebuilt. Refreshing view context...");
-        window.location.reload(); // FIX 2: Added screen refresh to show the calculations
-    })
-    .catch(err => console.error("Error in mixed checkout workflow:", err));
-}
-
-
-function executeCouponPost(cartId, couponCode) {
-    fetch(`/api/storefront/checkouts/${cartId}/coupons`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ "couponCode": couponCode })
-    })
-    .then(res => {
-        if (res.ok) window.location.reload();
-        else alert("Invalid coupon code.");
-    });
-}      
-
-async function checkCart(activeCoupon) {
+async function checkCart() {
     try {
-        fetch('/api/storefront/carts')
-        .then(res => res.json())
-        .then(cartData => {
-            // Normalize return shape handles
-                 let cart = null;
-            if (Array.isArray(cartData) && cartData.length > 0) {
-                cart = cartData[0]; // Extract the actual cart object from index 0
-            } else if (cartData && !Array.isArray(cartData)) {
-                cart = cartData; // Fallback if BigCommerce returns a direct object
-            }
-
-            if (!cart || !cart.id) {
-                console.warn("No active cart session object or valid ID found.");
-                return;
-            }
-            
-            const cartId = cart.id; // Resolves cleanly to a string ID (e.g., "f9b9e542-...")
-            console.log("Active Cart ID Found:", cartId);
-
-
-            // If checking on page load and no coupon is passed/active, exit quietly
-            if (!activeCoupon && (!cart || !cart.coupons || cart.coupons.length === 0)) return;
-            
-                let appliedCouponCode = null;
-            if (cart.coupons && cart.coupons.length > 0) {
-                appliedCouponCode = cart.coupons[0].code;
-            }
-            
-
-              const targetCoupon = activeCoupon || appliedCouponCode;
-            if (!targetCoupon) return
-            const items = cart.lineItems?.physicalItems || [];
-            let bulkTargetIds = [];
-
-            // COMPARISON LOOP: Inspect item arrays against your custom worker script indicators
-            items.forEach(item => {
-                if (item.quantity >= 2 || item.originalPrice > item.listPrice) {
-                    bulkTargetIds.push({
-                        itemId: item.id,
-                        productId: item.productId,
-                        variantId: item.variantId,
-                        quantity: item.quantity
-                    });
-                }
-            });
-
-            if (bulkTargetIds.length === 0) {
-                // If coupon isn't applied yet, push it through standard route
-                if (activeCoupon) executeCouponPost(cartId, targetCoupon);
-                return;
-            }
-
-            console.log("Isolating your custom worker app product IDs...", bulkTargetIds);
-            processMixedCheckout(cartId, targetCoupon, bulkTargetIds);
+   fetch('/api/storefront/carts')
+  .then(response => response.json())
+  .then(cartData => {
+    if (!cartData || cartData.length === 0) return;
+    
+    const cart = cartData[0];
+    const hasCoupons = cart.coupons && cart.coupons.length > 0;
+    
+    if (hasCoupons) {
+      let bulkPricingDetected = false;
+      
+      // Loop through cart items to see if bulk tier pricing is active
+      cart.lineItems.physicalItems.forEach(item => {
+        console.log(item)
+        if (item.quantity > 1) { // Replace 5 with your bulk tier threshold
+          bulkPricingDetected = true;
+        }
+      });
+      
+      if (bulkPricingDetected) {
+        const couponCode = cart.coupons[0].code;
+        const cartId = cart.id;
+        
+        // Automatically delete the coupon from the cart
+        fetch(`/api/storefront/checkouts/${cartId}/coupons/${couponCode}`, {
+          method: 'DELETE'
+        })
+        .then(() => {
+          console.log(`Coupon ${couponCode} removed due to bulk pricing.`);
+          // alert("Coupons cannot be combined with bulk quantity discounts.");
+          // window.location.reload(); // Refresh to update the cart total
         });
+      } else{
+
+      }
+    }
+  });
     } catch (error) {
         console.error("Cart API error:", error);
     }
@@ -695,7 +614,10 @@ function watchCouponApply() {
             if (!activeCoupon) return alert("Please enter a valid coupon code.");
 
             // Initiate checking architecture
-            checkCart(activeCoupon);
+                 setTimeout(async() => {  
+                    await checkCart();
+               }, 1000);
+    
         }
     });
 }
@@ -779,38 +701,4 @@ async function init() {
   }
 })();
 
-// fetch('/api/storefront/carts')
-//   .then(response => response.json())
-//   .then(cartData => {
-//     if (!cartData || cartData.length === 0) return;
-    
-//     const cart = cartData[0];
-//     const hasCoupons = cart.coupons && cart.coupons.length > 0;
-    
-//     if (hasCoupons) {
-//       let bulkPricingDetected = false;
-      
-//       // Loop through cart items to see if bulk tier pricing is active
-//       cart.lineItems.physicalItems.forEach(item => {
-//         // BigCommerce adjusts the item's 'sale_price' when bulk tiers are hit.
-//         // Or you can check if item.quantity matches your specific tier rules.
-//         if (item.quantity > 1) { // Replace 5 with your bulk tier threshold
-//           bulkPricingDetected = true;
-//         }
-//       });
-      
-//       if (bulkPricingDetected) {
-//         const couponCode = cart.coupons[0].code;
-//         const cartId = cart.id;
-        
-//         // Automatically delete the coupon from the cart
-//         fetch(`/api/storefront/checkouts/${cartId}/coupons/${couponCode}`, {
-//           method: 'DELETE'
-//         })
-//         .then(() => {
-//           alert("Coupons cannot be combined with bulk quantity discounts.");
-//           window.location.reload(); // Refresh to update the cart total
-//         });
-//       }
-//     }
-//   });
+
