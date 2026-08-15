@@ -556,7 +556,6 @@ async function checkCart() {
     
     const cart = cartData[0];
     const hasCoupons = cart.coupons && cart.coupons.length > 0;
-    let productIds = []
     let ignoreIds = cart.lineItems.physicalItems.map(item=>item.productId)
 
     if (hasCoupons) {
@@ -566,15 +565,13 @@ async function checkCart() {
         if(item.listPrice !== item.originalPrice){
          // Replace 5 with your bulk tier threshold
           bulkPricingDetected = true;
-          productIds.push(item.productId)
+          ignoreIds = ignoreIds.filter(id => !item.productId);
         }
       });
-        ignoreIds = ignoreIds.filter(id => !productIds.includes(id));
 
-       console.log(productIds)
-       console.log(ignoreIds)  
+
       if (bulkPricingDetected) {
-        fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}&ids=${JSON.stringify(productIds)}&igId=${JSON.stringify(ignoreIds)}`)
+        fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}&igId=${JSON.stringify(ignoreIds)}`)
           .then(response => response.json())
           .then(data => {
             console.log("Bulk pricing detected for products:", data);
@@ -629,7 +626,6 @@ async function init() {
     console.log("========== Widget Init ==========");
     const cart = findCart();
     if(cart.isCartPage){
-      //  await loadProductIds()
        await checkCart();
         watchCouponApply()
     } 
