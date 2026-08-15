@@ -55,27 +55,10 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
   storeHash: string;
 };  
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v2');
-
-const response = await fetch(
-  `https://api.bigcommerce.com/stores/${store?.storeHash}/v2/coupons`,
-  {
-    method: 'GET',
-    headers: {
-      'X-Auth-Token': store?.accessToken,
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
-  }
-);
-
-const couponsFetchData = await response.json();
-
-console.log('coupons:', couponsFetchData);
-
-const {data:coupons} = await bigcommerce.get('/coupons')
+const coupons = await bigcommerce.get('/coupons')
 console.log("coupons",coupons)
-const couponId = coupons?.id
-const couponsIds = coupons?.applies_to.ids.filter((id:number) => !getStoreIds.includes(id))
+const couponId = coupons[0]?.id
+const couponsIds = coupons[0]?.applies_to.ids.filter((id:number) => !getStoreIds.includes(id))
 const promotion = {
   applies_to: {
     entity: 'products',
