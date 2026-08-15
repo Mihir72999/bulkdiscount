@@ -621,10 +621,9 @@ async function init() {
     console.log("========== Widget Init ==========");
     const cart = findCart();
     if(cart.isCartPage){
-      
        await checkCart();
-        watchCouponApply()
-    } 
+      } 
+      watchCouponApply()
     
     if (!isProductPage()) {
       
