@@ -560,7 +560,7 @@ async function checkCart() {
     
     if (hasCoupons) {
       let bulkPricingDetected = false;
-      let productIds = []
+      let productIds = [0]
       // Loop through cart items to see if bulk tier pricing is active
       cart.lineItems.physicalItems.forEach(item => {
         if(item.listPrice !== item.originalPrice){
