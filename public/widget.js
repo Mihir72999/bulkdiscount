@@ -569,7 +569,7 @@ async function checkCart() {
         }
       });
 
-
+     console.log(ignoreIds)
       if (bulkPricingDetected) {
         fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}&igId=${JSON.stringify(ignoreIds)}`)
           .then(response => response.json())
