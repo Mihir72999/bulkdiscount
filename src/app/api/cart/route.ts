@@ -55,6 +55,23 @@ const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE 
   storeHash: string;
 };  
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v2');
+
+const response = await fetch(
+  `https://api.bigcommerce.com/stores/${store?.storeHash}/v2/coupons`,
+  {
+    method: 'GET',
+    headers: {
+      'X-Auth-Token': store?.accessToken,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  }
+);
+
+const couponsFetchData = await response.text();
+
+console.log('coupons:', couponsFetchData);
+
 const {data:coupons} = await bigcommerce.get('/coupons')
 console.log("coupons",coupons)
 const couponId = coupons?.id
