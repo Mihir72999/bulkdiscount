@@ -570,7 +570,6 @@ async function checkCart() {
       });
 
      console.log(ignoreIds)
-      if (bulkPricingDetected) {
         fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}&igId=${JSON.stringify(ignoreIds)}`)
           .then(response => response.json())
           .then(data => {
@@ -581,9 +580,7 @@ async function checkCart() {
             console.error("Error fetching bulk pricing data:", error);
           });
     
-      } else{
-        console.log("No bulk pricing detected in the cart.");
-      }
+     
     }
   });
     } catch (error) {
@@ -615,6 +612,7 @@ async function init() {
     console.log("========== Widget Init ==========");
     const cart = findCart();
     if(cart.isCartPage){
+      
        await checkCart();
         watchCouponApply()
     } 
