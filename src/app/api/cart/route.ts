@@ -44,6 +44,8 @@ request: NextRequest
 export async function GET(request:NextRequest){
     const domain = request.nextUrl.searchParams.get('domain')
     const getIds = request.nextUrl.searchParams.get('ids')
+     const igId = request.nextUrl.searchParams.get('igId')
+     const ignoreId = JSON.parse(igId || '[]') as number[]
     const getStoreIds = JSON.parse(getIds || '[]') as number[]
     const origin = request.headers.get("origin") || "";
   const allowedOrigins = await getStoreDomain();      
@@ -63,7 +65,7 @@ console.log("couponsIds",JSON.stringify(couponsIds,null,2))
 const promotion = {
   applies_to: {
     entity: 'products',
-    ids: couponsIds.length > 0 ? couponsIds : coupons[0]?.applies_to.ids
+    ids: couponsIds.length > 0 ? couponsIds : ignoreId
   }
 };
 const rule = await bigcommerce.put(`/coupons/${couponId}` , promotion);
