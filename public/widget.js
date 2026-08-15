@@ -628,7 +628,9 @@ async function init() {
     if(cart.isCartPage){
        const productIds =  await checkCart();
        console.log(productIds)
-        fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`,{
+       const url = `${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}`
+       console.log(url) 
+       fetch(url,{
           method:'POST',
           headers:{
              'Content-Type': 'application/json',
