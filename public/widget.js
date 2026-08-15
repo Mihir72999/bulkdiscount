@@ -557,7 +557,7 @@ async function checkCart() {
     const cart = cartData[0];
     const hasCoupons = cart.coupons && cart.coupons.length > 0;
     let ignoreIds = cart.lineItems.physicalItems.map(item=>item.productId)
-
+    
     if (hasCoupons) {
       let bulkPricingDetected = false;
       // Loop through cart items to see if bulk tier pricing is active
@@ -565,7 +565,7 @@ async function checkCart() {
         if(item.listPrice !== item.originalPrice){
          // Replace 5 with your bulk tier threshold
           bulkPricingDetected = true;
-          ignoreIds = ignoreIds.filter(id => !item.productId);
+          ignoreIds = ignoreIds.filter(id =>id !== item.productId);
         }
       });
 
