@@ -554,9 +554,7 @@ async function checkCart() {
   const cartTable = findCartTable()
   if (cartTable) {
   const rows = cartTable.querySelector("tbody");
-     rows.forEach((row, index) => {
-    console.log("Row:", index, row);
-  });
+   console.log(rows)
   console.log("Cart table found:", cartTable);
 }
     try {    
