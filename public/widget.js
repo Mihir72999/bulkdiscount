@@ -589,18 +589,34 @@ async function checkCart() {
     }
 }
 
-function watchCouponApply() {
-   const cartTable = findCartTable()
-  if (cartTable) {
-  const rows = cartTable.querySelector("tbody");
-   console.log(rows)
-  console.log("Cart table found:", cartTable);
-}
-// document.addEventListener("click", async (event) => {
-//   if (!event.target.closest(".coupon-code-add")) return;
-
-//   await checkCart();
-// });
+function watchCouponApply() { 
+    const cartTable = findCartTable(); 
+ 
+    if (cartTable) { 
+        const rows = cartTable.querySelector("tbody"); 
+ 
+        console.log(rows); 
+        console.log("Cart table found:", cartTable); 
+    } 
+ 
+    document.addEventListener("click", async (event) => { 
+        const button = event.target.closest( 
+            'button[data-cart-update][data-action]' 
+        ); 
+ 
+        if (!button) return; 
+ 
+        const action = button.dataset.action; 
+ 
+        if (action === "inc" || action === "dec") { 
+            console.log("Quantity changed:", action); 
+ 
+            // Wait for BigCommerce cart AJAX update 
+            setTimeout(async () => { 
+                await checkCart(); 
+            }, 200); 
+        } 
+    }); 
 }
 
 
