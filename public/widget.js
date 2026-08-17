@@ -573,42 +573,49 @@ async function getCart() {
 }
 
 async function checkCart() {
-    try {    
-   fetch('/api/storefront/carts')
-  .then(response => response.json())
-  .then(cartData => {
-    if (!cartData || cartData.length === 0) return;
-    
-    const cart = cartData[0];
-    // const hasCoupons = cart.coupons && cart.coupons.length > 0;
-    let ignoreIds = cart.lineItems.physicalItems.map(item=>item.productId)
-    
-    // if (hasCoupons) {
-      let bulkPricingDetected = false;
-      // Loop through cart items to see if bulk tier pricing is active
-      cart.lineItems.physicalItems.forEach(item => {
-        if(item.listPrice !== item.originalPrice){
-         // Replace 5 with your bulk tier threshold
-          bulkPricingDetected = true;
-          ignoreIds = ignoreIds.filter(id =>id !== item.productId);
-        }
-      });
-       ignoreIds = [...new Set(ignoreIds)];
-     console.log(ignoreIds)
-        fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}&igId=${JSON.stringify(ignoreIds)}`)
-          .then(response => response.json())
-          .then(data => {
-            console.log("Coupon detected for products:", data);
-            
-          })
-          .catch(error => {
-            console.error("Error fetching bulk pricing data:", error);
-          }); 
-    // }
-  });
-     
-     await getCart()
-    
+    try {
+        // 1. Get latest cart
+        const response = await fetch('/api/storefront/carts');
+        const cartData = await response.json();
+
+        if (!cartData || cartData.length === 0) return;
+
+        const cart = cartData[0];
+
+        let ignoreIds = cart.lineItems.physicalItems
+            .map(item => item.productId);
+
+        // 2. Check bulk pricing
+        cart.lineItems.physicalItems.forEach(item => {
+            if (item.listPrice !== item.originalPrice) {
+                ignoreIds = ignoreIds.filter(
+                    id => id !== item.productId
+                );
+            }
+        });
+
+        ignoreIds = [...new Set(ignoreIds)];
+
+        console.log("ignoreIds:", ignoreIds);
+
+        // 3. Call YOUR custom API and WAIT for it
+        const customResponse = await fetch(
+            `${API_BASE}/api/cart?domain=${encodeURIComponent(
+                window.location.hostname
+            )}&igId=${encodeURIComponent(JSON.stringify(ignoreIds))}`
+        );
+
+        const data = await customResponse.json();
+
+        console.log("Custom API completed:", data);
+
+        // 4. ONLY NOW get cart again
+        const updatedCart = await getCart();
+
+        console.log("Cart after custom API:", updatedCart);
+
+        return updatedCart;
+
     } catch (error) {
         console.error("Cart API error:", error);
     }
