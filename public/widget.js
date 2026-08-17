@@ -551,12 +551,6 @@ if(missing[qty]){
 }
 
 async function checkCart() {
-  const cartTable = findCartTable()
-  if (cartTable) {
-  const rows = cartTable.querySelector("tbody");
-   console.log(rows)
-  console.log("Cart table found:", cartTable);
-}
     try {    
    fetch('/api/storefront/carts')
   .then(response => response.json())
@@ -596,11 +590,17 @@ async function checkCart() {
 }
 
 function watchCouponApply() {
-document.addEventListener("click", async (event) => {
-  if (!event.target.closest(".coupon-code-add")) return;
+   const cartTable = findCartTable()
+  if (cartTable) {
+  const rows = cartTable.querySelector("tbody");
+   console.log(rows)
+  console.log("Cart table found:", cartTable);
+}
+// document.addEventListener("click", async (event) => {
+//   if (!event.target.closest(".coupon-code-add")) return;
 
-  await checkCart();
-});
+//   await checkCart();
+// });
 }
 
 
