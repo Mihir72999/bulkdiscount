@@ -550,6 +550,28 @@ if(missing[qty]){
   return document.querySelector("table.cart");
 }
 
+async function getCart() {
+    try {
+        const response = await fetch('/api/storefront/carts');
+
+        if (!response.ok) {
+            throw new Error(`Cart API error: ${response.status}`);
+        }
+
+        const cartData = await response.json();
+
+        if (!cartData || cartData.length === 0) {
+            return null;
+        }
+
+        return cartData[0];
+
+    } catch (error) {
+        console.error("Get cart error:", error);
+        return null;
+    }
+}
+
 async function checkCart() {
     try {    
    fetch('/api/storefront/carts')
@@ -605,6 +627,8 @@ function watchCouponApply() {
             await Promise.resolve();
 
             await checkCart();
+            
+            await getCart()
         });
 
         observer.observe(cartContainer, {
