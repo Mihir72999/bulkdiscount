@@ -571,7 +571,7 @@ async function checkCart() {
           ignoreIds = ignoreIds.filter(id =>id !== item.productId);
         }
       });
-
+       ignoreIds = [...new Set(ignoreIds)];
      console.log(ignoreIds)
         fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}&igId=${JSON.stringify(ignoreIds)}`)
           .then(response => response.json())
@@ -589,45 +589,49 @@ async function checkCart() {
     }
 }
 
-function watchCouponApply() { 
-  const removeCouponButton = document.querySelector(
-        'a[href*="action=removecoupon"]'
-    );
+function watchCouponApply() {
 
-    if (removeCouponButton) {
-        console.log("Coupon found. Removing...");
-        removeCouponButton.click();
+    const cartTable = findCartTable();
+
+    if (cartTable) {
+        console.log("Cart table found:", cartTable);
+
+        const cartContainer = cartTable.parentElement;
+
+        const observer = new MutationObserver(async () => {
+            console.log("BigCommerce cart DOM changed");
+
+            // Give the browser a chance to finish the DOM replacement
+            await Promise.resolve();
+
+            await checkCart();
+        });
+
+        observer.observe(cartContainer, {
+            childList: true,
+            subtree: true
+        });
     }
-  
-    const cartTable = findCartTable(); 
- 
-    if (cartTable) { 
-        const rows = cartTable.querySelector("tbody"); 
- 
-        console.log(rows); 
-        console.log("Cart table found:", cartTable); 
-    } 
- 
-    document.addEventListener("click", async (event) => { 
-        const button = event.target.closest( 
-            'button[data-cart-update][data-action]' 
-        ); 
- 
-        if (!button) return; 
- 
-        const action = button.dataset.action; 
- 
-        if (action === "inc" || action === "dec") { 
-            console.log("Quantity changed:", action); 
- 
-            // Wait for BigCommerce cart AJAX update 
-            setTimeout(async () => { 
-                await checkCart(); 
-            }, 200); 
-        } 
-    }); 
-}
 
+    if (window.couponCartWatcherAdded) return;
+
+    window.couponCartWatcherAdded = true;
+
+    document.addEventListener("click", (event) => {
+
+        const button = event.target.closest(
+            'button[data-cart-update][data-action]'
+        );
+
+        if (!button) return;
+
+        const action = button.dataset.action;
+
+        if (action === "inc" || action === "dec") {
+            console.log("Quantity button clicked:", action);
+        }
+    });
+}
 
 async function init() {
     console.log("========== Widget Init ==========");
