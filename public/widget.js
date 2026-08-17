@@ -604,6 +604,8 @@ async function checkCart() {
           .catch(error => {
             console.error("Error fetching bulk pricing data:", error);
           }); 
+          
+          await getCart()
     // }
   });
     } catch (error) {
@@ -627,8 +629,7 @@ function watchCouponApply() {
             await Promise.resolve();
 
             await checkCart();
-            
-            await getCart()
+        
         });
 
         observer.observe(cartContainer, {
