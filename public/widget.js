@@ -590,6 +590,15 @@ async function checkCart() {
 }
 
 function watchCouponApply() { 
+  const removeCouponButton = document.querySelector(
+        'a[href*="action=removecoupon"]'
+    );
+
+    if (removeCouponButton) {
+        console.log("Coupon found. Removing...");
+        removeCouponButton.click();
+    }
+  
     const cartTable = findCartTable(); 
  
     if (cartTable) { 
