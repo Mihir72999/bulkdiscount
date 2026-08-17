@@ -65,8 +65,8 @@ const promotion = {
   }
 };
 const rule = await bigcommerce.put(`/coupons/${couponId}` , promotion);
-console.log("rule",JSON.stringify(rule,null,2))
 
+await bigcommerce.get('/coupons')
 
 return NextResponse.json({
       success: true,
