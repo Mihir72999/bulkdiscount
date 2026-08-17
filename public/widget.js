@@ -604,10 +604,11 @@ async function checkCart() {
           .catch(error => {
             console.error("Error fetching bulk pricing data:", error);
           }); 
-          
-          await getCart()
     // }
   });
+     
+     await getCart()
+    
     } catch (error) {
         console.error("Cart API error:", error);
     }
