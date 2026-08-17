@@ -608,7 +608,9 @@ async function init() {
     console.log("========== Widget Init ==========");
     const cart = findCart();
     if(cart.isCartPage){
+      console.log("========== Cart Init ==========");
       await  checkCart();
+      watchCouponApply()
     } 
     
     if (!isProductPage()) {
@@ -670,7 +672,7 @@ async function init() {
     );
 
     await bindEvents();
-      watchCouponApply()
+      
     
     console.log("✅ Widget Rendered");
 }
