@@ -546,8 +546,15 @@ if(missing[qty]){
 
         });
   }
-  
+ function findCartTable() {
+  return document.querySelector("table.cart");
+}
+
 async function checkCart() {
+  const cartTable = findCartTable()
+  if (cartTable) {
+  console.log("Cart table found:", cartTable);
+}
     try {    
    fetch('/api/storefront/carts')
   .then(response => response.json())
@@ -573,7 +580,7 @@ async function checkCart() {
         fetch(`${API_BASE}/api/cart?domain=${encodeURIComponent(window.location.hostname)}&igId=${JSON.stringify(ignoreIds)}`)
           .then(response => response.json())
           .then(data => {
-            console.log("Bulk pricing detected for products:", data);
+            console.log("Coupon detected for products:", data);
             
           })
           .catch(error => {
