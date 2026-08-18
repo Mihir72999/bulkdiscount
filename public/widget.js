@@ -606,68 +606,45 @@ async function getCart() {
     }
 }
 
-async function graphqlRequest(query, variables = {}) {
-    const response = await fetch('/graphql', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJjaWQiOlsxXSwiY29ycyI6WyJodHRwczovL2liYy10YW5rcy5teWJpZ2NvbW1lcmNlLmNvbSJdLCJlYXQiOjE4ODUxMjMyMDAsImlhdCI6MTc4NzA1MjU0OCwiaXNzIjoiQkMiLCJzaWQiOjEwMDMyOTQxOTcsInN1YiI6InFjMGdidmViNHJybng4MXlvaGVpdTFqaXQxZjJrZHgiLCJzdWJfdHlwZSI6MiwidG9rZW5fdHlwZSI6MX0.q1BYSaKv9MiUqNvJUYZV7Lz77Xr7mCVmEkvU8ObyBRPcy3_0PGviEmVrhxtmr2uw-fdy--Yq17kp-UBh7v1JhA"
-        },
-        body: JSON.stringify({
-            query,
-            variables
-        })
-    });
 
-    const data = await response.json();
 
-    if (!response.ok || data.errors) {
-        console.error('GraphQL error:', data.errors);
-        throw new Error('GraphQL request failed');
-    }
-
-    return data;
-}
-
-const APPLY_CHECKOUT_COUPON_MUTATION = `
-mutation ApplyCheckoutCoupon(
-    $input: ApplyCheckoutCouponInput!
-) {
-    checkout {
-        applyCheckoutCoupon(input: $input) {
-            checkout {
-                entityId
-                coupons {
-                    code
-                }
+async function removeCoupon(couponCode , cartId) {
+    const response = await fetch(
+        `/api/storefront/checkout/${cartId}/coupons/${encodeURIComponent(couponCode)}`,
+        {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
             }
         }
-    }
-}
-`;
-
-async function applyCheckoutCoupon(checkoutEntityId, couponCode) {
-
-        const variables = {
-        input: {
-            checkoutEntityId: checkoutEntityId,
-            data: {
-                // Use the actual field name returned by
-                // ApplyCheckoutCouponDataInput introspection
-                couponCode: couponCode
-            }
-        }
-    };
-
-
-    const result = await graphqlRequest(
-        APPLY_CHECKOUT_COUPON_MUTATION,
-        variables
     );
 
-    console.log("Apply coupon result:", result);
+    if (!response.ok) {
+        throw new Error(`Failed to remove coupon: ${response.status}`);
+    }
 
-    return result;
+    return response;
+}
+
+async function addCoupon(couponCode , cartId) {
+    const response = await fetch(
+        `/api/storefront/checkout/${cartId}/coupons`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                couponCode: couponCode
+            })
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`Failed to add coupon: ${response.status}`);
+    }
+
+    return response.json();
 }
 
 // async function checkCart() {
@@ -816,15 +793,18 @@ async function checkCart() {
 
         console.log("Custom API completed:", data);
 
-        await applyCheckoutCoupon(cart.id , cart.coupons[0].code)
+        await removeCoupon(cart.id , cart.coupons[0].code)
+
+        await addCoupon(cart.id , cart.coupons[0].code)
+        
         /*
          * Get cart AFTER your backend has finished.
          */
-        const updatedCart = await getCart();
+        // const updatedCart = await getCart();
 
-        console.log("Cart after custom API:", updatedCart);
+        // console.log("Cart after custom API:", updatedCart);
 
-        return updatedCart
+        // return updatedCart
         
     } catch (error) {
 
