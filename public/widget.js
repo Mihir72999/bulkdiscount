@@ -610,7 +610,7 @@ async function getCart() {
 
 async function removeCoupon(couponCode , cartId) {
     const response = await fetch(
-        `/api/storefront/checkout/${cartId}/coupons/${encodeURIComponent(couponCode)}`,
+        `/api/storefront/checkouts/${cartId}/coupons/${encodeURIComponent(couponCode)}`,
         {
             method: "DELETE",
             headers: {
@@ -628,7 +628,7 @@ async function removeCoupon(couponCode , cartId) {
 
 async function addCoupon(couponCode , cartId) {
     const response = await fetch(
-        `/api/storefront/checkout/${cartId}/coupons`,
+        `/api/storefront/checkouts/${cartId}/coupons`,
         {
             method: "POST",
             headers: {
