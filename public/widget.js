@@ -560,27 +560,6 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// async function getCart() {
-//     try {
-//         const response = await fetch('/api/storefront/carts');
-
-//         if (!response.ok) {
-//             throw new Error(`Cart API error: ${response.status}`);
-//         }
-
-//         const cartData = await response.json();
-
-//         if (!cartData || cartData.length === 0) {
-//             return null;
-//         }
-
-//         return cartData[0];
-
-//     } catch (error) {
-//         console.error("Get cart error:", error);
-//         return null;
-//     }
-// }
 
 async function getCart() {
     try {
@@ -647,59 +626,9 @@ async function addCoupon(cartId , couponCode) {
     return response.json();
 }
 
-// async function checkCart() {
-//     try {
-//         // 1. Get latest cart
-//         const response = await fetch('/api/storefront/carts');
-//         const cartData = await response.json();
-
-//         if (!cartData || cartData.length === 0) return;
-
-//         const cart = cartData[0];
-
-//         let ignoreIds = cart.lineItems.physicalItems
-//             .map(item => item.productId);
-
-//         // 2. Check bulk pricing
-//         cart.lineItems.physicalItems.forEach(item => {
-//             if (item.listPrice !== item.originalPrice) {
-//                 ignoreIds = ignoreIds.filter(
-//                     id => id !== item.productId
-//                 );
-//             }
-//         });
-
-//         ignoreIds = [...new Set(ignoreIds)];
-
-//         console.log("ignoreIds:", ignoreIds);
-
-//         // 3. Call YOUR custom API and WAIT for it
-//         const customResponse = await fetch(
-//             `${API_BASE}/api/cart?domain=${encodeURIComponent(
-//                 window.location.hostname
-//             )}&igId=${encodeURIComponent(JSON.stringify(ignoreIds))}`
-//         );
-
-//         const data = await customResponse.json();
-
-//         console.log("Custom API completed:", data);
-
-//         // 4. ONLY NOW get cart again
-//         const updatedCart = await getCart();
-
-//         console.log("Cart after custom API:", updatedCart);
-
-//         return updatedCart;
-
-//     } catch (error) {
-//         console.error("Cart API error:", error);
-//     }
-// }
-
 async function checkCart() {
 
     if (checkCartRunning) {
-        console.log("checkCart already running...");
         return;
     }
 
@@ -716,11 +645,8 @@ async function checkCart() {
         const cart = await getCart();
 
         if (!cart) {
-            console.log("No cart found");
             return;
         }
-
-        console.log("Latest BigCommerce cart:", cart);
 
         /*
          * Create a signature so we don't process
@@ -737,7 +663,6 @@ async function checkCart() {
         );
 
         if (cartSignature === lastCartSignature) {
-            console.log("Cart unchanged - skipping backend call");
             return;
         }
 
@@ -767,7 +692,6 @@ async function checkCart() {
 
         ignoreIds = [...new Set(ignoreIds)];
 
-        console.log("ignoreIds:", ignoreIds);
 
         /*
          * Call your backend.
@@ -791,20 +715,9 @@ async function checkCart() {
 
         const data = await customResponse.json();
 
-        console.log("Custom API completed:", data);
-
         await removeCoupon(cart.id , cart.coupons[0].code)
 
         await addCoupon(cart.id , cart.coupons[0].code)
-        
-        /*
-         * Get cart AFTER your backend has finished.
-         */
-        // const updatedCart = await getCart();
-
-        // console.log("Cart after custom API:", updatedCart);
-
-        // return updatedCart
         
     } catch (error) {
 
@@ -844,11 +757,6 @@ function watchQuantityButtons() {
             return;
         }
 
-        console.log(
-            "Quantity button clicked:",
-            action
-        );
-
         /*
          * Wait for BigCommerce to update the cart.
          */
@@ -863,17 +771,16 @@ function watchCouponApply() {
     const cartTable = findCartTable();
 
     if (!cartTable) {
-        console.log("Cart table not found");
+
         return;
     }
 
-    console.log("Cart table found:", cartTable);
 
     const cartContainer = cartTable.parentElement;
 
     const observer = new MutationObserver(() => {
 
-        console.log("BigCommerce cart DOM changed");
+
 
         /*
          * Don't immediately call checkCart().
@@ -890,56 +797,11 @@ function watchCouponApply() {
     });
 }
 
-// function watchCouponApply() {
-
-//     const cartTable = findCartTable();
-
-//     if (cartTable) {
-//         console.log("Cart table found:", cartTable);
-
-//         const cartContainer = cartTable.parentElement;
-
-//         const observer = new MutationObserver(async () => {
-//             console.log("BigCommerce cart DOM changed");
-
-//             // Give the browser a chance to finish the DOM replacement
-//             await Promise.resolve();
-
-//             await checkCart();
-        
-//         });
-
-//         observer.observe(cartContainer, {
-//             childList: true,
-//             subtree: true
-//         });
-//     }
-
-//     if (window.couponCartWatcherAdded) return;
-
-//     window.couponCartWatcherAdded = true;
-
-//     document.addEventListener("click", (event) => {
-
-//         const button = event.target.closest(
-//             'button[data-cart-update][data-action]'
-//         );
-
-//         if (!button) return;
-
-//         const action = button.dataset.action;
-
-//         if (action === "inc" || action === "dec") {
-//             console.log("Quantity button clicked:", action);
-//         }
-//     });
-// }
 
 async function init() {
-    console.log("========== Widget Init ==========");
     const cart = findCart();
     if(cart.isCartPage){
-      console.log("========== Cart Init ==========");
+
       await  checkCart();
       
       watchQuantityButtons();
@@ -949,11 +811,8 @@ async function init() {
     
     if (!isProductPage()) {
       
-        console.log("❌ Not a product page");
         return;
     }
-
-    console.log("✅ Product page");
    
     loadCSS();
     await loadWidgetSettings()
@@ -961,7 +820,6 @@ async function init() {
     const productId = getProductId();
 
     if (!productId) {
-    console.log("Not a product page");
     return;
 }
 
@@ -977,8 +835,6 @@ async function init() {
     let rules = [];
 
     try {
-
-        console.log("Calling getRules...");
 
         rules = await getRules();
         discountType = rules[0]?.discountType  
@@ -1007,8 +863,6 @@ async function init() {
 
     await bindEvents();
       
-    
-    console.log("✅ Widget Rendered");
 }
 
   if (document.readyState === "loading") {
