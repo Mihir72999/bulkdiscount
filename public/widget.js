@@ -811,7 +811,7 @@ async function checkCart() {
 
         console.log("Custom API completed:", data);
 
-        await applyCheoutCoupon(cart.id , cart.coupons[0].code)
+        await applyCheckoutCoupon(cart.id , cart.coupons[0].code)
         /*
          * Get cart AFTER your backend has finished.
          */
