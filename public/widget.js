@@ -726,7 +726,7 @@ async function checkCart() {
     } finally {
 
         checkCartRunning = false;
-        window.location.reload
+        window.location.reload()
     }
 }
 
