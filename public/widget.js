@@ -648,12 +648,17 @@ mutation ApplyCheckoutCoupon(
 
 async function applyCheckoutCoupon(checkoutEntityId, couponCode) {
 
-    const variables = {
+        const variables = {
         input: {
             checkoutEntityId: checkoutEntityId,
-            couponCode: couponCode
+            data: {
+                // Use the actual field name returned by
+                // ApplyCheckoutCouponDataInput introspection
+                couponCode: couponCode
+            }
         }
     };
+
 
     const result = await graphqlRequest(
         APPLY_CHECKOUT_COUPON_MUTATION,
