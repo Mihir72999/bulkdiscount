@@ -610,7 +610,9 @@ async function graphqlRequest(query, variables = {}) {
     const response = await fetch('/graphql', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJjaWQiOlsxXSwiY29ycyI6WyJodHRwczovL2dxbC1wbGF5Z3JvdW5kLmJpZ2NvbW1lcmNlLmNvbSJdLCJlYXQiOjE3ODcyMTA0NzQsImlhdCI6MTc4NzAzNzY3NCwiaXNzIjoiQkMiLCJzaWQiOjEwMDMyOTQxOTcsInN1YiI6IkJDIiwic3ViX3R5cGUiOjAsInRva2VuX3R5cGUiOjF9.C5YwQL1XYsxEbMVGSe471e5KtAc6QGv3SFVbvQ6pUyKkhNV2QuaB4MyZwjdLLxABkYzmF0d6Kyd64El_dX6CaQ"
+
         },
         body: JSON.stringify({
             query,
