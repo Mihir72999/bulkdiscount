@@ -813,6 +813,38 @@ function watchQuantityButtons() {
 
 }
 
+function watchCouponApply() {
+
+    const cartTable = findCartTable();
+
+    if (!cartTable) {
+        console.log("Cart table not found");
+        return;
+    }
+
+    console.log("Cart table found:", cartTable);
+
+    const cartContainer = cartTable.parentElement;
+
+    const observer = new MutationObserver(() => {
+
+        console.log("BigCommerce cart DOM changed");
+
+        /*
+         * Don't immediately call checkCart().
+         *
+         * BigCommerce may still be updating the cart.
+         */
+        scheduleCheckCart(700);
+
+    });
+
+    observer.observe(cartContainer, {
+        childList: true,
+        subtree: true
+    });
+}
+
 // function watchCouponApply() {
 
 //     const cartTable = findCartTable();
@@ -864,6 +896,9 @@ async function init() {
     if(cart.isCartPage){
       console.log("========== Cart Init ==========");
       await  checkCart();
+      
+      watchQuantityButtons();
+
       watchCouponApply()
     } 
     
