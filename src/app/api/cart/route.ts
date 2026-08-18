@@ -46,7 +46,13 @@ export async function GET(request:NextRequest){
      const igId = request.nextUrl.searchParams.get('igId')
      const ignoreId = JSON.parse(igId || '[]') as number[]
     const origin = request.headers.get("origin") || "";
-  const allowedOrigins = await getStoreDomain();      
+  const allowedOrigins = await getStoreDomain();
+  if(!ignoreId || ignoreId.length <= 0){
+    return NextResponse.json({
+       success:true, 
+       rules:[]  
+    } ,{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)})
+  }      
   try{
   const db = await getDB()
 
