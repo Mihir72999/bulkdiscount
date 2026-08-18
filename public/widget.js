@@ -606,6 +606,89 @@ async function getCart() {
     }
 }
 
+async function graphqlRequest(query, variables = {}) {
+    const response = await fetch('/graphql', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            query,
+            variables
+        })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.errors) {
+        console.error('GraphQL error:', data.errors);
+        throw new Error('GraphQL request failed');
+    }
+
+    return data;
+}
+
+const REMOVE_COUPON_MUTATION = `
+mutation RemoveCoupon(
+    $cartEntityId: String!
+    $couponCode: String!
+) {
+    cart {
+        removeCartCoupon(
+            input: {
+                cartEntityId: $cartEntityId
+                couponCode: $couponCode
+            }
+        ) {
+            cart {
+                entityId
+                coupons {
+                    code
+                }
+            }
+        }
+    }
+}
+`;
+
+const ADD_COUPON_MUTATION = `
+mutation AddCoupon(
+    $cartEntityId: String!
+    $couponCode: String!
+) {
+    cart {
+        addCartCoupon(
+            input: {
+                cartEntityId: $cartEntityId
+                couponCode: $couponCode
+            }
+        ) {
+            cart {
+                entityId
+                coupons {
+                    code
+                }
+            }
+        }
+    }
+}
+`;
+
+async function reapplyCoupon(cartId, couponCode) {
+
+    // Remove
+    await graphqlRequest(REMOVE_COUPON_MUTATION, {
+        cartEntityId: cartId,
+        couponCode: couponCode
+    });
+
+    // Add again
+    await graphqlRequest(ADD_COUPON_MUTATION, {
+        cartEntityId: cartId,
+        couponCode: couponCode
+    });
+}
+
 // async function checkCart() {
 //     try {
 //         // 1. Get latest cart
@@ -752,6 +835,7 @@ async function checkCart() {
 
         console.log("Custom API completed:", data);
 
+        reapplyCoupon(cart.id , cart.coupons[0].code)
         /*
          * Get cart AFTER your backend has finished.
          */
@@ -759,8 +843,8 @@ async function checkCart() {
 
         console.log("Cart after custom API:", updatedCart);
 
-        return updatedCart;
-
+        return updatedCart
+        
     } catch (error) {
 
         console.error("checkCart error:", error);
