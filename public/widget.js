@@ -780,8 +780,6 @@ function watchCouponApply() {
 
     const observer = new MutationObserver(() => {
 
-
-
         /*
          * Don't immediately call checkCart().
          *
