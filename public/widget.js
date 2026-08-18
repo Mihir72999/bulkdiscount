@@ -611,8 +611,7 @@ async function graphqlRequest(query, variables = {}) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJjaWQiOlsxXSwiY29ycyI6WyJodHRwczovL2dxbC1wbGF5Z3JvdW5kLmJpZ2NvbW1lcmNlLmNvbSJdLCJlYXQiOjE3ODcyMTA0NzQsImlhdCI6MTc4NzAzNzY3NCwiaXNzIjoiQkMiLCJzaWQiOjEwMDMyOTQxOTcsInN1YiI6IkJDIiwic3ViX3R5cGUiOjAsInRva2VuX3R5cGUiOjF9.C5YwQL1XYsxEbMVGSe471e5KtAc6QGv3SFVbvQ6pUyKkhNV2QuaB4MyZwjdLLxABkYzmF0d6Kyd64El_dX6CaQ"
-
+            "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJjaWQiOlsxXSwiY29ycyI6WyJodHRwczovL2liYy10YW5rcy5teWJpZ2NvbW1lcmNlLmNvbSJdLCJlYXQiOjE4ODUxMjMyMDAsImlhdCI6MTc4NzA1MjU0OCwiaXNzIjoiQkMiLCJzaWQiOjEwMDMyOTQxOTcsInN1YiI6InFjMGdidmViNHJybng4MXlvaGVpdTFqaXQxZjJrZHgiLCJzdWJfdHlwZSI6MiwidG9rZW5fdHlwZSI6MX0.q1BYSaKv9MiUqNvJUYZV7Lz77Xr7mCVmEkvU8ObyBRPcy3_0PGviEmVrhxtmr2uw-fdy--Yq17kp-UBh7v1JhA"
         },
         body: JSON.stringify({
             query,
