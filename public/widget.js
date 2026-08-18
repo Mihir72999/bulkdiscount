@@ -546,13 +546,47 @@ if(missing[qty]){
 
         });
   }
+
+ let checkCartTimer = null;
+let checkCartRunning = false;
+let lastCartSignature = null;
+ 
+
  function findCartTable() {
   return document.querySelector("table.cart");
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// async function getCart() {
+//     try {
+//         const response = await fetch('/api/storefront/carts');
+
+//         if (!response.ok) {
+//             throw new Error(`Cart API error: ${response.status}`);
+//         }
+
+//         const cartData = await response.json();
+
+//         if (!cartData || cartData.length === 0) {
+//             return null;
+//         }
+
+//         return cartData[0];
+
+//     } catch (error) {
+//         console.error("Get cart error:", error);
+//         return null;
+//     }
+// }
+
 async function getCart() {
     try {
-        const response = await fetch('/api/storefront/carts');
+        const response = await fetch("/api/storefront/carts", {
+            cache: "no-store"
+        });
 
         if (!response.ok) {
             throw new Error(`Cart API error: ${response.status}`);
@@ -572,44 +606,155 @@ async function getCart() {
     }
 }
 
+// async function checkCart() {
+//     try {
+//         // 1. Get latest cart
+//         const response = await fetch('/api/storefront/carts');
+//         const cartData = await response.json();
+
+//         if (!cartData || cartData.length === 0) return;
+
+//         const cart = cartData[0];
+
+//         let ignoreIds = cart.lineItems.physicalItems
+//             .map(item => item.productId);
+
+//         // 2. Check bulk pricing
+//         cart.lineItems.physicalItems.forEach(item => {
+//             if (item.listPrice !== item.originalPrice) {
+//                 ignoreIds = ignoreIds.filter(
+//                     id => id !== item.productId
+//                 );
+//             }
+//         });
+
+//         ignoreIds = [...new Set(ignoreIds)];
+
+//         console.log("ignoreIds:", ignoreIds);
+
+//         // 3. Call YOUR custom API and WAIT for it
+//         const customResponse = await fetch(
+//             `${API_BASE}/api/cart?domain=${encodeURIComponent(
+//                 window.location.hostname
+//             )}&igId=${encodeURIComponent(JSON.stringify(ignoreIds))}`
+//         );
+
+//         const data = await customResponse.json();
+
+//         console.log("Custom API completed:", data);
+
+//         // 4. ONLY NOW get cart again
+//         const updatedCart = await getCart();
+
+//         console.log("Cart after custom API:", updatedCart);
+
+//         return updatedCart;
+
+//     } catch (error) {
+//         console.error("Cart API error:", error);
+//     }
+// }
+
 async function checkCart() {
+
+    if (checkCartRunning) {
+        console.log("checkCart already running...");
+        return;
+    }
+
+    checkCartRunning = true;
+
     try {
-        // 1. Get latest cart
-        const response = await fetch('/api/storefront/carts');
-        const cartData = await response.json();
 
-        if (!cartData || cartData.length === 0) return;
+        /*
+         * Give BigCommerce time to finish its own
+         * cart API request / DOM update.
+         */
+        await sleep(500);
 
-        const cart = cartData[0];
+        const cart = await getCart();
 
+        if (!cart) {
+            console.log("No cart found");
+            return;
+        }
+
+        console.log("Latest BigCommerce cart:", cart);
+
+        /*
+         * Create a signature so we don't process
+         * exactly the same cart repeatedly.
+         */
+        const cartSignature = JSON.stringify(
+            cart.lineItems?.physicalItems?.map(item => ({
+                id: item.id,
+                productId: item.productId,
+                quantity: item.quantity,
+                listPrice: item.listPrice,
+                originalPrice: item.originalPrice
+            }))
+        );
+
+        if (cartSignature === lastCartSignature) {
+            console.log("Cart unchanged - skipping backend call");
+            return;
+        }
+
+        lastCartSignature = cartSignature;
+
+        /*
+         * Products that should be ignored.
+         */
         let ignoreIds = cart.lineItems.physicalItems
             .map(item => item.productId);
 
-        // 2. Check bulk pricing
+        /*
+         * If BigCommerce already applied a bulk price,
+         * remove that product from ignoreIds.
+         */
         cart.lineItems.physicalItems.forEach(item => {
+
             if (item.listPrice !== item.originalPrice) {
+
                 ignoreIds = ignoreIds.filter(
                     id => id !== item.productId
                 );
+
             }
+
         });
 
         ignoreIds = [...new Set(ignoreIds)];
 
         console.log("ignoreIds:", ignoreIds);
 
-        // 3. Call YOUR custom API and WAIT for it
+        /*
+         * Call your backend.
+         */
         const customResponse = await fetch(
             `${API_BASE}/api/cart?domain=${encodeURIComponent(
                 window.location.hostname
-            )}&igId=${encodeURIComponent(JSON.stringify(ignoreIds))}`
+            )}&igId=${encodeURIComponent(
+                JSON.stringify(ignoreIds)
+            )}`,
+            {
+                cache: "no-store"
+            }
         );
+
+        if (!customResponse.ok) {
+            throw new Error(
+                `Custom API error: ${customResponse.status}`
+            );
+        }
 
         const data = await customResponse.json();
 
         console.log("Custom API completed:", data);
 
-        // 4. ONLY NOW get cart again
+        /*
+         * Get cart AFTER your backend has finished.
+         */
         const updatedCart = await getCart();
 
         console.log("Cart after custom API:", updatedCart);
@@ -617,40 +762,30 @@ async function checkCart() {
         return updatedCart;
 
     } catch (error) {
-        console.error("Cart API error:", error);
+
+        console.error("checkCart error:", error);
+
+    } finally {
+
+        checkCartRunning = false;
+
     }
 }
 
-function watchCouponApply() {
+function scheduleCheckCart(delay = 500) {
 
-    const cartTable = findCartTable();
+    clearTimeout(checkCartTimer);
 
-    if (cartTable) {
-        console.log("Cart table found:", cartTable);
+    checkCartTimer = setTimeout(() => {
 
-        const cartContainer = cartTable.parentElement;
+        checkCart();
 
-        const observer = new MutationObserver(async () => {
-            console.log("BigCommerce cart DOM changed");
+    }, delay);
+}
 
-            // Give the browser a chance to finish the DOM replacement
-            await Promise.resolve();
+function watchQuantityButtons() {
 
-            await checkCart();
-        
-        });
-
-        observer.observe(cartContainer, {
-            childList: true,
-            subtree: true
-        });
-    }
-
-    if (window.couponCartWatcherAdded) return;
-
-    window.couponCartWatcherAdded = true;
-
-    document.addEventListener("click", (event) => {
+    document.addEventListener("click", event => {
 
         const button = event.target.closest(
             'button[data-cart-update][data-action]'
@@ -660,11 +795,68 @@ function watchCouponApply() {
 
         const action = button.dataset.action;
 
-        if (action === "inc" || action === "dec") {
-            console.log("Quantity button clicked:", action);
+        if (action !== "inc" && action !== "dec") {
+            return;
         }
+
+        console.log(
+            "Quantity button clicked:",
+            action
+        );
+
+        /*
+         * Wait for BigCommerce to update the cart.
+         */
+        scheduleCheckCart(700);
+
     });
+
 }
+
+// function watchCouponApply() {
+
+//     const cartTable = findCartTable();
+
+//     if (cartTable) {
+//         console.log("Cart table found:", cartTable);
+
+//         const cartContainer = cartTable.parentElement;
+
+//         const observer = new MutationObserver(async () => {
+//             console.log("BigCommerce cart DOM changed");
+
+//             // Give the browser a chance to finish the DOM replacement
+//             await Promise.resolve();
+
+//             await checkCart();
+        
+//         });
+
+//         observer.observe(cartContainer, {
+//             childList: true,
+//             subtree: true
+//         });
+//     }
+
+//     if (window.couponCartWatcherAdded) return;
+
+//     window.couponCartWatcherAdded = true;
+
+//     document.addEventListener("click", (event) => {
+
+//         const button = event.target.closest(
+//             'button[data-cart-update][data-action]'
+//         );
+
+//         if (!button) return;
+
+//         const action = button.dataset.action;
+
+//         if (action === "inc" || action === "dec") {
+//             console.log("Quantity button clicked:", action);
+//         }
+//     });
+// }
 
 async function init() {
     console.log("========== Widget Init ==========");
