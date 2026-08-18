@@ -629,19 +629,13 @@ async function graphqlRequest(query, variables = {}) {
     return data;
 }
 
-const REMOVE_COUPON_MUTATION = `
-mutation RemoveCoupon(
-    $cartEntityId: String!
-    $couponCode: String!
+const APPLY_CHECKOUT_COUPON_MUTATION = `
+mutation ApplyCheckoutCoupon(
+    $input: ApplyCheckoutCouponInput!
 ) {
-    cart {
-        removeCartCoupon(
-            input: {
-                cartEntityId: $cartEntityId
-                couponCode: $couponCode
-            }
-        ) {
-            cart {
+    checkout {
+        applyCheckoutCoupon(input: $input) {
+            checkout {
                 entityId
                 coupons {
                     code
@@ -652,42 +646,23 @@ mutation RemoveCoupon(
 }
 `;
 
-const ADD_COUPON_MUTATION = `
-mutation AddCoupon(
-    $cartEntityId: String!
-    $couponCode: String!
-) {
-    cart {
-        addCartCoupon(
-            input: {
-                cartEntityId: $cartEntityId
-                couponCode: $couponCode
-            }
-        ) {
-            cart {
-                entityId
-                coupons {
-                    code
-                }
-            }
+async function applyCheckoutCoupon(checkoutEntityId, couponCode) {
+
+    const variables = {
+        input: {
+            checkoutEntityId: checkoutEntityId,
+            couponCode: couponCode
         }
-    }
-}
-`;
+    };
 
-async function reapplyCoupon(cartId, couponCode) {
+    const result = await graphqlRequest(
+        APPLY_CHECKOUT_COUPON_MUTATION,
+        variables
+    );
 
-    // Remove
-    await graphqlRequest(REMOVE_COUPON_MUTATION, {
-        cartEntityId: cartId,
-        couponCode: couponCode
-    });
+    console.log("Apply coupon result:", result);
 
-    // Add again
-    await graphqlRequest(ADD_COUPON_MUTATION, {
-        cartEntityId: cartId,
-        couponCode: couponCode
-    });
+    return result;
 }
 
 // async function checkCart() {
@@ -836,7 +811,7 @@ async function checkCart() {
 
         console.log("Custom API completed:", data);
 
-        reapplyCoupon(cart.id , cart.coupons[0].code)
+        await applyCheoutCoupon(cart.id , cart.coupons[0].code)
         /*
          * Get cart AFTER your backend has finished.
          */
