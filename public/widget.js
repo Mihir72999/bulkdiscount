@@ -761,9 +761,9 @@ function watchQuantityButtons() {
   
           const row = button.closest("tr");
 
-    const qtyInput = row?.querySelector('input[type="number"]');
-     console.log(row , qtyInput)
-
+    const qtyInput = row?.querySelector(".cart-item-qty-input");
+     console.log(row)
+     console.log(qtyInput)
 
         /*
          * Wait for BigCommerce to update the cart.
