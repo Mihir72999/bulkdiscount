@@ -775,7 +775,10 @@ if (action === "dec") {
     value = Math.max(1, currentQty - 1);
 }
 console.log(value)
+  
+const itemId = qtyInput.dataset.cartItemid;
 
+console.log(itemId);
         /*
          * Wait for BigCommerce to update the cart.
          */
