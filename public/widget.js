@@ -712,12 +712,15 @@ async function checkCart() {
                 `Custom API error: ${customResponse.status}`
             );
         }
-
+        const couponcode = cart.coupons[0]
+        if(!couponcode || couponcode.length === 0){
+            return
+        }
         const data = await customResponse.json();
 
-        await removeCoupon(cart.id , cart.coupons[0].code)
+        await removeCoupon(cart.id , couponcode?.code)
 
-        await addCoupon(cart.id , cart.coupons[0].code)
+        await addCoupon(cart.id , couponcode?.code)
         
     } catch (error) {
 
