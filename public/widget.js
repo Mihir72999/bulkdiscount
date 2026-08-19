@@ -757,6 +757,9 @@ async function checkCart() {
         //await removeCoupon(cart.id , couponcode?.code)
 
         //await addCoupon(cart.id , couponcode?.code)
+        if(value > 0){
+          updateCart(itemId, value)
+        }
         
         console.log(itemId)
         
