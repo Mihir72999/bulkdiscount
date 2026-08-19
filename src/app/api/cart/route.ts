@@ -72,51 +72,6 @@ const promotion = {
 };
 const rule = await bigcommerce.put(`/coupons/${couponId}` , promotion);
 
-await bigcommerce.get('/coupons')
-
-return NextResponse.json({
-      success: true,
-      rules: rule,
-    },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
-      } catch (error) {
-    
-        const { message, response } = error as {
-          message: string;
-          response?: { status?: number };
-        };
-    
-        return NextResponse.json(
-          { message },
-          { status: response?.status ?? 500 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)}
-        ); 
-      }
-}
-export async function POST(request:NextRequest){
-    const domain = request.nextUrl.searchParams.get('domain')
-    const getStoreIds = await request.json()
-    const origin = request.headers.get("origin") || "";
-  const allowedOrigins = await getStoreDomain();      
-  try{
-  const db = await getDB()
-
-const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE domain = ?").bind(domain).first()  as {
-  accessToken: string;
-  storeHash: string;
-};  
-const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v2');
-const coupons = await bigcommerce.get('/coupons')
-console.log("coupons",JSON.stringify(coupons,null,2))
-const couponId = coupons[0]?.id
-const promotion = {
-  applies_to: {
-    entity: 'products',
-    ids: getStoreIds
-  }
-};
-const rule = await bigcommerce.put(`/coupons/${couponId}` , promotion);
-console.log("rule",JSON.stringify(rule,null,2))
-
-
 return NextResponse.json({
       success: true,
       rules: rule,
