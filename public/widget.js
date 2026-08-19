@@ -761,9 +761,20 @@ function watchQuantityButtons() {
   
           const row = button.closest("tr");
 
-    const qtyInput = row?.querySelector(".cart-item-qty-input");
+         const qtyInput = row?.querySelector(".cart-item-qty-input");
     
-     console.log(qtyInput?.value)
+         let value = 0;
+
+const currentQty = Number(qtyInput?.value) || 1;
+
+if (action === "inc") {
+    value = currentQty + 1;
+}
+
+if (action === "dec") {
+    value = Math.max(1, currentQty - 1);
+}
+console.log(value)
 
         /*
          * Wait for BigCommerce to update the cart.
