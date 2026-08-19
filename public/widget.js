@@ -487,6 +487,7 @@ function bindEvents() {
   function calculatePrice(price, discount , type=discountType) {
    return type === 'percent' ? Number(price - (price * discount / 100)) : type === 'fixed' ? Number(price - (price - discount)) : Number(price - discount)  
 }
+
 function updateDisplayedPrice(discount, qty , type=discountType ) {
 
     const newPrice = type === 'percent' ? calculatePrice(originalPrice * qty, discount) : type === 'fixed' ? calculatePrice(originalPrice * qty, Number(discount) === 0 ? originalPrice : discount) * qty : calculatePrice(originalPrice*qty,discount*qty ) ;
@@ -550,7 +551,8 @@ if(missing[qty]){
  let checkCartTimer = null;
 let checkCartRunning = false;
 let lastCartSignature = null;
- 
+let itemId = "";
+let value = 0;
 
  function findCartTable() {
   return document.querySelector("table.cart");
@@ -756,7 +758,9 @@ async function checkCart() {
 
         //await addCoupon(cart.id , couponcode?.code)
         
+        console.log(itemId)
         
+        console.log(value)
         
     } catch (error) {
 
@@ -799,7 +803,7 @@ function watchQuantityButtons() {
 
          const qtyInput = row?.querySelector(".cart-item-qty-input");
     
-         let value = 0;
+         
 
 const currentQty = Number(qtyInput?.value) || 1;
 
@@ -810,13 +814,11 @@ if (action === "inc") {
 if (action === "dec") {
     value = Math.max(1, currentQty - 1);
 }
-console.log(value)
+
   
-const itemId = qtyInput.dataset.cartItemid;
+itemId = qtyInput.dataset.cartItemid;
 
-updateCart(itemId,value)
 
-console.log(itemId);
         /*
          * Wait for BigCommerce to update the cart.
          */
