@@ -560,6 +560,40 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function updateCart(itemId, quantity) {
+
+    const formData = new URLSearchParams();
+
+    formData.append("items[0][id]", itemId);
+    formData.append("items[0][quantity]", String(quantity));
+
+    return fetch("/remote/v1/cart/update", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(result => {
+
+        console.log("Update result:", result);
+
+        return fetch("/api/storefront/carts");
+    })
+    .then(response => response.json())
+    .then(cartData => {
+
+        const cart = cartData?.[0];
+
+        if (!cart) return null;
+
+        return cart;
+    })
+    .catch(error => {
+
+        console.error("Error:", error);
+
+        return null;
+    });
+}
 
 async function getCart() {
     try {
@@ -718,9 +752,11 @@ async function checkCart() {
         }
         const data = await customResponse.json();
 
-        await removeCoupon(cart.id , couponcode?.code)
+        //await removeCoupon(cart.id , couponcode?.code)
 
-        await addCoupon(cart.id , couponcode?.code)
+        //await addCoupon(cart.id , couponcode?.code)
+        
+        
         
     } catch (error) {
 
@@ -777,6 +813,8 @@ if (action === "dec") {
 console.log(value)
   
 const itemId = qtyInput.dataset.cartItemid;
+
+updateCart(itemId,value)
 
 console.log(itemId);
         /*
