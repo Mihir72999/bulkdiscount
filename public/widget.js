@@ -621,47 +621,6 @@ async function getCart() {
     }
 }
 
-
-
-async function removeCoupon(cartId , couponCode) {
-    const response = await fetch(
-        `/api/storefront/checkouts/${cartId}/coupons/${encodeURIComponent(couponCode)}`,
-        {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }
-    );
-
-    if (!response.ok) {
-        throw new Error(`Failed to remove coupon: ${response.status}`);
-    }
-
-    return response;
-}
-
-async function addCoupon(cartId , couponCode) {
-    const response = await fetch(
-        `/api/storefront/checkouts/${cartId}/coupons`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                couponCode: couponCode
-            })
-        }
-    );
-
-    if (!response.ok) {
-        throw new Error(`Failed to add coupon: ${response.status}`);
-    }
-
-    return response.json();
-}
-
 async function checkCart() {
 
     if (checkCartRunning) {
@@ -754,16 +713,12 @@ async function checkCart() {
         }
         const data = await customResponse.json();
 
-        //await removeCoupon(cart.id , couponcode?.code)
-
-        //await addCoupon(cart.id , couponcode?.code)
+        
         if(value > 0){
           updateCart(itemId, value)
         }
         
-        console.log(itemId)
         
-        console.log(value)
         
     } catch (error) {
 
