@@ -713,7 +713,7 @@ async function checkCart() {
             );
         }
         const couponcode = cart.coupons[0]
-        if(!couponcode || couponcode.length === 0){
+        if(!couponcode || !couponcode.code){
             return
         }
         const data = await customResponse.json();
