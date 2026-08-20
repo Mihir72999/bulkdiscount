@@ -713,10 +713,15 @@ async function checkCart() {
         }
         const data = await customResponse.json();
 
+        let timer;   
         
         if(value > 0){
           updateCart(itemId, value)
-          window.location.reload();
+          clearTimeout(timer);
+
+       timer = setTimeout(() => {
+        window.location.reload()
+    }, 500);
         }
         
         
