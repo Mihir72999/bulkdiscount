@@ -716,6 +716,7 @@ async function checkCart() {
         
         if(value > 0){
           updateCart(itemId, value)
+          window.location.reload();
         }
         
         
