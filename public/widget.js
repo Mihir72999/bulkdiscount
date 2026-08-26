@@ -738,12 +738,14 @@ function scheduleCheckCart(delay = 500) {
 
     }, delay);
 }
-let buttonTimer;
+let buttonTimer = null;
+let isProgrammaticClick = false;
 function scheduleButtonClick(delay = 200, button) {
    
      clearTimeout(buttonTimer);
 
      buttonTimer = setTimeout(() => {
+      let isProgrammaticClick = true;
         button.click()
     }, delay);
 }
@@ -758,7 +760,10 @@ function watchQuantityButtons() {
 
         if (!button) return;
         
-        
+        if (isProgrammaticClick) {
+        isProgrammaticClick = false;
+        return;
+        }
 
         const action = button.dataset.action;
 
@@ -766,7 +771,7 @@ function watchQuantityButtons() {
             return;
         }
   
-          const row = button.closest("tr");
+         const row = button.closest("tr");
 
          const qtyInput = row?.querySelector(".cart-item-qty-input");
     
