@@ -636,8 +636,6 @@ async function checkCart() {
          * cart API request / DOM update.
          */
 
-        await sleep(200);
-
         const cart = await getCart();
 
         if (!cart) {
