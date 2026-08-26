@@ -635,7 +635,8 @@ async function checkCart() {
          * Give BigCommerce time to finish its own
          * cart API request / DOM update.
          */
-        await sleep(500);
+
+        await sleep(200);
 
         const cart = await getCart();
 
@@ -804,7 +805,7 @@ function watchCouponApply() {
          *
          * BigCommerce may still be updating the cart.
          */
-        scheduleCheckCart(700);
+        scheduleCheckCart(0);
 
     });
 
