@@ -739,12 +739,12 @@ function scheduleCheckCart(delay = 500) {
     }, delay);
 }
 let buttonTimer;
-function scheduleButtonClick(delay = 200, func) {
+function scheduleButtonClick(delay = 200, button) {
    
      clearTimeout(buttonTimer);
 
      buttonTimer = setTimeout(() => {
-        func();
+        button.click()
     }, delay);
 }
 
@@ -788,7 +788,7 @@ itemId = qtyInput.dataset.cartItemid;
          * Wait for BigCommerce to update the cart.
          */
         scheduleCheckCart(100);
-        scheduleButtonClick(200, () => button.click());
+        scheduleButtonClick(200,button);
     },true);
 
 }
