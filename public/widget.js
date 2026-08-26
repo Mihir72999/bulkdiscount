@@ -738,17 +738,7 @@ function scheduleCheckCart(delay = 500) {
 
     }, delay);
 }
-let buttonTimer = null;
-let isProgrammaticClick = false;
-function scheduleButtonClick(delay = 200, button) {
-   
-     clearTimeout(buttonTimer);
 
-     buttonTimer = setTimeout(() => {
-      let isProgrammaticClick = true;
-        button.click()
-    }, delay);
-}
 
 function watchQuantityButtons() {
 
@@ -760,10 +750,7 @@ function watchQuantityButtons() {
 
         if (!button) return;
         
-        if (isProgrammaticClick) {
-        isProgrammaticClick = false;
-        return;
-        }
+      
 
         const action = button.dataset.action;
 
@@ -792,8 +779,8 @@ itemId = qtyInput.dataset.cartItemid;
         /*
          * Wait for BigCommerce to update the cart.
          */
-        scheduleCheckCart(100);
-        scheduleButtonClick(200,button);
+        scheduleCheckCart(0);
+        button.click()
     },true);
 
 }
