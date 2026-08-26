@@ -713,18 +713,10 @@ async function checkCart() {
         }
         const data = await customResponse.json();
 
-        let timer;   
-        clearTimeout(timer);
         
         if(value > 0){
           updateCart(itemId, value)
-
-       timer = setTimeout(() => {
-        window.location.reload()
-    }, 500);
         }
-        
-        
         
     } catch (error) {
 
@@ -756,6 +748,9 @@ function watchQuantityButtons() {
         );
 
         if (!button) return;
+        
+        event.preventDefault();
+        event.stopImmediatePropagation();
 
         const action = button.dataset.action;
 
@@ -782,13 +777,13 @@ if (action === "dec") {
   
 itemId = qtyInput.dataset.cartItemid;
 
-
+button.click();
         /*
          * Wait for BigCommerce to update the cart.
          */
         scheduleCheckCart(700);
 
-    });
+    },true);
 
 }
 
