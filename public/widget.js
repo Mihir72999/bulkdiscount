@@ -749,8 +749,7 @@ function watchQuantityButtons() {
 
         if (!button) return;
         
-        event.preventDefault();
-        event.stopImmediatePropagation();
+        
 
         const action = button.dataset.action;
 
