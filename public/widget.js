@@ -562,7 +562,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function updateCart(itemId, quantity) {
+async function updateCart(itemId, quantity) {
 
     const formData = new URLSearchParams();
 
@@ -598,6 +598,9 @@ function updateCart(itemId, quantity) {
 }
 
 async function getCart() {
+    if(value > 0){
+    updateCart(itemId, value)
+    }
     try {
         const response = await fetch("/api/storefront/carts", {
             cache: "no-store"
@@ -622,7 +625,7 @@ async function getCart() {
 }
 
 async function checkCart() {
-
+   
     if (checkCartRunning) {
         return;
     }
@@ -713,10 +716,6 @@ async function checkCart() {
         const data = await customResponse.json();
 
         
-        if(value > 0){
-          updateCart(itemId, value)
-        }
-        
     } catch (error) {
 
         console.error("checkCart error:", error);
@@ -760,7 +759,7 @@ function watchQuantityButtons() {
          const row = button.closest("tr");
 
          const qtyInput = row?.querySelector(".cart-item-qty-input");
-    
+                 itemId = qtyInput.dataset.cartItemid;    
          
 
 const currentQty = Number(qtyInput?.value) || 1;
@@ -774,7 +773,7 @@ if (action === "dec") {
 }
 
   
-itemId = qtyInput.dataset.cartItemid;
+
         /*
          * Wait for BigCommerce to update the cart.
          */
