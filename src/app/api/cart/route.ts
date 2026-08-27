@@ -41,6 +41,16 @@ request: NextRequest
    return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) })
 }
 
+export async function getStore(domain:string | null){
+  if(!domain) console.log('getSomething wrong')
+  const db = await getDB()
+const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE domain = ?").bind(domain).first()  as {
+  accessToken: string;
+  storeHash: string;
+};  
+return store
+}
+
 export async function GET(request:NextRequest){
     const domain = request.nextUrl.searchParams.get('domain')
      const igId = request.nextUrl.searchParams.get('igId')
@@ -54,15 +64,9 @@ export async function GET(request:NextRequest){
     } ,{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)})
   }      
   try{
-  const db = await getDB()
-
-const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE domain = ?").bind(domain).first()  as {
-  accessToken: string;
-  storeHash: string;
-};  
+  const store = await getStore(domain)  
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v2');
 const coupons = await bigcommerce.get('/coupons')
-
 const couponId = coupons[0]?.id
 const promotion = {
   applies_to: {
