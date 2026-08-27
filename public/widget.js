@@ -548,7 +548,7 @@ if(missing[qty]){
         });
   }
 
- let checkCartTimer = null;
+
 let checkCartRunning = false;
 let lastCartSignature = null;
 let itemId = "";
@@ -599,7 +599,7 @@ async function updateCart(itemId, quantity) {
 
 async function getCart() {
     if(value > 0){
-    updateCart(itemId, value)
+    await updateCart(itemId, value)
     }
     try {
         const response = await fetch("/api/storefront/carts", {
@@ -726,19 +726,9 @@ async function checkCart() {
     }
 }
 
-function scheduleCheckCart(delay = 500) {
-
-    clearTimeout(checkCartTimer);
-
-    checkCartTimer = setTimeout(() => {
-
-        checkCart();
-
-    }, delay);
-}
 
 
-function watchQuantityButtons() {
+await function watchQuantityButtons() {
 
     document.addEventListener("click", event => {
 
@@ -748,7 +738,7 @@ function watchQuantityButtons() {
 
         if (!button) return;
         
-      
+        await checkCart()      
 
         const action = button.dataset.action;
 
@@ -759,7 +749,7 @@ function watchQuantityButtons() {
          const row = button.closest("tr");
 
          const qtyInput = row?.querySelector(".cart-item-qty-input");
-                 itemId = qtyInput.dataset.cartItemid;    
+                itemId = qtyInput.dataset.cartItemid;    
          
 
 const currentQty = Number(qtyInput?.value) || 1;
@@ -777,7 +767,7 @@ if (action === "dec") {
         /*
          * Wait for BigCommerce to update the cart.
          */
-        scheduleCheckCart(0);
+
         button.click()
     },true);
 
@@ -802,8 +792,6 @@ function watchCouponApply() {
          *
          * BigCommerce may still be updating the cart.
          */
-        scheduleCheckCart(0);
-
     });
 
     observer.observe(cartContainer, {
@@ -819,7 +807,7 @@ async function init() {
 
       await  checkCart();
       
-      watchQuantityButtons();
+      await watchQuantityButtons();
 
       watchCouponApply()
     } 
