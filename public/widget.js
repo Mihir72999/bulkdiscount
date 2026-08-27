@@ -548,7 +548,7 @@ if(missing[qty]){
         });
   }
 
-
+ let checkCartTimer = null;
 let checkCartRunning = false;
 let lastCartSignature = null;
 let itemId = "";
@@ -726,9 +726,19 @@ async function checkCart() {
     }
 }
 
+function scheduleCheckCart(delay = 500) {
+
+    clearTimeout(checkCartTimer);
+
+    checkCartTimer = setTimeout(() => {
+
+        checkCart();
+
+    }, delay);
+}
 
 
-await function watchQuantityButtons() {
+function watchQuantityButtons() {
 
     document.addEventListener("click", event => {
 
@@ -738,7 +748,7 @@ await function watchQuantityButtons() {
 
         if (!button) return;
         
-        await checkCart()      
+      
 
         const action = button.dataset.action;
 
@@ -755,11 +765,13 @@ await function watchQuantityButtons() {
 const currentQty = Number(qtyInput?.value) || 1;
 
 if (action === "inc") {
-    value = currentQty + 1;
+    checkCart().then(value = currentQty + 1)
+    
 }
 
 if (action === "dec") {
-    value = Math.max(1, currentQty - 1);
+    checkCart().then(value = Math.max(1, currentQty - 1))
+    
 }
 
   
@@ -767,7 +779,7 @@ if (action === "dec") {
         /*
          * Wait for BigCommerce to update the cart.
          */
-
+        scheduleCheckCart(0);
         button.click()
     },true);
 
@@ -792,6 +804,8 @@ function watchCouponApply() {
          *
          * BigCommerce may still be updating the cart.
          */
+        scheduleCheckCart(0);
+
     });
 
     observer.observe(cartContainer, {
@@ -805,9 +819,9 @@ async function init() {
     const cart = findCart();
     if(cart.isCartPage){
 
-      await  checkCart();
+      await checkCart();
       
-      await watchQuantityButtons();
+      watchQuantityButtons();
 
       watchCouponApply()
     } 
