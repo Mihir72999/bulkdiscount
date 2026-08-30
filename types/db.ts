@@ -1,5 +1,9 @@
 import { SessionProps } from './index';
 
+export type Store = {
+  domain:string;
+}
+
 export interface StoreData {
     accessToken?: string;
     scope?: string;

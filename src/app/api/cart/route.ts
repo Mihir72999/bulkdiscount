@@ -1,62 +1,33 @@
 import { NextRequest, NextResponse  } from "next/server";
 import { bigcommerceClient } from "../../../../lib/auth";
 import { getDB } from "../../../../lib/db";
-
+import corsHeaders from "@/lib/corsheaaders";
+import normalizeOrigin from "@/lib/normalizeorigin";
+import getStoreDomain from "@/lib/storedomain";
+import getStore from "@/lib/getstore";
+import getSearchParams from "@/lib/getsearchparams";
+import errorMessage from '@/lib/errorMessage'
 export const dynamic = 'force-dynamic';
 
-function corsHeaders(origin: string | null , allowedOrigins: string[]) {
-  const headers: Record<string, string> = {
-    "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-
-  if (origin && allowedOrigins?.includes(origin)) {
-    headers["Access-Control-Allow-Origin"] = `https://${origin}`;
-  }
-
-  return headers;
-}
-
-type Store = {
-  domain:string;
-}
-
-function normalizeOrigin(origin: string) {
-  return new URL(origin).hostname.toLowerCase();
-}
-
-async function getStoreDomain(){
-const db = await getDB()
-  const {results} = await db.prepare("SELECT domain FROM stores").all<Store>()
-  const allowedOrigins = results.map((row:Store) => row.domain);
-return allowedOrigins
-}
 
 export async function OPTIONS(
 request: NextRequest 
 ) {
-  const allowedOrigins = await getStoreDomain();
+  const db = await getDB()
+  const allowedOrigins = await getStoreDomain(db);
    const origin = request.headers.get("origin") || "";
 
    return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) })
 }
 
-export async function getStore(domain:string | null){
-  if(!domain) console.log('getSomething wrong')
-  const db = await getDB()
-const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE domain = ?").bind(domain).first()  as {
-  accessToken: string;
-  storeHash: string;
-};  
-return store
-}
 
 export async function GET(request:NextRequest){
-    const domain = request.nextUrl.searchParams.get('domain')
-     const igId = request.nextUrl.searchParams.get('igId')
+  const db = await getDB()
+  const [domain , igId] = getSearchParams(request,['domain', 'igId'])
+    //  const igId = getSearchParams(request,'igId')
      const ignoreId = JSON.parse(igId || '[]') as number[]
     const origin = request.headers.get("origin") || "";
-  const allowedOrigins = await getStoreDomain();
+  const allowedOrigins = await getStoreDomain(db);
   if(!ignoreId || ignoreId.length <= 0){
     return NextResponse.json({
        success:true, 
@@ -64,7 +35,7 @@ export async function GET(request:NextRequest){
     } ,{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)})
   }      
   try{
-  const store = await getStore(domain)  
+  const store = await getStore(domain , db)  
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v2');
 const coupons = await bigcommerce.get('/coupons')
 const couponId = coupons[0]?.id
@@ -81,15 +52,7 @@ return NextResponse.json({
       rules: rule,
     },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
       } catch (error) {
-    
-        const { message, response } = error as {
-          message: string;
-          response?: { status?: number };
-        };
-    
-        return NextResponse.json(
-          { message },
-          { status: response?.status ?? 500 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)}
-        ); 
+      errorMessage(error , allowedOrigins) 
       }
 }
+
