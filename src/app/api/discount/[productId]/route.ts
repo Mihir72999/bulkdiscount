@@ -56,7 +56,7 @@ export async function GET(
     { params }: { params: Promise<{ productId: string }> }
 ){
   const db = await getDB()
-  const domain = getSearchParams(request,'domain') as string
+  const domain = getSearchParams(request,'domain')
   const origin = request.headers.get("origin") || "";
   const allowedOrigins = await getStoreDomain(db);    
   try {

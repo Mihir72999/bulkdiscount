@@ -23,10 +23,9 @@ request: NextRequest
 
 export async function GET(request:NextRequest){
   const db = await getDB()
-  const [domain , igId] = getSearchParams(request,['domain', 'igId'])
-    //  const igId = getSearchParams(request,'igId')
-    console.log(domain , 'domain')
-    console.log(igId, 'idId')
+  const domain = getSearchParams(request,'domain')
+   const igId = getSearchParams(request,'igId')
+    
      const ignoreId = JSON.parse(igId || '[]') as number[]
     const origin = request.headers.get("origin") || "";
   const allowedOrigins = await getStoreDomain(db);
