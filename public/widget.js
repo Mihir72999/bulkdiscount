@@ -771,12 +771,12 @@ async function init() {
     const cart = findCart();
     
     if(cart.isCartPage){
-
-      await checkCart();
       
       watchQuantityButtons();
       
       interceptCartUpdate()
+      
+      await checkCart()
 
     } 
     
