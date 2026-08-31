@@ -806,7 +806,22 @@ if (action === "dec") {
     
 }
 
-  
+  const originalFetch = window.fetch;
+
+window.fetch = async function (...args) {
+
+    const url = args[0]?.url || args[0];
+
+    if (url.includes('/remote/v1/cart/update')) {
+
+        console.log('Cart update intercepted');
+
+
+        console.log('Sending cart update now');
+    }
+
+    return originalFetch.apply(this, args);
+};
 
         /*
          * Wait for BigCommerce to update the cart.
