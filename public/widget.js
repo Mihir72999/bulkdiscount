@@ -659,7 +659,7 @@ async function checkCart() {
         cart.lineItems.physicalItems.forEach(item => {
 
             if (item.listPrice !== item.originalPrice) {
-
+                console.log('qty' , item.quantity)
                 ignoreIds = ignoreIds.filter(
                     id => id !== item.productId
                 );
@@ -698,7 +698,7 @@ async function checkCart() {
         }
         await customResponse.json();
 
-        console.log("qty",value)
+        
         
     } catch (error) {
 
