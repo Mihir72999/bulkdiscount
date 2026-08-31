@@ -689,7 +689,7 @@ async function checkCart() {
         }
 
         lastCartSignature = cartSignature;
-        const coupon = cart
+       
     
         const couponcode = cart.coupons[0]
         /*
@@ -716,7 +716,10 @@ async function checkCart() {
 
         ignoreIds = [...new Set(ignoreIds)];
         if (Array.isArray(ignoreIds) && ignoreIds.length === 0){
-          deleteCouponFromCart(cart.id, couponcode.code)
+            if(Array.isArray(cart.coupons) && cart.coupons.length > 0){
+                deleteCouponFromCart(cart.id, couponcode?.code)
+            }
+
         }
 
         /*
