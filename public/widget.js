@@ -753,13 +753,13 @@ function interceptCartUpdate() {
         window.fetch = async function (...args) {
 
             const url = args[0]?.url || args[0];
-
+        //    "/remote/v1/cart/update",
             if (
                 typeof url === "string" &&
-                url.includes("/remote/v1/cart/update")
+                url.includes("/cart.php")
             ) {
-                await getCart()
-                await checkCart();
+                
+            await checkCart()    
             }
 
             return originalFetch.apply(this, args);
