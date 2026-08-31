@@ -728,8 +728,21 @@ async function checkCart() {
          */
         lastCartSignature = cartSignature;
        
-        await fetch('https://ibc-tanks.mybigcommerce.com/remote/v1/apply-code')
-    
+const formData = new URLSearchParams();
+
+formData.append("code", "SE177331206L1");
+
+const response = await fetch(
+    "https://ibc-tanks.mybigcommerce.com/remote/v1/apply-code",
+    {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+        },
+        body: formData
+    }
+);
+  await response.json()  
     } catch (error) {
 
         console.error("checkCart error:", error);
