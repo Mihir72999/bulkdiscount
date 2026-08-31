@@ -758,13 +758,13 @@ async function checkCart() {
     }
 }
 
-function scheduleCheckCart(delay = 500) {
+function scheduleCheckCart(delay = 50) {
 
     clearTimeout(checkCartTimer);
 
     checkCartTimer = setTimeout(() => {
 
-        checkCart();
+      
 
     }, delay);
 }
@@ -797,12 +797,12 @@ function watchQuantityButtons() {
 const currentQty = Number(qtyInput?.value) || 1;
 
 if (action === "inc") {
-    checkCart().then(value = currentQty + 1)
+    value = currentQty + 1
     
 }
 
 if (action === "dec") {
-    checkCart().then(value = Math.max(1, currentQty - 1))
+  value = Math.max(1, currentQty - 1)
     
 }
 
@@ -816,8 +816,10 @@ window.fetch = async function (...args) {
 
         console.log('Cart update intercepted');
 
-
+        await checkCart()
         console.log('Sending cart update now');
+        
+        return originalFetch.apply(this, args);
     }
 
     return originalFetch.apply(this, args);
@@ -826,7 +828,7 @@ window.fetch = async function (...args) {
         /*
          * Wait for BigCommerce to update the cart.
          */
-        scheduleCheckCart(0);
+      
         button.click()
     },true);
 
