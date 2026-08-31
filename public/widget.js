@@ -689,9 +689,9 @@ async function checkCart() {
         }
 
         lastCartSignature = cartSignature;
-        const coupon = cart[0]
+        const coupon = cart
     
-        const couponCode = coupon[0].id
+        const couponcode = cart.coupons[0]
         /*
          * Products that should be ignored.
          */
@@ -716,7 +716,7 @@ async function checkCart() {
 
         ignoreIds = [...new Set(ignoreIds)];
         if (Array.isArray(ignoreIds) && ignoreIds.length === 0){
-          deleteCouponFromCart(checkoutId, couponCode)
+          deleteCouponFromCart(cart.id, couponcode.code)
         }
 
         /*
@@ -738,11 +738,11 @@ async function checkCart() {
                 `Custom API error: ${customResponse.status}`
             );
         }
-        const couponcode = cart.coupons[0]
+        
         if(!couponcode || !couponcode.code){
             return
         }
-        const data = await customResponse.json();
+        await customResponse.json();
 
         
     } catch (error) {
