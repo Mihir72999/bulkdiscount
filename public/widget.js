@@ -728,7 +728,7 @@ async function checkCart() {
          */
         lastCartSignature = cartSignature;
        
-        await fetch('https://ibc-tanks.mybigcommerce.com/cart.php')
+        await fetch('https://ibc-tanks.mybigcommerce.com/remote/v1/apply-code')
     
     } catch (error) {
 
