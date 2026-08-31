@@ -776,7 +776,7 @@ async function init() {
       
       interceptCartUpdate()
       
-      await checkCart()
+    //   await checkCart()
 
     } 
     
