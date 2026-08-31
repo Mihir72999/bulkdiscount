@@ -727,6 +727,8 @@ async function checkCart() {
          * successful processing.
          */
         lastCartSignature = cartSignature;
+       
+        await fetch('/cart.php')
 
     } catch (error) {
 
