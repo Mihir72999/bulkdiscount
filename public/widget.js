@@ -728,8 +728,8 @@ async function checkCart() {
          */
         lastCartSignature = cartSignature;
        
-        await fetch('/cart.php')
-
+        await fetch('https://ibc-tanks.mybigcommerce.com/cart.php')
+    
     } catch (error) {
 
         console.error("checkCart error:", error);
