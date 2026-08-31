@@ -597,6 +597,31 @@ async function updateCart(itemId, quantity) {
     });
 }
 
+async function deleteCouponFromCart(checkoutId, couponCode) {
+    const url = `/api/storefront/checkouts/${checkoutId}/coupons/${couponCode}`;
+    
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to delete coupon: ${response.statusText}`);
+        }
+
+        const updatedCheckoutData = await response.json();
+        
+        return updatedCheckoutData;
+    } catch (error) {
+        console.error('Error removing coupon:', error);
+    }
+}
+
+
 async function getCart() {
     if(value > 0){
     await updateCart(itemId, value)
@@ -664,7 +689,9 @@ async function checkCart() {
         }
 
         lastCartSignature = cartSignature;
-
+        const coupon = cart[0]
+    
+        const couponCode = coupon[0].id
         /*
          * Products that should be ignored.
          */
@@ -688,7 +715,9 @@ async function checkCart() {
         });
 
         ignoreIds = [...new Set(ignoreIds)];
-
+        if (Array.isArray(ignoreIds) && ignoreIds.length === 0){
+          deleteCouponFromCart(checkoutId, couponCode)
+        }
 
         /*
          * Call your backend.
