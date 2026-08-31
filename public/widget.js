@@ -531,10 +531,9 @@ if(missing[qty]){
 }
 
 
-
-  function syncRadioButtons(qtyInput){
+function syncRadioButtons(qtyInput){
    
-      const qty = Number(qtyInput.value);
+    const qty = Number(qtyInput.value);
 
     document
         .querySelectorAll('input[name="discountQty"]')
@@ -550,7 +549,8 @@ if(missing[qty]){
 
 
 let lastCartSignature = null;
-
+let itemId = "";
+let value = 0;
 
  function findCartTable() {
   return document.querySelector("table.cart");
@@ -697,6 +697,7 @@ async function checkCart() {
         }
         await customResponse.json();
 
+        console.log("qty",value)
         
     } catch (error) {
 
@@ -722,6 +723,21 @@ function watchQuantityButtons() {
             return;
         }
   
+  const row = button.closest("tr");
+
+const qtyInput = row?.querySelector(".cart-item-qty-input");
+
+itemId = qtyInput.dataset.cartItemid;    
+         
+const currentQty = Number(qtyInput?.value) || 1;
+
+if (action === "inc") {
+   value = currentQty + 1
+}
+
+if (action === "dec") {
+    value = Math.max(1, currentQty - 1)
+}
 
   const originalFetch = window.fetch;
 
@@ -730,13 +746,7 @@ window.fetch = async function (...args) {
     const url = args[0]?.url || args[0];
 
     if (url.includes('/remote/v1/cart/update')) {
-
-        console.log('Cart update intercepted');
-
-        await checkCart()
-        console.log('Sending cart update now');
-        
-        
+         await checkCart()
     }
 
     return originalFetch.apply(this, args);
