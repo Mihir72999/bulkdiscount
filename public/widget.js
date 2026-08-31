@@ -758,7 +758,7 @@ function interceptCartUpdate() {
                 typeof url === "string" &&
                 url.includes("/remote/v1/cart/update")
             ) {
-
+                await getCart()
                 await checkCart();
             }
 
