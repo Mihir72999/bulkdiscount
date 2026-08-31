@@ -736,7 +736,7 @@ window.fetch = async function (...args) {
         await checkCart()
         console.log('Sending cart update now');
         
-        return originalFetch.apply(this, args);
+        
     }
 
     return originalFetch.apply(this, args);
