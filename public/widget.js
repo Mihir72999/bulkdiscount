@@ -548,11 +548,9 @@ if(missing[qty]){
         });
   }
 
- let checkCartTimer = null;
-let checkCartRunning = false;
+
 let lastCartSignature = null;
-let itemId = "";
-let value = 0;
+
 
  function findCartTable() {
   return document.querySelector("table.cart");
@@ -560,41 +558,6 @@ let value = 0;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function updateCart(itemId, quantity) {
-
-    const formData = new URLSearchParams();
-
-    formData.append("items[0][id]", itemId);
-    formData.append("items[0][quantity]", String(quantity));
-
-    return fetch("/remote/v1/cart/update", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(result => {
-
-        console.log("Update result:", result);
-
-        return fetch("/api/storefront/carts");
-    })
-    .then(response => response.json())
-    .then(cartData => {
-
-        const cart = cartData?.[0];
-
-        if (!cart) return null;
-
-        return cart;
-    })
-    .catch(error => {
-
-        console.error("Error:", error);
-
-        return null;
-    });
 }
 
 async function deleteCouponFromCart(checkoutId, couponCode) {
@@ -623,9 +586,7 @@ async function deleteCouponFromCart(checkoutId, couponCode) {
 
 
 async function getCart() {
-    if(value > 0){
-    await updateCart(itemId, value)
-    }
+  
     try {
         const response = await fetch("/api/storefront/carts", {
             cache: "no-store"
@@ -651,14 +612,7 @@ async function getCart() {
 
 async function checkCart() {
    
-    if (checkCartRunning) {
-        return;
-    }
-
-    checkCartRunning = true;
-
     try {
-
         /*
          * Give BigCommerce time to finish its own
          * cart API request / DOM update.
@@ -689,7 +643,6 @@ async function checkCart() {
         }
 
         lastCartSignature = cartSignature;
-       
     
         const couponcode = cart.coupons[0]
         /*
@@ -709,9 +662,7 @@ async function checkCart() {
                 ignoreIds = ignoreIds.filter(
                     id => id !== item.productId
                 );
-
             }
-
         });
 
         ignoreIds = [...new Set(ignoreIds)];
@@ -719,11 +670,10 @@ async function checkCart() {
             if(Array.isArray(cart.coupons) && cart.coupons.length > 0){
                 deleteCouponFromCart(cart.id, couponcode?.code)
             }
-
         }
 
         /*
-         * Call your backend.
+         * Call backend.
          */
         const customResponse = await fetch(
             `${API_BASE}/api/cart?domain=${encodeURIComponent(
@@ -752,21 +702,7 @@ async function checkCart() {
 
         console.error("checkCart error:", error);
 
-    } finally {
-
-        checkCartRunning = false;
     }
-}
-
-function scheduleCheckCart(delay = 50) {
-
-    clearTimeout(checkCartTimer);
-
-    checkCartTimer = setTimeout(() => {
-
-      
-
-    }, delay);
 }
 
 
@@ -779,8 +715,6 @@ function watchQuantityButtons() {
         );
 
         if (!button) return;
-        
-      
 
         const action = button.dataset.action;
 
@@ -788,23 +722,6 @@ function watchQuantityButtons() {
             return;
         }
   
-         const row = button.closest("tr");
-
-         const qtyInput = row?.querySelector(".cart-item-qty-input");
-                itemId = qtyInput.dataset.cartItemid;    
-         
-
-const currentQty = Number(qtyInput?.value) || 1;
-
-if (action === "inc") {
-    value = currentQty + 1
-    
-}
-
-if (action === "dec") {
-  value = Math.max(1, currentQty - 1)
-    
-}
 
   const originalFetch = window.fetch;
 
@@ -829,50 +746,20 @@ window.fetch = async function (...args) {
          * Wait for BigCommerce to update the cart.
          */
       
-        button.click()
     },true);
 
 }
 
-function watchCouponApply() {
-
-    const cartTable = findCartTable();
-
-    if (!cartTable) {
-
-        return;
-    }
-
-
-    const cartContainer = cartTable.parentElement;
-
-    const observer = new MutationObserver(() => {
-
-        /*
-         * Don't immediately call checkCart().
-         *
-         * BigCommerce may still be updating the cart.
-         */
-        scheduleCheckCart(0);
-
-    });
-
-    observer.observe(cartContainer, {
-        childList: true,
-        subtree: true
-    });
-}
-
-
 async function init() {
+  
     const cart = findCart();
+    
     if(cart.isCartPage){
 
       await checkCart();
       
       watchQuantityButtons();
 
-      watchCouponApply()
     } 
     
     if (!isProductPage()) {
@@ -881,6 +768,7 @@ async function init() {
     }
    
     loadCSS();
+    
     await loadWidgetSettings()
 
     const productId = getProductId();
@@ -889,9 +777,7 @@ async function init() {
     return;
 }
 
-
     const target = findTarget();
-    
  
     if (!target) {
         console.warn("❌ Target element not found");
