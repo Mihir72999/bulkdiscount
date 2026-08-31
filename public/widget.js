@@ -553,48 +553,56 @@ let itemId = "";
 let value = 0;
 const originalFetch = window.fetch;
 
- function findCartTable() {
-  return document.querySelector("table.cart");
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 async function deleteCouponFromCart(checkoutId, couponCode) {
-    const url = `/api/storefront/checkouts/${checkoutId}/coupons/${couponCode}`;
-    
+
+    if (!checkoutId || !couponCode) {
+        return null;
+    }
+
+    const url =
+        `/api/storefront/checkouts/${checkoutId}/coupons/${encodeURIComponent(couponCode)}`;
+
     try {
-        const response = await fetch(url, {
-            method: 'DELETE',
+
+        const response = await originalFetch(url, {
+            method: "DELETE",
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                "Accept": "application/json",
+                "Content-Type": "application/json"
             }
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to delete coupon: ${response.statusText}`);
+            throw new Error(
+                `Failed to delete coupon: ${response.status}`
+            );
         }
 
-        const updatedCheckoutData = await response.json();
-        
-        return updatedCheckoutData;
+        return await response.json();
+
     } catch (error) {
-        console.error('Error removing coupon:', error);
+
+        console.error("Error removing coupon:", error);
+        return null;
     }
 }
 
 
 async function getCart() {
-  
+
     try {
-        const response = await fetch("/api/storefront/carts", {
-            cache: "no-store"
-        });
+
+        const response = await originalFetch(
+            "/api/storefront/carts",
+            {
+                cache: "no-store"
+            }
+        );
 
         if (!response.ok) {
-            throw new Error(`Cart API error: ${response.status}`);
+            throw new Error(
+                `Cart API error: ${response.status}`
+            );
         }
 
         const cartData = await response.json();
@@ -606,18 +614,16 @@ async function getCart() {
         return cartData[0];
 
     } catch (error) {
+
         console.error("Get cart error:", error);
         return null;
     }
 }
 
+
 async function checkCart() {
-   
+
     try {
-        /*
-         * Give BigCommerce time to finish its own
-         * cart API request / DOM update.
-         */
 
         const cart = await getCart();
 
@@ -625,12 +631,11 @@ async function checkCart() {
             return;
         }
 
-        /*
-         * Create a signature so we don't process
-         * exactly the same cart repeatedly.
-         */
+        const items =
+            cart.lineItems?.physicalItems || [];
+
         const cartSignature = JSON.stringify(
-            cart.lineItems?.physicalItems?.map(item => ({
+            items.map(item => ({
                 id: item.id,
                 productId: item.productId,
                 quantity: item.quantity,
@@ -643,23 +648,16 @@ async function checkCart() {
             return;
         }
 
-        lastCartSignature = cartSignature;
-    
-        const couponcode = cart.coupons[0]
-        /*
-         * Products that should be ignored.
-         */
-        let ignoreIds = cart.lineItems.physicalItems
-            .map(item => item.productId);
+        const coupon = cart.coupons?.[0];
 
-        /*
-         * If BigCommerce already applied a bulk price,
-         * remove that product from ignoreIds.
-         */
-        cart.lineItems.physicalItems.forEach(item => {
+        let ignoreIds = items.map(
+            item => item.productId
+        );
+
+        items.forEach(item => {
 
             if (item.listPrice !== item.originalPrice) {
-                console.log('qty' , item.quantity)
+
                 ignoreIds = ignoreIds.filter(
                     id => id !== item.productId
                 );
@@ -667,16 +665,44 @@ async function checkCart() {
         });
 
         ignoreIds = [...new Set(ignoreIds)];
-        if (Array.isArray(ignoreIds) && ignoreIds.length === 0){
-            if(Array.isArray(cart.coupons) && cart.coupons.length > 0){
-                deleteCouponFromCart(cart.id, couponcode?.code)
-            }
+
+        console.log("Cart:", cart);
+        console.log("Ignore IDs:", ignoreIds);
+        console.log("Coupon:", coupon);
+
+        /*
+         * If no products need coupon processing,
+         * remove existing coupon.
+         */
+        if (
+            ignoreIds.length === 0 &&
+            coupon?.code
+        ) {
+
+            await deleteCouponFromCart(
+                cart.id,
+                coupon.code
+            );
+
+            lastCartSignature = cartSignature;
+
+            return;
         }
 
         /*
-         * Call backend.
+         * No coupon → nothing else to do.
          */
-        const customResponse = await fetch(
+        if (!coupon?.code) {
+
+            lastCartSignature = cartSignature;
+
+            return;
+        }
+
+        /*
+         * Update backend/coupon rules.
+         */
+        const customResponse = await originalFetch(
             `${API_BASE}/api/cart?domain=${encodeURIComponent(
                 window.location.hostname
             )}&igId=${encodeURIComponent(
@@ -688,25 +714,61 @@ async function checkCart() {
         );
 
         if (!customResponse.ok) {
+
             throw new Error(
                 `Custom API error: ${customResponse.status}`
             );
         }
-        
-        if(!couponcode || !couponcode.code){
-            return
-        }
+
         await customResponse.json();
 
-        
-        
+        /*
+         * Only remember this cart after
+         * successful processing.
+         */
+        lastCartSignature = cartSignature;
+
     } catch (error) {
 
         console.error("checkCart error:", error);
-
     }
 }
 
+
+function interceptCartUpdate() {
+
+    window.fetch = async function (...args) {
+
+        const url = args[0]?.url || args[0];
+
+        const isCartUpdate =
+            typeof url === "string" &&
+            url.includes("/cart.php");
+
+        /*
+         * IMPORTANT:
+         * First let BigCommerce perform
+         * the actual cart update.
+         */
+        const response =
+            await originalFetch.apply(this, args);
+
+        if (isCartUpdate) {
+
+            /*
+             * Wait for BigCommerce's cart state
+             * to become available.
+             */
+            await new Promise(
+                resolve => setTimeout(resolve, 300)
+            );
+
+            await checkCart();
+        }
+
+        return response;
+    };
+}
 
 function watchQuantityButtons() {
 
@@ -748,22 +810,6 @@ if (action === "dec") {
 
 }
 
-function interceptCartUpdate() {
-
-    window.fetch = async function (...args) {
-        
-        const url = args[0]?.url || args[0];
-        //    "/remote/v1/cart/update",
-        if (
-            typeof url === "string" &&
-            url.includes("/cart.php")
-        ) {
-                await checkCart()                    
-            }
-
-            // return originalFetch.apply(this, args);
-        };
-    }
 
 async function init() {
   
