@@ -551,6 +551,7 @@ function syncRadioButtons(qtyInput){
 let lastCartSignature = null;
 let itemId = "";
 let value = 0;
+const originalFetch = window.fetch;
 
  function findCartTable() {
   return document.querySelector("table.cart");
@@ -739,19 +740,6 @@ if (action === "dec") {
     value = Math.max(1, currentQty - 1)
 }
 
-  const originalFetch = window.fetch;
-
-window.fetch = async function (...args) {
-
-    const url = args[0]?.url || args[0];
-
-    if (url.includes('/remote/v1/cart/update')) {
-         await checkCart()
-    }
-
-    return originalFetch.apply(this, args);
-};
-
         /*
          * Wait for BigCommerce to update the cart.
          */
@@ -759,6 +747,24 @@ window.fetch = async function (...args) {
     },true);
 
 }
+
+function interceptCartUpdate() {
+
+        window.fetch = async function (...args) {
+
+            const url = args[0]?.url || args[0];
+
+            if (
+                typeof url === "string" &&
+                url.includes("/remote/v1/cart/update")
+            ) {
+
+                await checkCart();
+            }
+
+            return originalFetch.apply(this, args);
+        };
+    }
 
 async function init() {
   
@@ -769,6 +775,8 @@ async function init() {
       await checkCart();
       
       watchQuantityButtons();
+      
+      interceptCartUpdate()
 
     } 
     
