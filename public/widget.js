@@ -750,19 +750,18 @@ if (action === "dec") {
 
 function interceptCartUpdate() {
 
-        window.fetch = async function (...args) {
-
-            const url = args[0]?.url || args[0];
+    window.fetch = async function (...args) {
+        
+        const url = args[0]?.url || args[0];
         //    "/remote/v1/cart/update",
-            if (
-                typeof url === "string" &&
-                url.includes("/cart.php")
-            ) {
-                
-            await checkCart()    
+        if (
+            typeof url === "string" &&
+            url.includes("/cart.php")
+        ) {
+                await checkCart()                    
             }
 
-            return originalFetch.apply(this, args);
+            // return originalFetch.apply(this, args);
         };
     }
 
@@ -776,7 +775,7 @@ async function init() {
       
       interceptCartUpdate()
       
-    //   await checkCart()
+        await checkCart()
 
     } 
     
