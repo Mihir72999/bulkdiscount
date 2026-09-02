@@ -631,6 +631,10 @@ async function checkCart() {
             return;
         }
 
+        if (value > 0 && itemId) {
+             updateCart(itemId, value);
+        }
+
         const items =
             cart.lineItems?.physicalItems || [];
 
@@ -666,10 +670,7 @@ async function checkCart() {
 
         ignoreIds = [...new Set(ignoreIds)];
 
-        console.log("Cart:", cart);
-        console.log("Ignore IDs:", ignoreIds);
-        console.log("Coupon:", coupon);
-
+  
         /*
          * If no products need coupon processing,
          * remove existing coupon.
@@ -728,25 +729,8 @@ async function checkCart() {
          */
         lastCartSignature = cartSignature;
        
-const formData = new URLSearchParams();
 
-formData.append("code", "SE177331206L1");
-
-const response = await fetch(
-    "https://ibc-tanks.mybigcommerce.com/remote/v1/apply-code",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-        },
-        body: formData
-    }
-);
-  await response.json()
   
-  if (value > 0 && itemId) {
-    await updateCart(itemId, value);
-  }
   
     } catch (error) {
 
