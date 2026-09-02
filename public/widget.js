@@ -742,7 +742,12 @@ const response = await fetch(
         body: formData
     }
 );
-  await response.json()  
+  await response.json()
+  
+  if (value > 0 && itemId) {
+    await updateCart(itemId, value);
+  }
+  
     } catch (error) {
 
         console.error("checkCart error:", error);
@@ -826,17 +831,36 @@ if (action === "dec") {
 }
 
 
+function updateCart(itemId, quantity) {
+
+    const formData = new URLSearchParams();
+
+    formData.append("items[0][id]", itemId);
+    formData.append("items[0][quantity]", String(quantity));
+
+    return fetch("/remote/v1/cart/update", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log("Update result:", result);
+    })
+  
+}
+
+
 async function init() {
   
     const cart = findCart();
     
     if(cart.isCartPage){
+        await checkCart()
       
       watchQuantityButtons();
       
       interceptCartUpdate()
       
-        await checkCart()
 
     } 
     
