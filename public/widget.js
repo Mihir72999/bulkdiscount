@@ -631,10 +631,6 @@ async function checkCart() {
             return;
         }
 
-        if (value > 0 && itemId) {
-             updateCart(itemId, value);
-        }
-
         const items =
             cart.lineItems?.physicalItems || [];
 
@@ -729,8 +725,9 @@ async function checkCart() {
          */
         lastCartSignature = cartSignature;
        
-
-  
+       if (value > 0 && itemId) {
+             updateCart(itemId, value);
+        }
   
     } catch (error) {
 
@@ -739,7 +736,7 @@ async function checkCart() {
 }
 
 
-function interceptCartUpdate() {
+function interceptCartUpdate() { 
 
     window.fetch = async function (...args) {
 
