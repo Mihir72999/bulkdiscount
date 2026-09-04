@@ -1,58 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "../../../../../lib/db";
+import getStoreDomain from "@/lib/storedomain";
+import normalizeOrigin from "@/lib/normalizeorigin";
+import corsHeaders from "@/lib/corsheaaders";
+import getSearchParams from "@/lib/getsearchparams";
+import errorMessage from "@/lib/errorMessage";
+import getStore from "@/lib/getstore";
 
 
 export const dynamic = 'force-dynamic';
 
-function corsHeaders(origin: string | null , allowedOrigins: string[]) {
-  const headers: Record<string, string> = {
-    "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    };
-
-    if (origin && allowedOrigins?.includes(origin)) {
-      headers["Access-Control-Allow-Origin"] = `https://${origin}`;
-    }
-
-  return headers;
-}
-
-type Store = {
-  domain:string;
-}
-
-function normalizeOrigin(origin: string) {
-  return new URL(origin).hostname.toLowerCase();
-}
-
-async function getStoreDomain(){
-const db = await getDB()
-  const {results} = await db.prepare("SELECT domain FROM stores").all<Store>()
-  const allowedOrigins = results.map((row:Store) => row.domain);
-return allowedOrigins
-}
-
 export async function OPTIONS(request: NextRequest){
-   const allowedOrigins = await getStoreDomain();
+  const db = await getDB()
+   const allowedOrigins = await getStoreDomain(db);
    const origin = request.headers.get("origin") || "";
-
    return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) })
 }
 
-export async function GET(req:NextRequest) {
-      const allowedOrigins = await getStoreDomain();
-        const domain = req.nextUrl.searchParams.get('domain')
-        const origin = req.headers.get("origin") || "";
-        const productId = req.nextUrl.searchParams.get('product_id')
-        if(!domain || !productId){
-         return NextResponse.json({success:false},{status:404,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins)})
-        }
-    try {
- const db = await getDB()
-const result = await db.prepare('SELECT storeHash from stores WHERE domain = ?').bind(domain).first<{storeHash:string | null}>()
-const storeHash = result?.storeHash
-const prorduct_id = Number(productId)
-const settings = await db
+
+interface WidgetSettings {
+  borderColor: string;
+  borderRadius: number;
+  product_ids: string;
+  name: string;
+  description: string;
+  widget_title: string;
+  // store_hash: string;
+  id: number;
+}
+
+async function getWidgetSettings(db:D1Database, storeHash:string, prorduct_id:number):Promise<WidgetSettings | null> {
+const settings: WidgetSettings | null = await db
   .prepare(`
     SELECT *
     FROM widget_settings
@@ -65,20 +43,37 @@ const settings = await db
   `)
   .bind(storeHash, prorduct_id)
   .first();
+  return settings
+}
 
+export async function GET(req:NextRequest) {
+  const db = await getDB()
+      const allowedOrigins = await getStoreDomain(db);
+        const domainParam:string = 'domain'
+        const domain = getSearchParams(req,domainParam)
+        const origin = req.headers.get("origin") || "";
+        const productIdParam:string = 'product_id'
+        const productId = getSearchParams(req,productIdParam)
+        if(!domain || !productId){
+         return NextResponse.json({success:false},{status:404,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins)})
+        }
+    try {
+const result = await getStore(domain,db)
+const storeHash= result?.storeHash
+if(!storeHash){
+  return NextResponse.json({success:false},{status:404,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins)})
+}
+const prorduct_id = Number(productId)
+const settings = await getWidgetSettings(db, storeHash, prorduct_id)
+     const data = settings
+     const success = data ? true : false
     return NextResponse.json({
-      success: true,
-      data: settings,
+      success,
+      data,
     } ,{headers: corsHeaders(normalizeOrigin(origin), allowedOrigins)});
 
   } catch (error) {
 
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Something went wrong.",
-      },
-      { status: 500 , headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) }
-    );
+   errorMessage(error , allowedOrigins)
   }
 }

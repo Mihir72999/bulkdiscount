@@ -99,11 +99,3 @@ if (storeHash && exists) {
   }
 }
 
-// await db
-//     .prepare(`
-//       UPDATE widget_settings
-//       SET border_color = ?, border_radius = ?, name = ?, description = ?, widget_title = ?
-//       WHERE store_hash = ?
-//     `)
-//     .bind(borderColor, borderRadius, name, description , widget_title, storeHash )
-//     .run();
