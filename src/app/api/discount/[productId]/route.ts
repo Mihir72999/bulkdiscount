@@ -101,6 +101,12 @@ export async function GET(
 
 const store = await getStore(domain,db)
 
+if(!store){
+  return NextResponse.json({
+    success: false,
+    rules: [],
+  },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+}
 const storeAccessToken = store?.accessToken;
 
 const storeHash = store?.storeHash;

@@ -1,9 +1,14 @@
-export default async function getStore(domain:string | null , db:D1Database){
-  if(!domain) console.log('getSomething wrong')
-
-const store = await db.prepare("SELECT accessToken, storeHash FROM stores WHERE domain = ?").bind(domain).first()  as {
-  accessToken: string;
-  storeHash: string;
-};  
-return store
+export default async function getStore(
+  domain: string | null,
+  db: D1Database
+) {
+  return await db
+    .prepare(`
+      SELECT storeHash
+      FROM stores
+      WHERE domain = ?
+      LIMIT 1
+    `)
+    .bind(domain)
+    .first<{ storeHash: string , accessToken: string }>();
 }
