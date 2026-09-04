@@ -50,24 +50,17 @@ const settings: WidgetSettings | null = await db
 export async function GET(req:NextRequest) {
   const db = await getDB()
       const allowedOrigins = await getStoreDomain(db);
-        const domainParam:string = 'domain'
-        const domain = getSearchParams(req,domainParam)
+        const domain = getSearchParams(req,'domain')
         const origin = req.headers.get("origin") || "";
-        const productIdParam:string = 'product_id'
-        const productId = getSearchParams(req,productIdParam)
+        const productId = getSearchParams(req,'product_id')
         if(!domain || !productId){
          return NextResponse.json({success:false},{status:404,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins)})
         }
     try {
-const result = await getStore(domain,db)
-const storeHash= result?.storeHash
-const prorduct_id = Number(productId)
-const settings = await getWidgetSettings(db, storeHash, prorduct_id)
-     const data = settings
-     const success = data ? true : false
+    const result = await getStore(domain,db)     
     return NextResponse.json({
-      success,
-      data,
+      success:true,
+      data:await getWidgetSettings(db, result?.storeHash, Number(productId)),
     } ,{headers: corsHeaders(normalizeOrigin(origin), allowedOrigins)});
 
   } catch (error) {
