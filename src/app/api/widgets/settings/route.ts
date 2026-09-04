@@ -10,11 +10,8 @@ import getStore from "@/lib/getstore";
 
 export const dynamic = 'force-dynamic';
 
-export async function OPTIONS(request: NextRequest){
-  const db = await getDB()
-   const allowedOrigins = await getStoreDomain(db);
-   const origin = request.headers.get("origin") || "";
-   return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) })
+export async function OPTIONS(request: NextRequest){ 
+   return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(request.headers.get("origin") ||""), await getStoreDomain(await getDB())) })
 }
 
 
@@ -25,12 +22,12 @@ interface WidgetSettings {
   name: string;
   description: string;
   widget_title: string;
-  // store_hash: string;
+  store_hash: string;
   id: number;
 }
 
 async function getWidgetSettings(db:D1Database, storeHash:string, prorduct_id:number):Promise<WidgetSettings | null> {
-const settings: WidgetSettings | null = await db
+return await db
   .prepare(`
       SELECT *
       FROM widget_settings
@@ -44,7 +41,7 @@ const settings: WidgetSettings | null = await db
     `)
   .bind(storeHash, prorduct_id)
   .first();
-  return settings
+  
 }
 
 export async function GET(req:NextRequest) {
