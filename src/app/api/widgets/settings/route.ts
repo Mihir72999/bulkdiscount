@@ -29,21 +29,21 @@ interface WidgetSettings {
   id: number;
 }
 
-async function getWidgetSettings(db:D1Database, storeHash:string, prorduct_id:number):Promise<WidgetSettings | null> {
-const settings: WidgetSettings | null = await db
-  .prepare(`
-    SELECT *
-    FROM widget_settings
-    WHERE store_hash = ?
-      AND EXISTS (
-        SELECT 1
-        FROM json_each(product_ids)
-        WHERE value = ?
-      )
-  `)
-  .bind(storeHash, prorduct_id)
-  .first();
-  return settings
+async function getWidgetSettings(db:D1Database, storeHash:string, product_id:number):Promise<void | WidgetSettings> {
+await db
+    .prepare(`
+      SELECT *
+      FROM widget_settings
+      WHERE store_hash = ?
+        AND EXISTS (
+          SELECT 1
+          FROM json_each(product_ids)
+          WHERE CAST(value AS INTEGER) = ?
+        )
+      LIMIT 1
+    `)
+    .bind(storeHash, product_id)
+    .first<WidgetSettings>();
 }
 
 export async function GET(req:NextRequest) {
