@@ -32,15 +32,16 @@ interface WidgetSettings {
 async function getWidgetSettings(db:D1Database, storeHash:string, prorduct_id:number):Promise<WidgetSettings | null> {
 const settings: WidgetSettings | null = await db
   .prepare(`
-    SELECT *
-    FROM widget_settings
-    WHERE store_hash = ?
-      AND EXISTS (
-        SELECT 1
-        FROM json_each(product_ids)
-        WHERE value = ?
-      )
-  `)
+      SELECT *
+      FROM widget_settings
+      WHERE store_hash = ?
+        AND EXISTS (
+          SELECT 1
+          FROM json_each(product_ids)
+          WHERE CAST(value AS INTEGER) = ?
+        )
+      LIMIT 1
+    `)
   .bind(storeHash, prorduct_id)
   .first();
   return settings
@@ -60,9 +61,6 @@ export async function GET(req:NextRequest) {
     try {
 const result = await getStore(domain,db)
 const storeHash= result?.storeHash
-if(!storeHash){
-  return NextResponse.json({success:false},{status:404,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins)})
-}
 const prorduct_id = Number(productId)
 const settings = await getWidgetSettings(db, storeHash, prorduct_id)
      const data = settings
