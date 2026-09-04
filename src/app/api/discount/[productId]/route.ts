@@ -11,31 +11,68 @@ import BigCommerce from "node-bigcommerce";
 
 export const dynamic = 'force-dynamic';
 
+type OptionsValue = {
+  id:number,
+  option_id:number,
+  display_name:string,
+}
+
+interface Variant {
+  id:number,
+  product_id:number,
+  sku:string,
+  option_values:OptionsValue[]
+}
+
+interface Data {
+  productId:string,
+  quantity:number,
+  maxQuantity:number,
+  discountType?:string,
+  type?:string,
+  discount:number,
+  label:string
+}
+
+type RuleData = {
+  quantity_min:number,
+  quantity_max:number,
+  type:string,
+  amount:number
+}
+
 function ruleData(
   productId:string,
-  response:any){
-    
- const rules = response.data.map((data:any)=>{
+  response:{data:RuleData[]}){
 
+    const rules = response.data.map((data:RuleData):Data=>{
+    const quantity:RuleData['quantity_min'] = data.quantity_min
+    const maxQuantity:RuleData['quantity_max'] = data.quantity_max
+    const discountType:RuleData['type'] = data.type
+    const discount:RuleData['amount'] = data.amount
+    const label:string = `${data.amount} % OFF`
     return{
       productId,
-      quantity: data.quantity_min,
-      maxQuantity: data.quantity_max,
-      discountType:data.type,
-      discount:data.amount,
-      label:`${data.amount} % OFF`
+      quantity,
+      maxQuantity,
+      discountType,
+      discount,
+      label
     }
    })
    
-   rules.unshift({productId,quantity: 1 , discountType:response.data[0].type, discount:0,label:'SINGLE'})
+   const quantity:number = 1
+   const discountType:string = response.data[0].type
+   const discount:number = 0
+   const label:string = 'SINGLE'
+   rules.unshift({productId,quantity , maxQuantity: quantity, discountType, discount,label})
    
    return rules
   
   }
 
-async function getData(bigcommerce: BigCommerce , productId:string){
+async function getData(bigcommerce: BigCommerce , productId:string):Promise<[ { data: Variant[] }, { data: RuleData[] } ]> {
 return await Promise.all([
-  bigcommerce.get(`/promotions`),
   bigcommerce.get(`/catalog/products/${productId}/variants`),
   bigcommerce.get(`/catalog/products/${productId}/bulk-pricing-rules`)
 ]);  
@@ -64,9 +101,13 @@ export async function GET(
 
 const store = await getStore(domain,db)
 
-const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash);
+const storeAccessToken = store?.accessToken;
 
-const [promotions, variants, response] = await getData(bigcommerce,productId)
+const storeHash = store?.storeHash;
+
+const bigcommerce = bigcommerceClient(storeAccessToken, storeHash);
+
+const [variants, response] = await getData(bigcommerce,productId)
 
 if(!response.data || response.data.length === 0){
 
@@ -78,10 +119,9 @@ if(!response.data || response.data.length === 0){
 
    const rules = ruleData(productId,response)
     return NextResponse.json({
-    succes:true,
+    success:true,
     rules,
-    variants : variants?.data,
-    promotions
+    variants : variants?.data
    },{headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)})
 
      } catch (error) {

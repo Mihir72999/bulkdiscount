@@ -28,7 +28,7 @@
 let variant ;
 let discountType = 'percent'
 let rules = null;
-let hasVariantOptions;
+// let hasVariantOptions;
 let widgetSettings = null;
 const selections = [];
 const priceElement =[
@@ -147,7 +147,7 @@ async function getRules() {
            sku: v.sku,
            option_values: v.option_values  
           }))
-          hasVariantOptions = (variant ?? []).some(v => v.option_values?.length > 0);
+        //   hasVariantOptions = (variant ?? []).some(v => v.option_values?.length > 0);
         }
       rules = r.rules
       return rules 
