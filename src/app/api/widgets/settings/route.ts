@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "../../../../../lib/db";
-import getStoreDomain from "@/lib/storedomain";
+import getStoreDomain, { getSingleDomain } from "@/lib/storedomain";
 import normalizeOrigin from "@/lib/normalizeorigin";
-import corsHeaders from "@/lib/corsheaaders";
+import corsHeaders, { corsHeader } from "@/lib/corsheaaders";
 import getSearchParams from "@/lib/getsearchparams";
-import errorMessage from "@/lib/errorMessage";
+import errorMessage, { errorMessages } from "@/lib/errorMessage";
 import getStore from "@/lib/getstore";
 
 
@@ -46,22 +46,22 @@ return await db
 
 export async function GET(req:NextRequest) {
   const db = await getDB()
-      const allowedOrigins = await getStoreDomain(db);
-        const domain = getSearchParams(req,'domain')
+  const domain = getSearchParams(req,'domain') || ""
+  const allowedOrigins = await getSingleDomain(db , domain);
         const origin = req.headers.get("origin") || "";
         const productId = getSearchParams(req,'product_id')
         if(!domain || !productId){
-         return NextResponse.json({success:false},{status:404,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins)})
+         return NextResponse.json({success:false},{status:404,headers: corsHeader(normalizeOrigin(origin), allowedOrigins)})
         }
     try {
     const result = await getStore(domain,db)     
     return NextResponse.json({
       success:true,
       data:await getWidgetSettings(db, result?.storeHash, Number(productId)),
-    } ,{headers: corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+    } ,{headers: corsHeader(normalizeOrigin(origin), allowedOrigins)});
 
   } catch (error) {
 
-   errorMessage(error , allowedOrigins)
+   errorMessages(error , allowedOrigins)
   }
 }
