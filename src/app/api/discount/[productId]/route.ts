@@ -95,11 +95,14 @@ export async function GET(
   const db = await getDB()
   const domain = getSearchParams(request,'domain')
   const origin = request.headers.get("origin") || "";
-  const allowedOrigins = await getStoreDomain(db);    
+  
+  const [allowedOrigins, store] = await Promise.all([
+  getStoreDomain(db),
+  getStore(domain, db)
+  ]);
+
   try {
   const {productId} = await params  
-
-const store = await getStore(domain,db)
 
 if(!store){
   return NextResponse.json({
