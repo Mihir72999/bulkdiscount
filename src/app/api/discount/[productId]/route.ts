@@ -118,7 +118,7 @@ const bigcommerce = bigcommerceClient(storeAccessToken, storeHash);
 
 const [variants, response] = await getData(bigcommerce,productId)
 
-if(!response.data || response.data.length === 0){
+if(!response.data || response.data.length === 0 || !variants.data || variants.data.length === 0){
 
   return NextResponse.json({
       success: false,

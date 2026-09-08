@@ -44,17 +44,23 @@ return await db
   
 }
 
+function getStorePromises(db:D1Database, domain:string){
+  return Promise.all([
+    getSingleDomain(db, domain),
+    getStore(domain, db)
+  ]);
+}
+
 export async function GET(req:NextRequest) {
   const db = await getDB()
   const domain = getSearchParams(req,'domain') || ""
-  const allowedOrigins = await getSingleDomain(db , domain);
+  const [allowedOrigins, result] = await getStorePromises(db, domain);
         const origin = req.headers.get("origin") || "";
         const productId = getSearchParams(req,'product_id')
         if(!domain || !productId){
          return NextResponse.json({success:false},{status:404,headers: corsHeader(normalizeOrigin(origin), allowedOrigins)})
         }
     try {
-    const result = await getStore(domain,db)     
     return NextResponse.json({
       success:true,
       data:await getWidgetSettings(db, result?.storeHash, Number(productId)),
