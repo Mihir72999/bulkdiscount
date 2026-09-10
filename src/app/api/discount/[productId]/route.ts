@@ -110,10 +110,16 @@ export async function GET(
   getStore(domain, db)
   ]);
 
+ const headers = corsHeaders(normalizeOrigin(origin), allowedOrigins)
+
+  if(!allowedOrigins){
+    throw new Error("Origin not allowed");
+  }
+
    if(!productId){
     return NextResponse.json({
       success:false,message:"Missing required parameters"
-    },{status:400 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)})
+    },{status:400 , headers})
   }
 
   try {
@@ -122,7 +128,7 @@ if(!store){
   return NextResponse.json({
     success: false,
     rules: [],
-  },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+  },{status:200 , headers});
 }
 const storeAccessToken = store?.accessToken;
 
@@ -133,7 +139,7 @@ if(!storeAccessToken || !storeHash){
     success: false,
     rules: [],
     message: "Missing required parameters"
-  },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+  },{status:200 , headers});
 }
  
 const bigcommerce = bigcommerceClient(storeAccessToken, storeHash);
@@ -143,7 +149,7 @@ if(!bigcommerce){
     success: false,
     rules: [],
     message: "Failed to initialize BigCommerce client"
-  },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+  },{status:200 , headers});
 }
 
 const [variants, response] = await getData(bigcommerce,productId)
@@ -153,7 +159,7 @@ if(!response.data || response.data.length === 0 || !variants.data || variants.da
   return NextResponse.json({
       success: false,
       rules: [],
-    },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+    },{status:200 , headers});
 }
 
    const rules = ruleData(productId,response)
@@ -163,14 +169,15 @@ if(!response.data || response.data.length === 0 || !variants.data || variants.da
       success: false,
       rules: [],
       message: "No valid discount rules found"
-    },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+    },{status:200 , headers});
    }
 
+   const variantsData = variants?.data ?? []
     return NextResponse.json({
     success:true,
     rules,
-    variants : variants?.data
-   },{headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)})
+    variants:variantsData
+   },{headers})
 
      } catch (error) {
 

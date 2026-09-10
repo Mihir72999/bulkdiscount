@@ -44,38 +44,44 @@ return await db
   
 }
 
-function getStorePromises(db:D1Database, domain:string){
-  return Promise.all([
+async function getStorePromises(db:D1Database, domain:string){
+  return await Promise.all([
     getSingleDomain(db, domain),
     getStore(domain, db)
   ]);
 }
 
 export async function GET(req:NextRequest) {
-  const obj = {
-   db: await getDB(),
-   domain: getSearchParams(req,'domain') || "",
-   productId: getSearchParams(req,'product_id') || "",
-   origin: req.headers.get("origin") || "" 
-  } as  {
-    db: D1Database;
-    domain: string;
-    productId: string;
-    origin: string;
-}
-  // const db = await getDB()
-  // const domain = getSearchParams(req,'domain') || ""
-  const [allowedOrigins, result] = await getStorePromises(obj.db, obj.domain);
-        // const origin = req.headers.get("origin") || "";
-        // const productId = getSearchParams(req,'product_id')
-        if(!obj.domain || !obj.productId){
-         return NextResponse.json({success:false},{status:404,headers: corsHeader(normalizeOrigin(obj.origin), allowedOrigins)})
+  
+  const db = await getDB()
+  const domain = getSearchParams(req,'domain') || ""
+  const [allowedOrigins, result] = await getStorePromises(db, domain);
+        const origin = req.headers.get("origin") || "";
+        const productId = getSearchParams(req,'product_id')
+
+        if(!domain || !productId || !origin){
+         throw new Error("Missing required parameters");
         }
+        if(!allowedOrigins){
+          throw new Error("Origin not allowed");
+        }
+        const headers = corsHeader(normalizeOrigin(origin), allowedOrigins)
+         
+        if(!result?.storeHash || !result?.accessToken){
+          return NextResponse.json({
+            success: false, 
+            message: "Missing required parameters"
+          },{status:400 , headers});
+        }
+
     try {
+    const accessToken:string = result?.accessToken;  
+    const success:boolean = result?.storeHash && accessToken ? true : false;  
+    const data = await getWidgetSettings(db, accessToken, Number(productId));  
     return NextResponse.json({
-      success:true,
-      data:await getWidgetSettings(obj.db, result?.storeHash, Number(obj.productId)),
-    } ,{headers: corsHeader(normalizeOrigin(obj.origin), allowedOrigins)});
+      success,
+      data,
+    } ,{headers});
 
   } catch (error) {
 
