@@ -77,7 +77,13 @@ export async function GET(req:NextRequest) {
     try {
     const storeHash:string = result?.storeHash;  
     const success:boolean = storeHash ? true : false;  
-    const data = await getWidgetSettings(db, storeHash, Number(productId));  
+    const data = await getWidgetSettings(db, storeHash, Number(productId));
+    if(!data){
+      return NextResponse.json({
+        success: false,
+        message: "Widget settings not found"
+      }, {status: 404, headers});
+    }
     return NextResponse.json({
       success,
       data,
