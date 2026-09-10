@@ -38,10 +38,7 @@ export async function GET(request:NextRequest){
   }
    const [allowedOrigins , store] = await getStorePromises(db, domain)
    if(!db || !domain || !igId){
-     return NextResponse.json({
-       success:false,
-       message:"Missing required parameters"
-     },{status:400 , headers:corsHeader(normalizeOrigin(origin), allowedOrigins)})
+     throw new Error("Missing required parameters");
    } 
   if(!ignoreId || ignoreId.length <= 0){
     return NextResponse.json({

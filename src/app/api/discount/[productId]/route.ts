@@ -93,16 +93,30 @@ export async function GET(
     { params }: { params: Promise<{ productId: string }> }
 ){
   const db = await getDB()
+  const {productId} = await params  
   const domain = getSearchParams(request,'domain')
   const origin = request.headers.get("origin") || "";
-  
+ 
+  if(!origin){
+   throw new Error("Origin header is missing"); 
+  }
+  if(!db || !domain){
+    throw new Error("Missing required parameters");
+  }
+
+
   const [allowedOrigins, store] = await Promise.all([
   getStoreDomain(db),
   getStore(domain, db)
   ]);
 
+   if(!productId){
+    return NextResponse.json({
+      success:false,message:"Missing required parameters"
+    },{status:400 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)})
+  }
+
   try {
-  const {productId} = await params  
 
 if(!store){
   return NextResponse.json({
@@ -114,7 +128,23 @@ const storeAccessToken = store?.accessToken;
 
 const storeHash = store?.storeHash;
 
+if(!storeAccessToken || !storeHash){
+  return NextResponse.json({
+    success: false,
+    rules: [],
+    message: "Missing required parameters"
+  },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+}
+ 
 const bigcommerce = bigcommerceClient(storeAccessToken, storeHash);
+
+if(!bigcommerce){
+  return NextResponse.json({
+    success: false,
+    rules: [],
+    message: "Failed to initialize BigCommerce client"
+  },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+}
 
 const [variants, response] = await getData(bigcommerce,productId)
 
