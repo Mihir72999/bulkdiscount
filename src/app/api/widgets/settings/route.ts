@@ -67,7 +67,7 @@ export async function GET(req:NextRequest) {
         }
         const headers = corsHeader(normalizeOrigin(origin), allowedOrigins)
          
-        if(!result?.storeHash || !result?.accessToken){
+        if(!result?.storeHash){
           return NextResponse.json({
             success: false, 
             message: "Missing required parameters"
@@ -75,9 +75,9 @@ export async function GET(req:NextRequest) {
         }
 
     try {
-    const accessToken:string = result?.accessToken;  
-    const success:boolean = result?.storeHash && accessToken ? true : false;  
-    const data = await getWidgetSettings(db, accessToken, Number(productId));  
+    const storeHash:string = result?.storeHash;  
+    const success:boolean = storeHash ? true : false;  
+    const data = await getWidgetSettings(db, storeHash, Number(productId));  
     return NextResponse.json({
       success,
       data,
