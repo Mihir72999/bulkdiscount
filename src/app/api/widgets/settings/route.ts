@@ -52,19 +52,30 @@ function getStorePromises(db:D1Database, domain:string){
 }
 
 export async function GET(req:NextRequest) {
-  const db = await getDB()
-  const domain = getSearchParams(req,'domain') || ""
-  const [allowedOrigins, result] = await getStorePromises(db, domain);
-        const origin = req.headers.get("origin") || "";
-        const productId = getSearchParams(req,'product_id')
-        if(!domain || !productId){
-         return NextResponse.json({success:false},{status:404,headers: corsHeader(normalizeOrigin(origin), allowedOrigins)})
+  const obj = {
+   db: await getDB(),
+   domain: getSearchParams(req,'domain') || "",
+   productId: getSearchParams(req,'product_id') || "",
+   origin: req.headers.get("origin") || "" 
+  } as  {
+    db: D1Database;
+    domain: string;
+    productId: string;
+    origin: string;
+}
+  // const db = await getDB()
+  // const domain = getSearchParams(req,'domain') || ""
+  const [allowedOrigins, result] = await getStorePromises(obj.db, obj.domain);
+        // const origin = req.headers.get("origin") || "";
+        // const productId = getSearchParams(req,'product_id')
+        if(!obj.domain || !obj.productId){
+         return NextResponse.json({success:false},{status:404,headers: corsHeader(normalizeOrigin(obj.origin), allowedOrigins)})
         }
     try {
     return NextResponse.json({
       success:true,
-      data:await getWidgetSettings(db, result?.storeHash, Number(productId)),
-    } ,{headers: corsHeader(normalizeOrigin(origin), allowedOrigins)});
+      data:await getWidgetSettings(obj.db, result?.storeHash, Number(obj.productId)),
+    } ,{headers: corsHeader(normalizeOrigin(obj.origin), allowedOrigins)});
 
   } catch (error) {
 
