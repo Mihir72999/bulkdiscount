@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse  } from "next/server";
 import { bigcommerceClient } from "../../../../lib/auth";
 import { getDB } from "../../../../lib/db";
-import corsHeaders from "@/lib/corsheaaders";
+import corsHeaders, { corsHeader } from "@/lib/corsheaaders";
 import normalizeOrigin from "@/lib/normalizeorigin";
-import getStoreDomain from "@/lib/storedomain";
 import getStore from "@/lib/getstore";
 import getSearchParams from "@/lib/getsearchparams";
-import errorMessage from '@/lib/errorMessage'
+import { errorMessages } from '@/lib/errorMessage'
+import getStoreDomain,{getSingleDomain} from "@/lib/storedomain";
 export const dynamic = 'force-dynamic';
 
 
@@ -20,26 +20,51 @@ request: NextRequest
    return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) })
 }
 
+async function getStorePromises(db:D1Database, domain:string | null){
+  return await Promise.all([
+    getSingleDomain(db , domain || ""),
+    getStore(domain, db)
+  ]);
+}
 
 export async function GET(request:NextRequest){
   const db = await getDB()
   const domain = getSearchParams(request,'domain')
    const igId = getSearchParams(request,'igId')
-    
-     const ignoreId = JSON.parse(igId || '[]') as number[]
-    const origin = request.headers.get("origin") || "";
-  const allowedOrigins = await getStoreDomain(db);
+   const ignoreId = JSON.parse(igId || '[]') as number[]
+   const origin = request.headers.get("origin") || "";
+  if(!origin){
+   throw new Error("Origin header is missing"); 
+  }
+   const [allowedOrigins , store] = await getStorePromises(db, domain)
+   if(!db || !domain || !igId){
+     return NextResponse.json({
+       success:false,
+       message:"Missing required parameters"
+     },{status:400 , headers:corsHeader(normalizeOrigin(origin), allowedOrigins)})
+   } 
   if(!ignoreId || ignoreId.length <= 0){
     return NextResponse.json({
        success:true, 
        rules:[]  
-    } ,{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)})
+    } ,{status:200 , headers:corsHeader(normalizeOrigin(origin), allowedOrigins)})
   }      
-  try{
-  const store = await getStore(domain , db)  
+  try{ 
 const bigcommerce = bigcommerceClient(store?.accessToken, store?.storeHash , 'v2');
+if(!bigcommerce){
+  return NextResponse.json({
+    success:false,
+    message:"Failed to initialize BigCommerce client"
+  },{status:500 , headers:corsHeader(normalizeOrigin(origin), allowedOrigins)})
+}
 const coupons = await bigcommerce.get('/coupons')
 const couponId = coupons[0]?.id
+if(!couponId){
+  return NextResponse.json({
+    success:false,
+    message:"No valid coupon found"
+  },{status:404 , headers:corsHeader(normalizeOrigin(origin), allowedOrigins)})
+}
 const promotion = {
   applies_to: {
     entity: 'products',
@@ -47,13 +72,18 @@ const promotion = {
   }
 };
 const rule = await bigcommerce.put(`/coupons/${couponId}` , promotion);
-
+if(!rule){
+  return NextResponse.json({
+    success:false,
+    message:"Failed to update coupon"
+  },{status:500 , headers:corsHeader(normalizeOrigin(origin), allowedOrigins)})
+}
 return NextResponse.json({
       success: true,
       rules: rule,
-    },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+    },{status:200 , headers:corsHeader(normalizeOrigin(origin), allowedOrigins)});
       } catch (error) {
-      errorMessage(error , allowedOrigins) 
+      errorMessages(error , allowedOrigins) 
       }
 }
 
