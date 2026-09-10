@@ -157,6 +157,15 @@ if(!response.data || response.data.length === 0 || !variants.data || variants.da
 }
 
    const rules = ruleData(productId,response)
+
+   if(!rules || rules.length === 0) {
+    return NextResponse.json({
+      success: false,
+      rules: [],
+      message: "No valid discount rules found"
+    },{status:200 , headers:corsHeaders(normalizeOrigin(origin), allowedOrigins)});
+   }
+
     return NextResponse.json({
     success:true,
     rules,
