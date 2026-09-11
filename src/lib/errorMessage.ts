@@ -25,3 +25,15 @@ export  function errorMessages(error:unknown , allowedOrigins:string){
           { status: response?.status ?? 500 , headers:corsHeader(normalizeOrigin(origin), allowedOrigins)}
         ); 
 }
+
+export function messageError(error:unknown){
+       const { message, response } = error as {
+          message: string;
+          response?: { status?: number };
+        };
+    
+        return NextResponse.json(
+          { message },
+          { status: response?.status ?? 500 }
+        ); 
+}
