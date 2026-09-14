@@ -41,6 +41,16 @@ type RuleData = {
   amount:number
 }
 
+export async function OPTIONS(
+request: NextRequest 
+) {
+  const db = await getDB()
+  const allowedOrigins = await getStoreDomain(db);
+   const origin = request.headers.get("origin") || "";
+
+   return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) })
+}
+
 function ruleData(
   productId:string,
   response:{data:RuleData[]}){
@@ -78,14 +88,75 @@ return await Promise.all([
 ]);  
 }
 
-export async function OPTIONS(
-request: NextRequest 
-) {
-  const db = await getDB()
-  const allowedOrigins = await getStoreDomain(db);
-   const origin = request.headers.get("origin") || "";
 
-   return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) })
+function validationOrigin(allowedOrigins:string[]){
+  if(!allowedOrigins){
+    throw new Error("Origin not allowed");
+  }
+  return allowedOrigins
+}
+
+function validateId(productId:string){
+  if(!productId){
+    throw new Error("Product ID is required");
+  }
+return productId
+}
+
+function validateBigcommerceClient(bigcommerce: BigCommerce | null){
+  if(!bigcommerce){
+    throw new Error("Bigcommerce Client Not Found");
+  }
+return bigcommerce
+}
+
+function validateStore(store:{ accessToken: string; storeHash: string }){
+  if(!store.accessToken || !store?.storeHash){
+    throw new Error("Store not found");
+  }
+return store
+}
+
+function validateOrigin(origin:string | null){
+if(!origin){
+   throw new Error("Origin header is missing"); 
+  }
+  return origin
+}
+
+function domainValidation( domain:string | null){
+  if(!domain){
+    throw new Error("Missing required parameters");
+  }
+  return domain
+}
+
+async function parallerPromise(db:D1Database, domain:string | null){
+return await Promise.all([
+  getStoreDomain(db),
+  getStore(domain, db)
+  ]);
+}
+
+function validateResponseDate(response:{data:RuleData[]}){
+  if(!response.data || response.data.length === 0){
+    throw new Error("No valid discount rules found");
+  }
+return response
+}
+
+function validateVariantsData(variants:{data:Variant[]}){
+  if(!variants.data || variants.data.length === 0){
+    throw new Error("No variants found for the product");
+  }
+  return variants
+}
+
+function validateRulesData(rules:Data[]){
+  if(!rules || rules.length === 0){
+    throw new Error("No valid discount rules found");
+  }
+  return rules
 }
 
 export async function GET(
@@ -93,95 +164,53 @@ export async function GET(
     { params }: { params: Promise<{ productId: string }> }
 ){
   const db = await getDB()
+
   const {productId} = await params  
-  const domain = getSearchParams(request,'domain')
-  const origin = request.headers.get("origin") || "";
- 
-  if(!origin){
-   throw new Error("Origin header is missing"); 
-  }
-  if(!db || !domain){
-    throw new Error("Missing required parameters");
-  }
 
+  const doma = getSearchParams(request,'domain')
 
-  const [allowedOrigins, store] = await Promise.all([
-  getStoreDomain(db),
-  getStore(domain, db)
-  ]);
+  const domain = domainValidation(doma)
 
- const headers = corsHeaders(normalizeOrigin(origin), allowedOrigins)
+  const origin = validateOrigin(request.headers.get("origin"))
+   
+  const [allowedOrigins, store] = await parallerPromise(db, domain);
 
-  if(!allowedOrigins){
-    throw new Error("Origin not allowed");
-  }
-
-   if(!productId){
-    return NextResponse.json({
-      success:false,message:"Missing required parameters"
-    },{status:400 , headers})
-  }
+  const allowedOrigin = validationOrigin(allowedOrigins)
 
   try {
+  
+const headers = corsHeaders(normalizeOrigin(origin), allowedOrigin)
+ 
+const validatedProductId = validateId(productId)
 
-if(!store){
-  return NextResponse.json({
-    success: false,
-    rules: [],
-  },{status:200 , headers});
-}
-const storeAccessToken = store?.accessToken;
-
-const storeHash = store?.storeHash;
-
-if(!storeAccessToken || !storeHash){
-  return NextResponse.json({
-    success: false,
-    rules: [],
-    message: "Missing required parameters"
-  },{status:200 , headers});
-}
+const { accessToken: storeAccessToken, storeHash } = validateStore(store)
  
 const bigcommerce = bigcommerceClient(storeAccessToken, storeHash);
 
-if(!bigcommerce){
-  return NextResponse.json({
-    success: false,
-    rules: [],
-    message: "Failed to initialize BigCommerce client"
-  },{status:200 , headers});
-}
+const validatedBigcommerce = validateBigcommerceClient(bigcommerce);
 
-const [variants, response] = await getData(bigcommerce,productId)
+const [variants, response] = await getData(validatedBigcommerce,validatedProductId)
 
-if(!response.data || response.data.length === 0 || !variants.data || variants.data.length === 0){
+const responseData = validateResponseDate(response);
 
-  return NextResponse.json({
-      success: false,
-      rules: [],
-    },{status:200 , headers});
-}
+const validateVariants = validateVariantsData(variants);
 
-   const rules = ruleData(productId,response)
+   const rules = ruleData(validatedProductId,responseData)
 
-   if(!rules || rules.length === 0) {
-    return NextResponse.json({
-      success: false,
-      rules: [],
-      message: "No valid discount rules found"
-    },{status:200 , headers});
-   }
+   const ruleDatas = validateRulesData(rules)
+ 
+   const variantsData = validateVariants.data ?? []
 
-   const variantsData = variants?.data ?? []
-    return NextResponse.json({
+
+   return NextResponse.json({
     success:true,
-    rules,
-    variants:variantsData
+    rules: ruleDatas,
+    variants: variantsData
    },{headers})
 
      } catch (error) {
 
-     errorMessage(error , allowedOrigins)
+     errorMessage(error , allowedOrigin)
   } 
 }
 
