@@ -181,13 +181,13 @@ export async function GET(
   
 const headers = corsHeaders(normalizeOrigin(origin), allowedOrigin)
  
-const validatedProductId = validateId(productId)
-
 const { accessToken: storeAccessToken, storeHash } = validateStore(store)
  
 const bigcommerce = bigcommerceClient(storeAccessToken, storeHash);
 
 const validatedBigcommerce = validateBigcommerceClient(bigcommerce);
+
+const validatedProductId = validateId(productId)
 
 const [variants, response] = await getData(validatedBigcommerce,validatedProductId)
 
