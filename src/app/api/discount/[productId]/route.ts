@@ -191,17 +191,16 @@ const validatedProductId = validateId(productId)
 
 const [variants, response] = await getData(validatedBigcommerce,validatedProductId)
 
-const responseData = validateResponseDate(response);
-
 const validateVariants = validateVariantsData(variants);
 
-   const rules = ruleData(validatedProductId,responseData)
+const responseData = validateResponseDate(response);
 
-   const ruleDatas = validateRulesData(rules)
+const rules = ruleData(validatedProductId,responseData)
+
+const ruleDatas = validateRulesData(rules)
+
+const variantsData = validateVariants.data ?? []
  
-   const variantsData = validateVariants.data ?? []
-
-
    return NextResponse.json({
     success:true,
     rules: ruleDatas,
