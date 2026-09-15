@@ -1,17 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDB } from "../../../../../lib/db";
-import getStoreDomain, { getSingleDomain } from "@/lib/storedomain";
+import { getSingleDomain } from "@/lib/storedomain";
 import normalizeOrigin from "@/lib/normalizeorigin";
-import corsHeaders, { corsHeader } from "@/lib/corsheaaders";
+import { corsHeader } from "@/lib/corsheaaders";
 import getSearchParams from "@/lib/getsearchparams";
-import errorMessage, { errorMessages } from "@/lib/errorMessage";
+import { errorMessages } from "@/lib/errorMessage";
 import getStore from "@/lib/getstore";
 
 
 export const dynamic = 'force-dynamic';
 
 export async function OPTIONS(request: NextRequest){ 
-   return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(request.headers.get("origin") ||""), await getStoreDomain(await getDB())) })
+  const db = await getDB()
+  const doma = getSearchParams(request,'domain')
+  const domain = domainValidation(doma)
+  const allowedOrigins = await getSingleDomain(db, domain);
+  const origin = request.headers.get("origin") || "";
+   return new NextResponse(null,{ status:204,headers: corsHeader(normalizeOrigin(origin), allowedOrigins) })
 }
 
 
@@ -46,7 +51,7 @@ return await db
 
 async function getStorePromises(db:D1Database, domain:string){
   return await Promise.all([
-    getStoreDomain(db),
+    getSingleDomain(db, domain),
     getStore(domain, db)
   ]);
 }
@@ -67,7 +72,7 @@ function validateStore(store:{accessToken: string , storeHash: string }){
   return store;
 }
 
-function validationOrigin(allowedOrigins:string[]){
+function validationOrigin(allowedOrigins:string){
   if(!allowedOrigins){
     throw new Error("Origin not allowed");
   }
@@ -115,7 +120,7 @@ export async function GET(req:NextRequest) {
 
   const productId = validateId(product_id)
           
-  const headers = corsHeaders(normalizeOrigin(origin), allowedOrigin)
+  const headers = corsHeader(normalizeOrigin(origin), allowedOrigin)
 
     try {
 
@@ -134,6 +139,6 @@ export async function GET(req:NextRequest) {
 
   } catch (error) {
 
-   errorMessage(error , allowedOrigin)
+   errorMessages(error , allowedOrigin)
   }
 }
