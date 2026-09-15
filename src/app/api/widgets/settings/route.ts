@@ -51,42 +51,69 @@ async function getStorePromises(db:D1Database, domain:string){
   ]);
 }
 
+function validateParams(param:string){
+  if(!param || param.trim() === ""){
+         throw new Error("Missing required parameters");
+    }
+    return param;
+}
+
+function dataValidation(data:WidgetSettings | null){
+  if(!data){
+    throw new Error("Widget settings not found");
+  }
+  return data
+}
+
+function validateStore(store:{accessToken: string , storeHash: string }){
+  if(!store?.storeHash || !store?.accessToken){
+    throw new Error("Store not found");
+  }
+  return store;
+}
+
+function validateAllowedOrigins(allowedOrigins:string){
+  if(!allowedOrigins){
+    throw new Error("Origin not allowed");
+  }
+  return allowedOrigins;
+}
+
 export async function GET(req:NextRequest) {
   
   const db = await getDB()
-  const domain = getSearchParams(req,'domain') || ""
-  const [allowedOrigins, result] = await getStorePromises(db, domain);
-        const origin = req.headers.get("origin") || "";
-        const productId = getSearchParams(req,'product_id')
 
-        if(!domain || !productId || !origin){
-         throw new Error("Missing required parameters");
-        }
-        if(!allowedOrigins){
-          throw new Error("Origin not allowed");
-        }
-        const headers = corsHeader(normalizeOrigin(origin), allowedOrigins)
-         
-        if(!result?.storeHash){
-          return NextResponse.json({
-            success: false, 
-            message: "Missing required parameters"
-          },{status:400 , headers});
-        }
+  const domains = getSearchParams(req,'domain')
+  
+  const domain = validateParams(domains || "")
+  
+  const [allowedOrigin, result] = await getStorePromises(db, domain);
+  
+  const allowedOrigins = validateAllowedOrigins(allowedOrigin)
+  
+  const origins = req.headers.get("origin") || "";
+  
+  const origin = normalizeOrigin(origins)
+
+  const product_id = getSearchParams(req,'product_id')
+
+  const productId = validateParams(product_id || "")
+          
+  const headers = corsHeader(normalizeOrigin(origin), allowedOrigins)
 
     try {
-    const storeHash:string = result?.storeHash;  
+
+    const { storeHash } = validateStore(result)
+
     const success:boolean = storeHash ? true : false;  
+
     const data = await getWidgetSettings(db, storeHash, Number(productId));
-    if(!data){
-      return NextResponse.json({
-        success: false,
-        message: "Widget settings not found"
-      }, {status: 404, headers});
-    }
+    
+    const widgetSettings = dataValidation(data)
+
     return NextResponse.json({
       success,
-      data,
+      data: widgetSettings,
     } ,{headers});
 
   } catch (error) {
