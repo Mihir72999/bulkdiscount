@@ -51,8 +51,8 @@ async function getStorePromises(db:D1Database, domain:string){
   ]);
 }
 
-function validateParams(param:string){
-  if(!param || param.trim() === ""){
+function validateParams(param:string | null){
+  if(!param){
          throw new Error("Missing required parameters");
     }
     return param;
@@ -94,9 +94,9 @@ export async function GET(req:NextRequest) {
   
   const domain = domainValidation(domains)
   
-  const [allowedOrigin, result] = await getStorePromises(db, domain);
+  const [allowedOrigins, result] = await getStorePromises(db, domain);
   
-  const allowedOrigins = validateAllowedOrigins(allowedOrigin)
+  const allowedOrigin = validateAllowedOrigins(allowedOrigins)
   
   const origins = req.headers.get("origin") || "";
   
@@ -104,7 +104,7 @@ export async function GET(req:NextRequest) {
 
   const product_id = getSearchParams(req,'product_id')
 
-  const productId = validateParams(product_id || "")
+  const productId = validateParams(product_id)
           
   const headers = corsHeader(normalizeOrigin(origin), allowedOrigin)
 
@@ -126,6 +126,6 @@ export async function GET(req:NextRequest) {
 
   } catch (error) {
 
-   errorMessages(error , allowedOrigins)
+   errorMessages(error , allowedOrigin)
   }
 }
