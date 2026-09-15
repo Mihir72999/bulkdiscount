@@ -99,13 +99,14 @@ export async function GET(req:NextRequest) {
 
   const productId = validateParams(product_id || "")
           
-  const headers = corsHeader(normalizeOrigin(origin), allowedOrigins)
+  const headers = corsHeader(normalizeOrigin(origin), allowedOrigin)
 
+  console.log("Allowed Origins:", allowedOrigins);
     try {
 
     const { storeHash } = validateStore(result)
 
-    const success:boolean = storeHash ? true : false;  
+    const success:boolean = !!storeHash 
 
     const data = await getWidgetSettings(db, storeHash, Number(productId));
     
