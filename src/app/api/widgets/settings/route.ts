@@ -46,17 +46,12 @@ return await db
 
 async function getStorePromises(db:D1Database, domain:string){
   return await Promise.all([
-    getSingleDomain(db, domain),
+    getStoreDomain(db),
     getStore(domain, db)
   ]);
 }
 
-function validateParams(param:string | null){
-  if(!param){
-         throw new Error("Missing required parameters");
-    }
-    return param;
-}
+
 
 function dataValidation(data:WidgetSettings | null){
   if(!data){
@@ -72,6 +67,20 @@ function validateStore(store:{accessToken: string , storeHash: string }){
   return store;
 }
 
+function validationOrigin(allowedOrigins:string[]){
+  if(!allowedOrigins){
+    throw new Error("Origin not allowed");
+  }
+  return allowedOrigins
+}
+
+function validateOrigin(origin:string | null){
+if(!origin){
+   throw new Error("Origin header is missing"); 
+  }
+  return origin
+}
+
 function domainValidation( domain:string | null){
   if(!domain){
     throw new Error("Missing required parameters");
@@ -79,11 +88,11 @@ function domainValidation( domain:string | null){
   return domain
 }
 
-function validateAllowedOrigins(allowedOrigins:string){
-  if(!allowedOrigins){
-    throw new Error("Origin not allowed");
+function validateId(productId:string){
+  if(!productId){
+    throw new Error("Product ID is required");
   }
-  return allowedOrigins;
+return productId
 }
 
 export async function GET(req:NextRequest) {
@@ -96,17 +105,17 @@ export async function GET(req:NextRequest) {
   
   const [allowedOrigins, result] = await getStorePromises(db, domain);
   
-  const allowedOrigin = validateAllowedOrigins(allowedOrigins)
+  const allowedOrigin = validationOrigin(allowedOrigins)
   
-  const origins = req.headers.get("origin") || "";
+  const origins = req.headers.get("origin");
   
-  const origin = normalizeOrigin(origins)
+  const origin = validateOrigin(origins)
 
   const product_id = getSearchParams(req,'product_id')
 
-  const productId = validateParams(product_id)
+  const productId = validateId(product_id)
           
-  const headers = corsHeader(normalizeOrigin(origin), allowedOrigin)
+  const headers = corsHeaders(normalizeOrigin(origin), allowedOrigin)
 
   console.log("Allowed Origins:", allowedOrigins);
     try {
