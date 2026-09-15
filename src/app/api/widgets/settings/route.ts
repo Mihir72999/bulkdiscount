@@ -134,6 +134,6 @@ export async function GET(req:NextRequest) {
 
   } catch (error) {
 
-   errorMessages(error , allowedOrigin)
+   errorMessage(error , allowedOrigin)
   }
 }
