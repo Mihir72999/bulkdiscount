@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse  } from "next/server";
 import { bigcommerceClient } from "../../../../../lib/auth";
 import { getDB } from "../../../../../lib/db";
-import errorMessage from "@/lib/errorMessage";
-import getStoreDomain from "@/lib/storedomain";
+import { errorMessages } from "@/lib/errorMessage";
+import {getSingleDomain} from "@/lib/storedomain";
 import getSearchParams from "@/lib/getsearchparams";
 import normalizeOrigin from "@/lib/normalizeorigin";
 import getStore from "@/lib/getstore";
-import corsHeaders from "@/lib/corsheaaders";
+import { corsHeader } from "@/lib/corsheaaders";
 import BigCommerce from "node-bigcommerce";
 
 export const dynamic = 'force-dynamic';
@@ -45,10 +45,12 @@ export async function OPTIONS(
 request: NextRequest 
 ) {
   const db = await getDB()
-  const allowedOrigins = await getStoreDomain(db);
+  const doma = getSearchParams(request,'domain')
+  const domain = domainValidation(doma)
+  const allowedOrigins = await getSingleDomain(db, domain);
    const origin = request.headers.get("origin") || "";
 
-   return new NextResponse(null,{ status:204,headers: corsHeaders(normalizeOrigin(origin), allowedOrigins) })
+   return new NextResponse(null,{ status:204,headers: corsHeader(normalizeOrigin(origin), allowedOrigins) })
 }
 
 function ruleData(
@@ -89,7 +91,7 @@ return await Promise.all([
 }
 
 
-function validationOrigin(allowedOrigins:string[]){
+function validationOrigin(allowedOrigins:string){
   if(!allowedOrigins){
     throw new Error("Origin not allowed");
   }
@@ -131,9 +133,9 @@ function domainValidation( domain:string | null){
   return domain
 }
 
-async function parallerPromise(db:D1Database, domain:string | null){
+async function parallerPromise(db:D1Database, domain:string){
 return await Promise.all([
-  getStoreDomain(db),
+  getSingleDomain(db , domain),
   getStore(domain, db)
   ]);
 }
@@ -177,7 +179,7 @@ export async function GET(
   
 const origin = validateOrigin(request.headers.get("origin"))
 
-const headers = corsHeaders(normalizeOrigin(origin), allowedOrigin)
+const headers = corsHeader(normalizeOrigin(origin), allowedOrigin)
  
 const { accessToken: storeAccessToken, storeHash } = validateStore(store)
  
@@ -209,7 +211,7 @@ const variantsData = validateVariants.data ?? []
 
      } catch (error) {
 
-     errorMessage(error , allowedOrigin)
+     errorMessages(error , allowedOrigin)
   } 
 }
 
