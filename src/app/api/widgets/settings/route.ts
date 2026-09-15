@@ -88,7 +88,7 @@ function domainValidation( domain:string | null){
   return domain
 }
 
-function validateId(productId:string){
+function validateId(productId:string | null){
   if(!productId){
     throw new Error("Product ID is required");
   }
@@ -117,7 +117,6 @@ export async function GET(req:NextRequest) {
           
   const headers = corsHeaders(normalizeOrigin(origin), allowedOrigin)
 
-  console.log("Allowed Origins:", allowedOrigins);
     try {
 
     const { storeHash } = validateStore(result)
