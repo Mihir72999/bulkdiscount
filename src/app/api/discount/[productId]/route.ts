@@ -165,13 +165,9 @@ export async function GET(
 ){
   const db = await getDB()
 
-  const {productId} = await params  
-
   const doma = getSearchParams(request,'domain')
 
   const domain = domainValidation(doma)
-
-  const origin = validateOrigin(request.headers.get("origin"))
    
   const [allowedOrigins, store] = await parallerPromise(db, domain);
 
@@ -179,6 +175,8 @@ export async function GET(
 
   try {
   
+const origin = validateOrigin(request.headers.get("origin"))
+
 const headers = corsHeaders(normalizeOrigin(origin), allowedOrigin)
  
 const { accessToken: storeAccessToken, storeHash } = validateStore(store)
@@ -186,6 +184,8 @@ const { accessToken: storeAccessToken, storeHash } = validateStore(store)
 const bigcommerce = bigcommerceClient(storeAccessToken, storeHash);
 
 const validatedBigcommerce = validateBigcommerceClient(bigcommerce);
+
+const {productId} = await params
 
 const validatedProductId = validateId(productId)
 
@@ -202,7 +202,7 @@ const ruleDatas = validateRulesData(rules)
 const variantsData = validateVariants.data ?? []
  
    return NextResponse.json({
-    success:true,
+    success:!!ruleDatas && !!variantsData,
     rules: ruleDatas,
     variants: variantsData
    },{headers})
