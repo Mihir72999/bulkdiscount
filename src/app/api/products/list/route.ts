@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { bigcommerceClient, getSession } from "../../../../../lib/auth";
 import getSearchParams from "@/lib/getsearchparams";
 import { messageError } from "@/lib/errorMessage";
+import BigCommerce from "node-bigcommerce";
 
 
 // {
@@ -49,45 +50,119 @@ type ProductResponse = {
   };
 
 type ParamsTruple = {
-  page:string, limit:string, sort?:string, direction?:string, keyword?:string};
+  page:string | undefined, 
+  limit:string | undefined, 
+  sort?:string | undefined, 
+  direction?:string | undefined, 
+  keyword?:string | undefined
+};
 
-export async function GET(req:NextRequest){
-     try { 
-               const context = await getSession(req);
-                       if(!context?.accessToken || !context?.storeHash){
-                          return NextResponse.json({message:'AccessToken Required'})
-                         }
-                const accessToken = context?.accessToken;
-                const storeHash = context?.storeHash;
-                 const bigcommerce = bigcommerceClient(accessToken, storeHash);
-                 if(!bigcommerce){
-                    return NextResponse.json({message:'Bigcommerce Client Not Found'})
-                 }
-           const truple: ParamsTruple = {
-              page: getSearchParams(req, "page") ?? "1",
-              limit: getSearchParams(req, "limit") ?? "20",
-              sort: getSearchParams(req, "sort") || undefined,
-              direction: getSearchParams(req, "direction") || undefined,
-              keyword: getSearchParams(req, "keyword") || undefined
-           }
-      //     const page = req.nextUrl.searchParams.get("page") ?? "1";
-      //  const limit = req.nextUrl.searchParams.get("limit") ?? "20";
-      //  const sort = req.nextUrl.searchParams.get("sort");
-      //  const direction = req.nextUrl.searchParams.get("direction");
-      //    const keyword = req.nextUrl.searchParams.get("keyword");
-         const params = new URLSearchParams({ page:truple.page, limit:truple.limit,
+type ValidateTruple =  {
+    page: string;
+    limit: string;
+    sort: string | undefined;
+    direction: string;
+    keyword: string | undefined;
+}
+
+function validatePage(page:string | undefined){
+if(!page) return "1"
+return page
+}
+
+function validateLimit(limit:string | undefined){
+  if(!limit) return "20"
+  return limit
+}
+
+function validateShort(short:string | undefined){
+  if(!short) return undefined
+  return short
+}
+
+function validateDirection(direction:string | undefined){
+  if(!direction) return "asc"
+  return direction
+}
+
+function validateKeyword(keyword:string | undefined){
+  if(!keyword) return undefined
+  return keyword
+}
+function validateTruples(truple:ParamsTruple){
+const page = validatePage(truple.page)
+const limit = validateLimit(truple.limit)
+const sort = validateShort(truple.sort)
+const direction = validateDirection(truple.direction)
+const keyword = validateKeyword(truple.keyword)
+return {page, limit, sort, direction, keyword}
+}  
+
+
+function validateParams(truple:ValidateTruple){
+  return new URLSearchParams({ page:truple.page, limit:truple.limit,
            ...(truple.keyword ? { keyword: truple.keyword } : {}),
            ...(truple.sort && {sort: truple.sort, direction: truple.direction ?? "asc"}) }).toString();
  
+}
 
-         const response: ProductResponse = await bigcommerce.get(`/catalog/products?${params}`);
-          
-         if(!response.data || response.data.length === 0){
-            return NextResponse.json({message:'No Products Found'})
-         }
+function getTruple(req:NextRequest):ParamsTruple{
+  return {
+              page: getSearchParams(req, "page") ?? "1",
+              limit: getSearchParams(req, "limit") ?? "20",
+              sort: getSearchParams(req, "sort") || undefined,
+              direction: getSearchParams(req, "direction") || "asc",
+              keyword: getSearchParams(req, "keyword") || undefined
+           }
+}
+
+function validateSession(context:{accessToken:string, storeHash:string} | undefined){
+  if(!context?.accessToken || !context?.storeHash){
+    throw new Error("AccessToken Required")
+  }
+  return context
+}
+
+function validateBigcommerceClient(bigcommerce:BigCommerce | undefined){
+  if(!bigcommerce){
+    throw new Error("Bigcommerce Client Not Found")
+  }
+  return bigcommerce
+}
+
+function validateProductResponse(response: ProductResponse){
+if(!response.data || response.data.length === 0){
+  throw new Error('No Products Found')
+}
+return response
+}
+
+export async function GET(req:NextRequest){
+     try { 
+                
+          const truples = getTruple(req)
+            
+          const truple = validateTruples(truples)
          
-        return NextResponse.json(response,{status:200})
+          const params = validateParams(truple)
+
+          const validateContext = await getSession(req);
+
+          const {accessToken, storeHash} = validateSession(validateContext)    
+                 
+          const validateBigcommerce = bigcommerceClient(accessToken, storeHash);
+                 
+          const bigcommerce = validateBigcommerceClient(validateBigcommerce)
+
+          const responseData: ProductResponse = await bigcommerce.get(`/catalog/products?${params}`);
+          
+          const response = validateProductResponse(responseData)
+         
+         return NextResponse.json(response,{status:200})
+
      } catch (error) {
-      messageError(error)
-     }   
+
+        messageError(error)
+     
+      }   
 }
