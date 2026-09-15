@@ -72,6 +72,13 @@ function validateStore(store:{accessToken: string , storeHash: string }){
   return store;
 }
 
+function domainValidation( domain:string | null){
+  if(!domain){
+    throw new Error("Missing required parameters");
+  }
+  return domain
+}
+
 function validateAllowedOrigins(allowedOrigins:string){
   if(!allowedOrigins){
     throw new Error("Origin not allowed");
@@ -85,7 +92,7 @@ export async function GET(req:NextRequest) {
 
   const domains = getSearchParams(req,'domain')
   
-  const domain = validateParams(domains || "")
+  const domain = domainValidation(domains)
   
   const [allowedOrigin, result] = await getStorePromises(db, domain);
   
