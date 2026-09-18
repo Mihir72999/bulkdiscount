@@ -167,18 +167,8 @@ export async function PUT(req:NextRequest , { params }: { params: Promise<{ prod
 export async function GET(req:NextRequest, { params }: { params: Promise<{ productId: string }> } ){
    const {productId} = await params
     try {
-    const context = await getSession(req);
-                   if(!context?.accessToken){
-                 return NextResponse.json({message:'AccessToken Required'}, {status:400})
-             }
-           const bigcommerce = bigcommerceClient(
-                                    context?.accessToken,
-                                    context?.storeHash,
-                                    "v3"
-                                );   
-           const { data } = await bigcommerce.get(
-                    `/catalog/products/${productId}/bulk-pricing-rules`
-                );                     
+            const bigcommerce = await getAuthenticatedClient(req);
+           const { data } = await getBulkPricingRule(productId,bigcommerce)                    
             return NextResponse.json(data)
          } catch (error) {
            messageError(error)
