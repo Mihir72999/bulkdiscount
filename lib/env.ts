@@ -5,3 +5,10 @@ export async function getEnv() {
 
     return env;
 }
+
+
+export async function getCtx() {
+    const { ctx } = await getCloudflareContext({ async: true });
+
+    return ctx;
+}

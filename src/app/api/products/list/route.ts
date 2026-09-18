@@ -9,7 +9,7 @@ import { getAuthenticatedClient } from "@/lib/getAuthenticatedClient";
 // 1. Types & Interfaces (ISP + DIP)
 // ======================
 
-interface Product {
+export interface Product {
   id: number;
   name: string;
   sku: string;
@@ -19,7 +19,7 @@ interface Product {
   type: string;
 }
 
-interface PaginationMeta {
+export interface PaginationMeta {
   total: number;
   count: number;
   per_page: number;
@@ -31,7 +31,7 @@ interface PaginationMeta {
   too_many: boolean;
 }
 
-interface ProductResponse {
+export interface ProductResponse {
   data: Product[];
   meta: {
     pagination: PaginationMeta;

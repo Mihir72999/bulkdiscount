@@ -22,3 +22,14 @@ export interface ListItem extends FormData {
 export interface StringKeyValue {
     [key: string]: string;
 }
+
+
+ // lib/api/widget-settings.ts
+export interface WidgetSettingsPayload {
+ borderColor: string;
+ borderRadius: number;
+ product_ids :string,
+ name: string,
+ description: string,
+ widget_title: string
+}

@@ -1,25 +1,12 @@
 'use client';
 import useSWR from 'swr';
 import { useSession } from '../context/session';
-import { mockDiscounts } from "../lib/dbs/mokeDiscounts";
-import { ErrorProps, ListItem, Order,  QueryParams, ShippingAndProductsInfo } from '../types';
-  const APP_URL = "https://bgcom.mihir72999.workers.dev" as const;
 
-export async function getDiscountRules(productId:number){
+import { ErrorProps, ListItem, Order,  QueryParams, ShippingAndProductsInfo, UpdateBulkPricingRule, WidgetSettingsPayload } from '../types';
+import { ProductResponse } from '@/app/api/products/list/route';
+  
+const APP_URL = "https://bgcom.mihir72999.workers.dev" as const;
 
-    const rules = mockDiscounts.filter(
-
-        item=>item.productId===productId
-
-    );
-
-    return rules.sort(
-
-        (a,b)=>a.quantity-b.quantity
-
-    );
-
-}
 
 async function fetcher<T>([url , query]: [string, string]):Promise<T> {
 
@@ -58,7 +45,7 @@ export function useProductList(query?: QueryParams) {
 
     // Use an array to send multiple arguments to fetcher
 
-    const { data, error, mutate: mutateList } = useSWR<any,ErrorProps>(context ? ['/api/products/list', params] : null, fetcher);
+    const { data, error, mutate: mutateList } = useSWR<ProductResponse,ErrorProps>(context ? ['/api/products/list', params] : null, fetcher);
 
     return {
         list: data?.data,
@@ -69,10 +56,7 @@ export function useProductList(query?: QueryParams) {
     };
 }
 
-type Product = {
-  id: number;
-  name: string;
-};
+
 
 export function useGetProductSettings(){
   const { context } = useSession();
@@ -87,7 +71,7 @@ export function useGetProductSettings(){
   }
 }
 
-export function useGetPricingRules(products: Product[]) {
+export function useGetPricingRules(products: ProductResponse['data']) {
   const { context } = useSession();
 
   const { data, error, isLoading } = useSWR<
@@ -116,12 +100,7 @@ export function useGetPricingRules(products: Product[]) {
     error,
   };
 }
-type UpdateBulkPricingRule = {
-  quantity_min: number;
-  quantity_max?: number;
-  type: string;
-  amount: number;
-};
+
 
 export function useUpdatePricingRule() {
   const { context } = useSession();
@@ -204,7 +183,7 @@ export function useProductInfo(pid: number, list?:ListItem[]) {
     }
 
     // Conditionally fetch product if it doesn't exist in the list (e.g. deep linking)
-    const { data, error } = useSWR<any,ErrorProps>(!product && context ? [`/api/products/${pid}`, params] : null, fetcher);
+    const { data, error } = useSWR<ProductResponse['data'],ErrorProps>(!product && context ? [`/api/products/${pid}`, params] : null, fetcher);
 
     return {
         product: product ?? data,
@@ -247,23 +226,6 @@ export const useShippingAndProductsInfo = (orderId: number) => {
 
 
 
-interface WidgetSettingsPayload {
-  borderColor: string;
-  borderRadius: number;
-}
-
-
-
-// lib/api/widget-settings.ts
-interface WidgetSettingsPayload {
- borderColor: string;
- borderRadius: number;
- product_ids :string,
- name: string,
- description: string,
- widget_title: string
-}
-
 export function useSaveWidgetSettings() {
   const { context } = useSession();
 
@@ -281,13 +243,12 @@ export function useSaveWidgetSettings() {
          body: JSON.stringify(payload),
        }
       );
-
+     const response = await res.text() as string
      if (!res.ok) {
-       const { message } = (await res.json()) as { message: string };
-       throw new Error(message || "Failed to save widget settings");
+       throw new Error(response || "Failed to save widget settings");
     }
 
-    return res.json();
+    return JSON.parse(response);
   };
 
     return {

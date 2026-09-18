@@ -10,6 +10,12 @@ export interface DiscountRule {
 
 }
 
+export type UpdateBulkPricingRule = {
+  quantity_min: number;
+  quantity_max?: number;
+  type: string;
+  amount: number;
+};
 
 export interface ProductMenuProps {
     id: number;
