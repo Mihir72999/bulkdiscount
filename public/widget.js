@@ -338,7 +338,7 @@ function updateWasPrice(quantity) {
 
 
         if (selectedVariant) {
-            originalPrice = selectedVariant.price;
+            originalPrice ="$"+ selectedVariant.price;
             priceElement.textContent =
                 selectedVariant.price.toFixed(2);
              rules = 

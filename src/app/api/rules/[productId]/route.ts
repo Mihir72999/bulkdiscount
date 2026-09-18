@@ -165,8 +165,8 @@ export async function PUT(req:NextRequest , { params }: { params: Promise<{ prod
 
 
 export async function GET(req:NextRequest, { params }: { params: Promise<{ productId: string }> } ){
-   const {productId} = await params
-    try {
+  try {
+            const {productId} = await params
             const bigcommerce = await getAuthenticatedClient(req);
            const { data } = await getBulkPricingRule(productId,bigcommerce)                    
             return NextResponse.json(data)
