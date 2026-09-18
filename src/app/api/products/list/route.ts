@@ -3,6 +3,7 @@ import { bigcommerceClient, getSession } from "../../../../../lib/auth";
 import getSearchParams from "@/lib/getsearchparams";
 import { messageError } from "@/lib/errorMessage";
 import BigCommerce from "node-bigcommerce";
+import { getAuthenticatedClient } from "@/lib/getAuthenticatedClient";
 
 // ======================
 // 1. Types & Interfaces (ISP + DIP)
@@ -110,25 +111,7 @@ class ProductService {
   }
 }
 
-// ======================
-// 5. Session & Client helpers (kept small and focused)
-// ======================
 
-async function getAuthenticatedClient(req: NextRequest): Promise<BigCommerce> {
-  const session = await getSession(req);
-
-  if (!session?.accessToken || !session?.storeHash) {
-    throw new Error("AccessToken Required");
-  }
-
-  const client = bigcommerceClient(session.accessToken, session.storeHash);
-
-  if (!client) {
-    throw new Error("Bigcommerce Client Not Found");
-  }
-
-  return client;
-}
 
 // ======================
 // 6. Route Handler (thin, only orchestration)
