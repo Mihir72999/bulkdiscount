@@ -10,6 +10,11 @@ import { cn } from "@/lib/utils";
 type Product = {  
   id: number;
   name: string;
+  sku:string;
+  description:string;
+  inventory_level:number;
+  type:string;
+  price:string;
 };
 
 interface ProductSelectorProps {
