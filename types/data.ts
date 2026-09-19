@@ -17,6 +17,7 @@ export interface TableItem {
 }
 
 export interface ListItem extends FormData {
+    id:number;
     type:string;
     description:string; 
     is_visible:boolean;
