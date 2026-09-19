@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/card";
 
 import { Badge } from "@/components/ui/badge";
+import { ListItem } from "../../../../types";
 
 const ProductAppExtension = () => {
     const params = useParams()
     const productId = Number(params?.productId);
     const { error, isLoading, product } = useProductInfo(productId);
-    const { description, is_visible: isVisible, name, price, type } = product ?? {};   
+    const { description, is_visible: isVisible, name, price, type } = product as ListItem ?? {};   
     const typeCapitalized = type?.replace(/^\w/, (c: string) => c.toUpperCase());
     const isVisibleString = isVisible ? 'True' : 'False';
     if(!product) return notFound()

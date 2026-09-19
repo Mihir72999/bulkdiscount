@@ -13,11 +13,13 @@ export interface TableItem {
     name: string;
     price: number;
     inventory_level: number;
+     
 }
 
 export interface ListItem extends FormData {
-    id: number;
-    description:string
+    type:string;
+    description:string; 
+    is_visible:boolean;
 }
 
 export interface StringKeyValue {
