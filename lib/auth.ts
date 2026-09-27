@@ -5,7 +5,6 @@ import { deleteStore, deleteUser, getStoreToken, hasStoreUser, setStore, setStor
 import { NextRequest } from 'next/server';
 import { getEnv } from './env';
 
-// const {env } = await getCloudflareContext({async:true})
 const env = await getEnv();
 const { API_URL, AUTH_CALLBACK, CLIENT_ID, CLIENT_SECRET, JWT_KEY, LOGIN_URL } = env;
 

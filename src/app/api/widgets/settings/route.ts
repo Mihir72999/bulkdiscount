@@ -26,6 +26,18 @@ interface WidgetSettings {
   store_hash: string;
 }
 
+const defaultWidgetSettings:WidgetSettings = {
+  id: 0,
+  name: "",
+  description: "",
+  widget_title: "",
+  borderColor: "",
+  borderRadius: 0,
+  product_ids: "",
+  store_hash: ""
+}
+
+
 interface StoreCredentials {
   accessToken: string;
   storeHash: string;
@@ -184,11 +196,19 @@ export async function GET(request: NextRequest) {
       store.storeHash,
       Number(productId)
     );
-
-    return NextResponse.json(
+     defaultWidgetSettings.id = widgetSettings.id
+     defaultWidgetSettings.borderColor = widgetSettings.borderColor
+     defaultWidgetSettings.borderRadius = widgetSettings.borderRadius
+     defaultWidgetSettings.name = widgetSettings.name
+     defaultWidgetSettings.description = widgetSettings.description
+     defaultWidgetSettings.product_ids = widgetSettings.product_ids
+     defaultWidgetSettings.store_hash = widgetSettings.store_hash
+     defaultWidgetSettings.widget_title = widgetSettings.widget_title
+     
+     return NextResponse.json(
       {
         success: true,
-        data: widgetSettings,
+        data: defaultWidgetSettings,
       },
       { headers }
     );
