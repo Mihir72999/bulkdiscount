@@ -185,18 +185,18 @@ export async function GET(request: NextRequest) {
   console.log('domain' , (performance.now() - start).toFixed(2))
   try {
 
-    
+    const startH = performance.now();
     const origin = requireOrigin(request.headers.get("origin"));
     const headers = corsHeader(normalizeOrigin(origin), allowedOrigin);
     const productId = requireProductId(getSearchParams(request, "product_id"));
-    console.log('Header' , (performance.now() - start).toFixed(2))
-
+    console.log('Header' , (performance.now() - startH).toFixed(2))
+   const startR = performance.now();
     // Dependency Injection
     const repository = new D1WidgetSettingsRepository(db);
     const service = new WidgetSettingsService(repository);
-    console.log('repository' , (performance.now() - start).toFixed(2))
+    console.log('repository' , (performance.now() - startR).toFixed(2))
 
-    
+    const startW = performance.now();
     const widgetSettings = await service.getSettings(
       store.storeHash,
       Number(productId)
@@ -209,7 +209,7 @@ export async function GET(request: NextRequest) {
      defaultWidgetSettings.product_ids = widgetSettings.product_ids
      defaultWidgetSettings.store_hash = widgetSettings.store_hash
      defaultWidgetSettings.widget_title = widgetSettings.widget_title
-     console.log('widget settings' , (performance.now() - start).toFixed(2))
+     console.log('widget settings' , (performance.now() - startW).toFixed(2))
      return NextResponse.json(
       {
         success: true,
