@@ -179,24 +179,24 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  console.time('Excecute Domain')
+   const start = performance.now();
   const domain = requireDomain(getSearchParams(request, "domain"));
   const { db, allowedOrigin, store } = await resolveStoreAndOrigin(domain);
-  console.timeEnd('Excecute Domain')
+  console.log('domain' , (performance.now() - start).toFixed(2))
   try {
 
-    console.time('Excecute Headers')
+    
     const origin = requireOrigin(request.headers.get("origin"));
     const headers = corsHeader(normalizeOrigin(origin), allowedOrigin);
     const productId = requireProductId(getSearchParams(request, "product_id"));
-    console.timeEnd('Excecute Headers')
+    console.log('Header' , (performance.now() - start).toFixed(2))
+
     // Dependency Injection
-    console.time('Execute reposetory')
     const repository = new D1WidgetSettingsRepository(db);
     const service = new WidgetSettingsService(repository);
-    console.timeEnd('Execute reposetory')
+    console.log('repository' , (performance.now() - start).toFixed(2))
 
-    console.time('Execute widget time')
+    
     const widgetSettings = await service.getSettings(
       store.storeHash,
       Number(productId)
@@ -209,7 +209,7 @@ export async function GET(request: NextRequest) {
      defaultWidgetSettings.product_ids = widgetSettings.product_ids
      defaultWidgetSettings.store_hash = widgetSettings.store_hash
      defaultWidgetSettings.widget_title = widgetSettings.widget_title
-     console.timeEnd('Execute widget time')
+     console.log('widget settings' , (performance.now() - start).toFixed(2))
      return NextResponse.json(
       {
         success: true,
