@@ -37,7 +37,7 @@ export async function GET(request:NextRequest){
    throw new Error("Origin header is missing"); 
   }
    const [allowedOrigins , store] = await getStorePromises(db, domain)
-   if(!db || !domain || !igId){
+   if(!db || !domain || !igId || !allowedOrigins || !store){
      throw new Error("Missing required parameters");
    } 
   if(!ignoreId || ignoreId.length <= 0){
