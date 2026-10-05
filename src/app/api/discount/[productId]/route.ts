@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { bigcommerceClient } from "../../../../../lib/auth";
 import { getDB } from "../../../../../lib/db";
-import { errorMessages } from "@/lib/errorMessage";
+import { errorMessages, messageError } from "@/lib/errorMessage";
 import { getSingleDomain } from "@/lib/storedomain";
 import getSearchParams from "@/lib/getsearchparams";
 import normalizeOrigin from "@/lib/normalizeorigin";
@@ -220,14 +220,14 @@ function createBigCommerceClient(store: StoreCredentials): BigCommerce {
 // ======================
 
 export async function OPTIONS(request: NextRequest) {
-  const domain = requireDomain(getSearchParams(request, "domain"));
-  const { allowedOrigin } = await resolveStoreAndOrigin(domain);
+  // const domain = requireDomain(getSearchParams(request, "domain"));
+  // const { allowedOrigin } = await resolveStoreAndOrigin(domain);
 
-  const origin = request.headers.get("origin") || "";
+  // const origin = request.headers.get("origin") || "";
 
   return new NextResponse(null, {
     status: 204,
-    headers: corsHeader(normalizeOrigin(origin), allowedOrigin),
+    // headers: corsHeader(normalizeOrigin(origin), allowedOrigin),
   });
 }
 
@@ -235,17 +235,22 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ productId: string }> }
 ) {
-  const domain = requireDomain(getSearchParams(request, "domain"));
-  const { allowedOrigin, store } = await resolveStoreAndOrigin(domain);
+  // const domain = requireDomain(getSearchParams(request, "domain"));
+  // const { allowedOrigin, store } = await resolveStoreAndOrigin(domain);
 
   try {
-    const origin = requireOrigin(request.headers.get("origin"));
-    const headers = corsHeader(normalizeOrigin(origin), allowedOrigin);
+    // const origin = requireOrigin(request.headers.get("origin"));
+    // const headers = corsHeader(normalizeOrigin(origin), allowedOrigin);
 
     const { productId } = await params;
     const validatedProductId = requireProductId(productId);
 
     // Dependency injection
+    const store = request.headers.get("x-store-hash") && request.headers.get("x-access-token") ? {
+      storeHash: request.headers.get("x-store-hash") || "",
+      accessToken: request.headers.get("x-access-token") || "",
+    } : null;
+    if(!store) throw new Error("Store credentials missing in headers");
     const bigCommerce = createBigCommerceClient(store);
     const productClient = new BigCommerceProductClient(bigCommerce);
     const service = new ProductDiscountService(productClient);
@@ -258,10 +263,10 @@ export async function GET(
         rules,
         variants,
       },
-      { headers }
+      // { headers }
     );
   } catch (error) {
-    return errorMessages(error, allowedOrigin);
+    return messageError(error);
   }
 }
 
