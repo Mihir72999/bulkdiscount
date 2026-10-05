@@ -58,7 +58,7 @@ function validateOrigin(store:{storeHash:string, accessToken:string} | null){
 
 
 export const config = {
-  matcher: [ "/api/discounts/*" ],
+  matcher: [ "/api/discounts/:path*" ],
 }
 
             // "/api/cart/*", 
