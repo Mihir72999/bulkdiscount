@@ -58,15 +58,14 @@ function validateOrigin(store:{storeHash:string, accessToken:string} | null){
 
 
 export const config = {
-  matcher: [
+  matcher: [ "/api/discounts/*" ],
+}
+
             // "/api/cart/*", 
             // "/api/widgets/*", 
             // "/api/widget/*" , 
             // "/api/products/*", 
             // "/api/orders/*" , 
             // "/api/rules/*",
-            "/api/discounts/*", 
             // "/api/script/*",
             // "/api/uninstall/*",
-        ],
-}
