@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDB } from "./lib/db";
+import { getDB } from "../lib/db";
 import normalizeOrigin from "@/lib/normalizeorigin";
 import getStore from "@/lib/getstore";
-import { getSession } from "./lib/auth";
+import { getSession } from "../lib/auth";
 
 export async function proxy(request: NextRequest) {
   const headers = new Headers(request.headers); 
